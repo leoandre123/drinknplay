@@ -1,0 +1,30 @@
+{
+  "name": "polly24",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "vite",
+    "dev:backend": "nodemon server/index.js",
+    "dev": "concurrently 'npm:dev:frontend' 'npm:dev:backend'",
+    "dev-host": "concurrently \"npm run dev:frontend -- --host\" \"npm run dev:backend\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "vue": "^3.5.12",
+    "vue-color": "^3.3.3",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.4",
+    "concurrently": "^9.0.1",
+    "eslint": "^9.13.0",
+    "eslint-plugin-vue": "^9.29.0",
+    "nodemon": "^3.1.7",
+    "vite": "^6.4.1"
+  }
+}

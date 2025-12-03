@@ -1,0 +1,12 @@
+[
+    {
+        "title": "Racing Game",
+        "imageUri": "game_backgrounds/racing.png",
+        "tips": "Try to win the race"
+    },
+    {
+        "title": "Questions Game",
+        "imageUri": "game_backgrounds/question.jpg",
+        "tips": "Try to to answer the right question"
+    }
+]
