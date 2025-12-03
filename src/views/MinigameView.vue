@@ -3,12 +3,6 @@
     <div class="title-bar">
       <h1 v-if="context.state.gameIndex == 0">2.5D Racer</h1>
       <h1 v-if="context.state.gameIndex == 1">Questions game</h1>
-      <svg view-box="0 0 100 100">
-        <rect x="10" y="10" width="50" height="50" fill="green" />
-        <circle cx="5" cy="5" :r="tmp" fill="red" />
-      </svg>
-      <p>{{ tmp }}</p>
-      <input type="range" v-model="tmp" min="1" max="10" />
     </div>
     <div class="body-container">
       <div class="scoreboard-container">
@@ -37,7 +31,7 @@ export default {
   name: "MinigameView",
 
   data() {
-    return { context, tmp: 0 };
+    return { context };
   },
   components: { RacingView, RacingControllerView, KahootView, KahootPlayerView },
   async created() {},
