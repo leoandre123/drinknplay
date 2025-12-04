@@ -1,0 +1,10 @@
+{
+    "auth": {
+        "login": "Logga in",
+        "logout": "Logga ut"
+    },
+    "player": {
+        "players": "Spelare",
+        "player": "Spelare"
+    }
+}

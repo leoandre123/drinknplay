@@ -17,6 +17,10 @@
       </div>
     </div>
   </div>
+  <div class="language-switcher">
+    <div @click="switchLang('sv')"><Flag iso="se" :squared="false" /></div>
+    <div @click="switchLang('en')"><Flag iso="gb" :squared="false" /></div>
+  </div>
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
@@ -33,6 +37,13 @@
         </button>
         <br />
         <button @click="joinLobbyAsHost('race')">Join race game as host</button>
+        <br />
+        <br />
+        <button @click="joinLobbyAsHost('result')">Join result as host</button>
+        <br />
+        <button @click="joinLobby('result', 'player_' + Math.floor(Math.random() * 1000))">
+          Join result as player
+        </button>
         <br />
         <br />
         <button @click="joinLobbyAsHost('lobby')">Join lobby as host</button>
@@ -53,6 +64,7 @@
 </template>
 
 <script>
+import { useI18n } from "vue-i18n";
 import LoadingView from "./LoadingView.vue";
 import MinigameView from "./MinigameView.vue";
 import SlotView from "./SlotView.vue";
@@ -60,6 +72,7 @@ import ResultView from "./ResultView.vue";
 import LobbyView from "./LobbyView.vue";
 import { socket } from "../socket";
 import { context } from "../context";
+import { Flag } from "vue-flag-icon/components";
 
 export default {
   name: "GameView",
@@ -71,7 +84,14 @@ export default {
       incomingMessages: [],
     };
   },
-  components: { MinigameView, LoadingView, SlotView, ResultView, LobbyView },
+  setup() {
+    const { locale } = useI18n();
+    function switchLang(lang) {
+      locale.value = lang;
+    }
+    return { locale, switchLang };
+  },
+  components: { MinigameView, LoadingView, SlotView, ResultView, LobbyView, Flag },
   mounted() {
     socket.on("joinLobbyResponse", (response) => {
       console.log("resp");
@@ -138,6 +158,23 @@ export default {
     rgba(0, 102, 204, 1) 49.5%,
     rgba(0, 191, 255, 1) 90%
   );
+}
+
+.language-switcher {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  font-size: 2rem;
+}
+.language-switcher span {
+  cursor: pointer;
+  border: 0.1rem solid black;
+  border-radius: 0.25rem;
+}
+.language-switcher span:hover {
+  transform: scale(1.1);
 }
 
 .connection-warning {

@@ -1,5 +1,5 @@
 {
-  "name": "polly24",
+  "name": "drinknplay",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,8 @@
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "vue": "^3.5.12",
-    "vue-color": "^3.3.3",
+    "vue-flag-icon": "^2.1.0",
+    "vue-i18n": "^11.2.2",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
