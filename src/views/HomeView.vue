@@ -4,12 +4,12 @@
     <div class="menu">
       <h1>Drink n' Draw</h1>
       <p>Lobby Code</p>
-      <input />
+      <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
       <br />
       <br />
-      <button>Join game</button>
+      <button @click="joinGame" :disabled="lobbyCode.length == 0">Join game</button>
       <div>
-        <p>If you want to host a game press <span class="create">here</span></p>
+        <p>If you want to host a game press <span class="create" @click="createGame">here</span></p>
       </div>
     </div>
   </div>
@@ -22,6 +22,7 @@ export default {
   data: function () {
     return {
       isConnected: false,
+      lobbyCode: "",
     };
   },
   mounted() {
@@ -33,7 +34,18 @@ export default {
     socket.off("connect");
     socket.off("disconnect");
   },
-  methods: {},
+  methods: {
+    joinGame() {
+      this.$router.push({
+        path: `/join/${this.lobbyCode}`,
+      });
+    },
+    createGame() {
+      this.$router.push({
+        path: `/create`,
+      });
+    },
+  },
 };
 </script>
 

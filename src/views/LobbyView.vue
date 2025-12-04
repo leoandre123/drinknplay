@@ -1,7 +1,7 @@
 <template>
   <div v-if="context.isHost" class="lobby-container">
     <div>
-      <h1>Players ({{ context.state.players.length }}/{{ 10 }})</h1>
+      <h1>{{ $t("common.player.players") }} ({{ context.state.players.length }}/{{ 10 }})</h1>
       <div class="player-list">
         <div v-for="player in context.state.players">
           <p>{{ player.name }}</p>
@@ -9,14 +9,15 @@
       </div>
     </div>
     <div>
-      <h1>Lobby Code: {{ context.state.lobbyId }}</h1>
-      <QrCode :data="`https://192.168.38.197:5173/join/${context.state.lobbyId}`" />
+      <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
+      <h3>{{ lobbyUri }}</h3>
+      <QrCode :data="lobbyUri" />
       <br /><br />
-      <button @click="startGame">Start game</button>
+      <button @click="startGame">{{ $t("game.startGame") }}</button>
     </div>
     <div></div>
   </div>
-  <div v-if="!context.isHost" class="waiting">Wating for host...</div>
+  <div v-if="!context.isHost" class="waiting">{{ $t("lobby.waitingForHost") }}...</div>
 </template>
 
 <script>
@@ -27,10 +28,14 @@ import { socket } from "../socket";
 export default {
   name: "LobbyView",
   data: function () {
-    return { context };
+    return { context, lobbyUri: "" };
   },
   components: { QrCode },
-  created: function () {},
+  created: function () {
+    const hostname = window.location.hostname;
+    const origin = window.location.origin;
+    this.lobbyUri = `${origin}/join/${context.state.lobbyId}`;
+  },
   methods: {
     startGame() {
       socket.emit("startGame");

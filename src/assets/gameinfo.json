@@ -1,12 +1,17 @@
 [
     {
-        "title": "Racing Game",
+        "title": "Drink n' Drive",
         "imageUri": "game_backgrounds/racing.png",
-        "tips": "Try to win the race"
+        "tips": [
+            "Try to win the race",
+            "Remember. Using the gas makes you faster than using the brakes"
+        ]
     },
     {
-        "title": "Questions Game",
+        "title": "Drink n' Guess",
         "imageUri": "game_backgrounds/question.jpg",
-        "tips": "Try to to answer the right question"
+        "tips": [
+            "Try to to answer the right question"
+        ]
     }
 ]
