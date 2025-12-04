@@ -3,36 +3,14 @@
 </template>
 
 <script>
-import { socket } from "../socket";
 export default {
   name: "CreateView",
   data: function () {
-    return {
-      isConnected: false,
-      lobbyCode: "",
-    };
+    return {};
   },
-  mounted() {
-    this.isConnected = socket.connected;
-    socket.on("connect", () => (this.isConnected = true));
-    socket.on("disconnect", () => (this.isConnected = false));
-  },
-  beforeUnmount() {
-    socket.off("connect");
-    socket.off("disconnect");
-  },
-  methods: {
-    joinGame() {
-      this.$router.push({
-        path: `/join/${this.lobbyCode}`,
-      });
-    },
-    createGame() {
-      this.$router.push({
-        path: `/create`,
-      });
-    },
-  },
+  mounted() {},
+  beforeUnmount() {},
+  methods: {},
 };
 </script>
 
@@ -49,55 +27,5 @@ export default {
     rgb(164, 34, 144) 90%
   );
   color: white;
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  font-size: 1.2rem;
-  font-weight: bold;
-  min-width: 15rem;
-  max-width: 25rem;
-}
-
-.menu p {
-  text-align: start;
-}
-
-.menu input {
-  background: #fff;
-  color: black;
-  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
-  outline: none;
-  padding: 1rem;
-  font: inherit;
-  border: 0.15rem solid #2c3b5f;
-}
-.menu input:focus {
-  border-color: #596a95;
-}
-.menu button {
-  background: #1ca2c6;
-  color: rgb(255, 255, 255);
-  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
-  border: none;
-  font: inherit;
-  padding: 1rem;
-}
-.menu button:hover {
-  background: #153f93;
-}
-
-.menu button:disabled {
-  background: #2c3b5f;
-  color: rgb(169, 169, 169);
-}
-
-.create {
-  color: rgb(203, 130, 130);
-  cursor: pointer;
-}
-.create:hover {
-  color: rgb(126, 35, 35);
 }
 </style>
