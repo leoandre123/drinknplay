@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import StartView from "../views/StartView.vue";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
+import BlackjackView from "../views/minigames/blackjack/BlackjackView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,11 @@ const router = createRouter({
       path: "/create",
       name: "Create",
       component: CreateView,
+    },
+    {
+      path: "/blackjack",
+      name: "Black",
+      component: BlackjackView,
     },
     {
       path: "/test",
