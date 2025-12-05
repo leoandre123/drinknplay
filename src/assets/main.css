@@ -9,3 +9,11 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+
+:root {
+    --Violet_Blue: RGB(59, 70, 164);
+    --French_Rose: RGB(250, 78, 147);
+    --Metallic_Yellow: RGB(255, 216, 20);
+    --Caribbean_Green: RGB(0, 191, 156);
+
+}

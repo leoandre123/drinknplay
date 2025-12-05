@@ -1,6 +1,5 @@
 <template>
-  <svg view-box="0 0 100 100" fill="none" stroke="black" stroke-width="4">
-    <rect x="0" y="0" width="100" height="100" fill="white" stroke="none" />
+  <svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4">
     <path
       :d="`M 27 ${75 - level * 5} L 30 75 A10 3 0 0 0 70 75 L73 ${75 - level * 5}`"
       fill="orange"
@@ -24,4 +23,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+svg{
+  display: block;
+}
+</style>
