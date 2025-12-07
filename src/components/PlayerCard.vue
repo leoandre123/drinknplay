@@ -13,7 +13,20 @@
         </div>
     </div>
 </template>
-<script>import DrinkingGlass from "./DrinkingGlass.vue"; import Drunkometer from "./Drunkometer.vue"; export default { components: { DrinkingGlass, Drunkometer }, props: { player: Object }, data: function () { return {}; }, }; </script>
+<script>import DrinkingGlass from "./DrinkingGlass.vue";
+import Drunkometer from "./Drunkometer.vue";
+export default {
+    components: {
+        DrinkingGlass,
+        Drunkometer
+    },
+    props: { player: Object },
+    data: function () {
+        return {};
+    },
+}; 
+</script>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Honk&display=swap');
