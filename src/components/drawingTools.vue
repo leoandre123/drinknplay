@@ -7,7 +7,7 @@
         <div class="brush-size-buttons">
             <button v-for="brushSize in this.brushSize" @click="options.brushSize = brushSize"
                 class="brush-size-button">
-                <span class="dot" v-bind:style="{ height: brushSize, width: brushSize, backgroundColor: options.brushSize == brushSize ? options.brushColor : 'gray' }
+                <span class="dot" v-bind:style="{ height: brushSize + 'px', width: brushSize + 'px', backgroundColor: options.brushSize == brushSize ? options.brushColor : 'gray' }
                     "></span>
             </button>
         </div>
@@ -21,8 +21,20 @@ export default {
     },
     data() {
         return {
-            brushSize: ['10px', '25px', '50px'],
-            colors: ["black", "white", "red", "green", "yellow", "blue", "gray", "white", "red", "green", "yellow", "blue"]
+            brushSize: [10, 25, 50],
+            colors: [
+                "red",
+                "green",
+                "blue",
+                "yellow",
+                "orange",
+                "purple",
+                "pink",
+                "brown",
+                "black",
+                "white",
+                "gray",
+                "cyan",]
         };
     },
 };
@@ -74,5 +86,6 @@ export default {
 .dot {
     background-color: white;
     border-radius: 50%;
+    border: 1px solid black;
 }
 </style>

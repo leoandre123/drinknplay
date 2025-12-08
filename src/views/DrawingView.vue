@@ -11,13 +11,14 @@
 import drawingCanvas from '../components/drawingCanvas.vue';
 import drawingTools from '../components/drawingTools.vue';
 
+
 export default {
-    components: { drawingCanvas, drawingTools },
+    components: { drawingCanvas, drawingTools},
     data() {
         return {
             drawingOptions: {
                 brushColor: "black",
-                brushSize: 1,
+                brushSize: 10,
                 isBucketSelected: false,
             }
         };
@@ -42,6 +43,6 @@ export default {
     text-shadow: 3px 3px black;
     border-bottom: 1px solid var(--Metallic_Yellow);
     width: 70%;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 </style>

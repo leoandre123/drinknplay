@@ -1,7 +1,9 @@
 <template>
+    <div class="drawing-canvas">
     <canvas ref="myCanvas" width="600px" height="300" @mousedown="startPosition" @mousemove="moving"
         @mouseup="finishedPosition">
     </canvas>
+    </div>
 </template>
 
 <script>
@@ -44,7 +46,8 @@ export default {
 
         draw(evt) {
             this.ctx.strokeStyle = this.options.brushColor;
-            this.ctx.lineWi
+            this.ctx.lineWidth = this.options.brushSize;
+            this.ctx.lineCap = "round";
             this.ctx.beginPath();
             this.ctx.moveTo(this.pos.x, this.pos.y);
             this.pos = getPos(evt);
@@ -101,8 +104,10 @@ function getPos(evt) {
 
 <style scoped>
 canvas {
-    border: 5px inset black;
     background-color: white;
-    margin: 2px;
+}
+.drawing-canvas{
+        border: 5px inset black;
+
 }
 </style>
