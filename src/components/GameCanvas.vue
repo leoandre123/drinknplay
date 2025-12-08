@@ -1,10 +1,6 @@
 <template>
-    <div class="canvas-wrapper">
-  <canvas
-    ref="canvas"
-    :width="width"
-    :height="height"
-  ></canvas>
+  <div class="canvas-wrapper">
+    <canvas ref="canvas" :width="width" :height="height"></canvas>
   </div>
 </template>
 
@@ -14,7 +10,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 const props = defineProps({
   width: { type: Number, default: 1000 },
   height: { type: Number, default: 600 },
-  mode: {type: Object},
+  mode: { type: Object },
 });
 defineExpose({ clear });
 
@@ -32,30 +28,30 @@ function getPos(evt) {
     // Touch event
     return {
       x: evt.touches[0].clientX - rect.left,
-      y: evt.touches[0].clientY - rect.top
+      y: evt.touches[0].clientY - rect.top,
     };
   } else {
     // Mouse event
     return {
       x: evt.clientX - rect.left,
-      y: evt.clientY - rect.top
+      y: evt.clientY - rect.top,
     };
   }
 }
 
-function clear(){
-    ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+function clear() {
+  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
 }
 
 function startDrawing(evt) {
-    const pos = getPos(evt);
-      console.log("DRAW: " + pos.x + " - " + pos.y);
-    if(props.mode.mode == "bucket"){
-        return;
-    }
-    drawing = true;
-    lastX = pos.x;
-    lastY = pos.y;
+  const pos = getPos(evt);
+  console.log("DRAW: " + pos.x + " - " + pos.y);
+  if (props.mode.mode == "bucket") {
+    return;
+  }
+  drawing = true;
+  lastX = pos.x;
+  lastY = pos.y;
 }
 
 function stopDrawing() {
@@ -102,10 +98,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-
-.canvas-wrapper{
-
-  aspect-ratio: 16 / 9;    
+.canvas-wrapper {
+  aspect-ratio: 16 / 9;
 }
 
 canvas {
