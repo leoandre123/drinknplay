@@ -80,12 +80,10 @@ export default {
 
 <style scoped>
 .reel-container {
-  width: 100px;
-  height: 150px;
+  width: 6rem;
+  height: 10rem;
   perspective: 600px;
-  background: white;
-  border: 3px solid #222;
-  border-radius: 10px;
+  background: linear-gradient(0deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 100%);
   overflow: hidden;
 }
 
@@ -100,10 +98,10 @@ export default {
 .symbol {
   position: absolute;
   width: 100%;
-  height: 100px;
+  height: 6rem;
   font-size: 3rem;
   text-align: center;
-  line-height: 100px;
+  line-height: 6rem;
   backface-visibility: hidden;
 }
 
@@ -130,9 +128,9 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 40px; /* adjust as needed */
+  height: 20%;
   background: linear-gradient(to bottom, rgb(0 0 0), rgb(6 0 0 / 0%) 80%);
-  pointer-events: none; /* clicks pass through */
+  pointer-events: none;
   z-index: 10;
 }
 
@@ -143,7 +141,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 40px;
+  height: 20%;
   background: linear-gradient(to top, rgb(0 0 0), rgb(6 0 0 / 0%) 80%);
   pointer-events: none;
   z-index: 10;

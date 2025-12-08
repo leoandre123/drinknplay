@@ -1,27 +1,31 @@
 <template>
-  <div v-if="context.isHost" class="lobby-container">
-    <div>
-      <h1>{{ $t("common.player.players") }} ({{ context.state.players.length }}/{{ 10 }})</h1>
+  <RetroContainer>
+    <div v-if="context.isHost" class="lobby-container">
       <div class="player-list">
-        <div v-for="player in context.state.players">
-          <p>{{ player.name }}</p>
+        <h1>{{ $t("common.player.players") }} ({{ context.state.players.length }}/{{ 10 }})</h1>
+        <div>
+          <div v-for="player in context.state.players">
+            <p>{{ player.name }}</p>
+          </div>
         </div>
       </div>
+      <div>
+        <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
+        <h3>{{ lobbyUri }}</h3>
+        <QrCode :data="lobbyUri" background="FF89B4" color="000000" />
+        <br /><br />
+        <RetroButton color="pink" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
+      </div>
+      <div></div>
     </div>
-    <div>
-      <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
-      <h3>{{ lobbyUri }}</h3>
-      <QrCode :data="lobbyUri" />
-      <br /><br />
-      <button @click="startGame">{{ $t("game.startGame") }}</button>
-    </div>
-    <div></div>
-  </div>
-  <div v-if="!context.isHost" class="waiting">{{ $t("lobby.waitingForHost") }}...</div>
+    <div v-if="!context.isHost" class="waiting">{{ $t("lobby.waitingForHost") }}...</div>
+  </RetroContainer>
 </template>
 
 <script>
 import QrCode from "../components/QrCode.vue";
+import RetroButton from "../components/RetroButton.vue";
+import RetroContainer from "../components/RetroContainer.vue";
 import { context } from "../context";
 import { socket } from "../socket";
 
@@ -30,7 +34,7 @@ export default {
   data: function () {
     return { context, lobbyUri: "" };
   },
-  components: { QrCode },
+  components: { QrCode, RetroContainer, RetroButton },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
@@ -45,6 +49,8 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Jersey+25&display=swap");
+
 .lobby-container {
   width: 100%;
   color: white;
@@ -52,6 +58,10 @@ export default {
   gap: 1rem;
   padding: 1rem;
   box-sizing: border-box;
+  font-family: "Jersey 25", sans-serif;
+  font-weight: 400;
+  font-size: 2rem;
+  font-style: normal;
   grid-template-columns: 1fr 3fr 1fr;
 }
 .lobby-container button {
@@ -76,13 +86,24 @@ p {
 }
 
 .qr {
-  background: white;
+  background: #ff89b4;
   padding: 1rem;
   border-radius: 0.25rem;
   box-shadow: 0px 0px 25px black;
 }
 
 .player-list {
+  font-size: 1.5rem;
+  margin: 0;
   text-align: start;
+  background-color: rgba(50, 50, 50, 0.5);
+  border-radius: 0.25rem;
+  padding: 1rem;
+}
+
+.player-list h1 {
+  margin-top: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 4px solid white;
 }
 </style>
