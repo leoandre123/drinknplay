@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
 import ResultView from "../views/ResultView.vue";
+import drawingCanvas from "../components/drawingCanvas.vue";
+import DrawingView from "../views/DrawingView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +16,11 @@ const router = createRouter({
     {
       path: "/join",
       redirect: "/",
+    },
+     {
+      path: "/canvas",
+      name: "canvas",
+      component: DrawingView,
     },
     {
       path: "/create",
