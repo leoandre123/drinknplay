@@ -1,24 +1,31 @@
 <template>
-  <div v-if="!isConnected">Not connected to server</div>
-  <div v-if="isConnected" class="home-container">
-    <div class="menu">
-      <h1>Drink n' Draw</h1>
-      <p>Lobby Code</p>
-      <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
-      <br />
-      <br />
-      <button @click="joinGame" :disabled="lobbyCode.length == 0">Join game</button>
-      <div>
-        <p>If you want to host a game press <span class="create" @click="createGame">here</span></p>
+  <RetroContainer>
+    <div v-if="!isConnected">Not connected to server</div>
+    <div v-if="isConnected" class="home-container">
+      <RetroText>DRINK N' DRAW</RetroText>
+      <div class="menu">
+        <p>Lobby Code</p>
+        <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
+        <br />
+        <br />
+        <button @click="joinGame" :disabled="lobbyCode.length == 0">Join game</button>
+        <div>
+          <p>
+            If you want to host a game press <span class="create" @click="createGame">here</span>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
+  </RetroContainer>
 </template>
 
 <script>
+import RetroContainer from "../components/RetroContainer.vue";
+import RetroText from "../components/RetroText.vue";
 import { socket } from "../socket";
 export default {
   name: "HomeView",
+  components: { RetroContainer, RetroText },
   data: function () {
     return {
       isConnected: false,
@@ -55,12 +62,7 @@ export default {
   height: 100vh;
   justify-items: center;
   align-content: center;
-  background-image: radial-gradient(
-    circle farthest-corner at 10% 20%,
-    rgb(102, 0, 32) 0%,
-    rgb(116, 18, 92) 49.5%,
-    rgb(164, 34, 144) 90%
-  );
+
   color: white;
 }
 

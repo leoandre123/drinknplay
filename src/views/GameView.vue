@@ -21,6 +21,9 @@
     <div @click="switchLang('sv')"><Flag iso="se" :squared="false" /></div>
     <div @click="switchLang('en')"><Flag iso="gb" :squared="false" /></div>
   </div>
+  <div class="mascot-container">
+    <Mascot />
+  </div>
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
@@ -54,12 +57,15 @@
       </div>
     </div>
   </div>
+
   <div v-if="context.isConnected" class="game-container">
-    <LobbyView v-if="context.state?.phase == 'lobby'" />
-    <SlotView v-if="context.state?.phase == 'slot'" />
-    <LoadingView v-if="context.state?.phase == 'loading'" />
-    <MinigameView v-if="context.state?.phase == 'game'" />
-    <ResultView v-if="context.state?.phase == 'result'" />
+    <RetroContainer>
+      <LobbyView v-if="context.state?.phase == 'lobby'" />
+      <SlotView v-if="context.state?.phase == 'slot'" />
+      <LoadingView v-if="context.state?.phase == 'loading'" />
+      <MinigameView v-if="context.state?.phase == 'game'" />
+      <ResultView v-if="context.state?.phase == 'result'" />
+    </RetroContainer>
   </div>
 </template>
 
@@ -73,6 +79,8 @@ import LobbyView from "./LobbyView.vue";
 import { socket } from "../socket";
 import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
+import RetroContainer from "../components/RetroContainer.vue";
+import Mascot from "../components/Mascot.vue";
 
 export default {
   name: "GameView",
@@ -82,6 +90,7 @@ export default {
       context,
       showDebug: false,
       incomingMessages: [],
+      isAngry: false,
     };
   },
   setup() {
@@ -91,7 +100,16 @@ export default {
     }
     return { locale, switchLang };
   },
-  components: { MinigameView, LoadingView, SlotView, ResultView, LobbyView, Flag },
+  components: {
+    MinigameView,
+    LoadingView,
+    SlotView,
+    ResultView,
+    LobbyView,
+    Flag,
+    RetroContainer,
+    Mascot,
+  },
   mounted() {
     socket.on("joinLobbyResponse", (response) => {
       console.log("resp");
@@ -122,10 +140,15 @@ export default {
     });
 
     const queryLobbyId = this.$route.query.id;
-    const queryPlayerName = this.$route.query.name;
+    const queryPlayerName = this.$route.query.name ?? "Unknown player";
+    const queryMode = this.$route.query.mode ?? "client";
     console.log(queryLobbyId);
-    if (queryLobbyId && queryPlayerName) {
-      this.joinLobby(queryLobbyId, queryPlayerName);
+    if (queryLobbyId) {
+      if (queryMode == "host") {
+        this.joinLobbyAsHost(queryLobbyId);
+      } else {
+        this.joinLobby(queryLobbyId, queryPlayerName);
+      }
     }
   },
   beforeUnmount() {
@@ -152,12 +175,6 @@ export default {
   height: 100vh;
   justify-items: center;
   align-content: center;
-  background-image: radial-gradient(
-    circle farthest-corner at 10% 20%,
-    rgba(0, 51, 102, 1) 0%,
-    rgba(0, 102, 204, 1) 49.5%,
-    rgba(0, 191, 255, 1) 90%
-  );
 }
 
 .language-switcher {
@@ -221,5 +238,11 @@ export default {
 }
 .debug-container p {
   margin: 0;
+}
+
+.mascot-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 </style>
