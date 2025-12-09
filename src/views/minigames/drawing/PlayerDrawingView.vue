@@ -1,22 +1,30 @@
 <template>
-    <div class="drawing-canvas">
+    <div class="drawing-canvas" v-if="isDrawingModeActive">
         <div class="drawing-title">Drink n' Draw</div>
-        <drawingCanvas :options="drawingOptions" ref="canvas">
-        </drawingCanvas>
-        <drawingTools :options="drawingOptions" @save-requested="saveCanvas">
-        </drawingTools>
+        <DrawingCanvas :options="drawingOptions" ref="canvas">
+        </DrawingCanvas>
+        <DrawingTools :options="drawingOptions" @save-requested="saveCanvas">
+        </DrawingTools>
     </div>
+
+    <div class="rating" v-if = "!isDrawingModeActive">
+        <RatingTool>
+        </RatingTool>
+    </div>
+
 </template>
 <script>
-import drawingCanvas from '../../../components/drawingCanvas.vue';
-import drawingTools from '../../../components/drawingTools.vue';
+import DrawingCanvas from '../../../components/DrawingCanvas.vue';
+import DrawingTools from '../../../components/DrawingTools.vue';
+import RatingTool from '../../../components/RatingTool.vue';
+
 
 import { context } from "../../../context";
 import { socket } from "../../../socket";
 
 
 export default {
-    components: { drawingCanvas, drawingTools },
+    components: { DrawingCanvas, DrawingTools, RatingTool },
     data() {
         return {
             drawingOptions: {
@@ -24,6 +32,7 @@ export default {
                 brushSize: 10,
                 isBucketSelected: false,
             },
+            isDrawingModeActive: false,
             canvasPNG: null
         };
     },
@@ -37,6 +46,7 @@ export default {
 </script>
 
 <style scoped>
+
 .drawing-canvas {
     position: relative;
     background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 87%);

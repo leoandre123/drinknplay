@@ -26,8 +26,7 @@ export default {
 };
 </script>
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Honk&display=swap");
+
 
 p {
   margin: 0;
