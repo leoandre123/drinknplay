@@ -1,8 +1,8 @@
 <template>
     <div class="drawing-canvas">
-    <canvas ref="myCanvas" width="600px" height="300" @mousedown="startPosition" @mousemove="moving"
-        @mouseup="finishedPosition">
-    </canvas>
+        <canvas ref="myCanvas" width="600px" height="300" @mousedown="startPosition" @mousemove="moving"
+            @mouseup="finishedPosition">
+        </canvas>
     </div>
 </template>
 
@@ -19,10 +19,15 @@ export default {
             pos: {},
             ctx: null,
             painting: false,
+            savedCanvasPNG: null,
         };
     },
     mounted() {
         this.ctx = this.$refs.myCanvas.getContext("2d");
+        this.ctx.fillStyle = "white";
+        this.ctx.fillRect(0, 0, this.$refs.myCanvas.width, this.$refs.myCanvas.height);
+        console.log("background white")
+
     },
     methods: {
         startPosition(evt) {
@@ -78,6 +83,13 @@ export default {
                 setTimeout(() => this.floodFill({ x: pos.x, y: pos.y - 1 }, refColor), 0);
                 this.ctx.fillRect(pos.x, pos.y, 1, 1);
             }
+        },
+
+        getCanvas() {
+            const canvasDataURL = this.$refs.myCanvas.toDataURL('image/png')
+            this.savedCanvasPNG = canvasDataURL;
+            console.log("saving canvas");
+            return canvasDataURL;
         }
     }
 };
@@ -104,10 +116,11 @@ function getPos(evt) {
 
 <style scoped>
 canvas {
-    background-color: white;
+     display: block;
 }
-.drawing-canvas{
-        border: 5px inset black;
+
+.drawing-canvas {
+    border: 5px inset black;
 
 }
 </style>

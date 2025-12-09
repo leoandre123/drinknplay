@@ -11,6 +11,9 @@
                     "></span>
             </button>
         </div>
+
+            <button class="save-button" @click="saveRequest"> SAVE </button>
+
     </div>
 </template>
 
@@ -19,6 +22,7 @@ export default {
     props: {
         options: Object,
     },
+    emits: ['save-requested'],
     data() {
         return {
             brushSize: [10, 25, 50],
@@ -37,6 +41,12 @@ export default {
                 "cyan",]
         };
     },
+    methods:{
+        saveRequest(){
+            this.$emit('save-requested');
+            console.log('Child component emitted save-requested event.');
+        }
+    }
 };
 </script>
 
@@ -88,4 +98,9 @@ export default {
     border-radius: 50%;
     border: 1px solid black;
 }
+
+.save-button{
+margin-left: 2rem;
+}
 </style>
+
