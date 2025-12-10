@@ -37,8 +37,15 @@ export default {
   data() {
     return { context };
   },
-  components: { RacingView, RacingControllerView, KahootView, KahootPlayerView, HostDrawingView, PlayerDrawingView },
-  async created() { },
+  components: {
+    RacingView,
+    RacingControllerView,
+    KahootView,
+    KahootPlayerView,
+    HostDrawingView,
+    PlayerDrawingView,
+  },
+  async created() {},
 
   methods: {},
 };
@@ -64,8 +71,8 @@ h1 {
 
 .client-container {
   box-sizing: border-box;
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: flex;
 }
 

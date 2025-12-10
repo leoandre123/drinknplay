@@ -171,8 +171,8 @@ export default {
 
 <style scoped>
 .game-container {
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   justify-items: center;
   align-content: center;
 }
