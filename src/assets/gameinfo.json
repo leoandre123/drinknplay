@@ -13,5 +13,12 @@
         "tips": [
             "Try to to answer the right question"
         ]
+    },
+    {
+        "title": "Drink n' Draw",
+        "imageUri": "game_backgrounds/drawing.jpg",
+        "tips": [
+            "Draw nice things"
+        ]
     }
 ]

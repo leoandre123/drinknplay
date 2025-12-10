@@ -1,4 +1,5 @@
 function sockets(io, socket, lobbyManager) {
+
   socket.on("checkLobbyCode", function (lobbyCode) {
     const lobby = lobbyManager.getLobby(lobbyCode);
     console.log(`Check lobby with code ${lobbyCode}`);
@@ -11,15 +12,19 @@ function sockets(io, socket, lobbyManager) {
       socket.emit("checkLobbyCodeResponse", { available: true });
     }
   });
+
   socket.on("joinLobby", function (lobbyCode, name) {
     lobbyManager.getLobby(lobbyCode)?.onPlayerJoined(socket, name);
   });
+
   socket.on("joinLobbyHost", function (lobbyCode) {
     lobbyManager.getLobby(lobbyCode)?.onHostJoined(socket);
   });
+
   socket.on("disconnect", function () {
     lobbyManager.getLobby(socket.data.lobbyId)?.onPlayerDisconnected(socket.id);
   });
+
 }
 
 export { sockets };

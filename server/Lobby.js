@@ -2,6 +2,7 @@ import { Player } from "./models/Player.js";
 import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { RacingGame } from "./minigames/RacingGame.js";
 import { KahootGame } from "./minigames/KahootGame.js";
+import { DrawingGame } from "./minigames/drawingGame.js";
 
 export class Lobby {
   constructor(io, lobbyId) {
@@ -41,8 +42,9 @@ export class Lobby {
 
   onPlayerDisconnected(playerId) {
     const playersToRemove = this.context.players.splice(
-      this.context.players.findIndex((x) => x.id != playerId)
+      this.context.players.findIndex((x) => x.id == playerId)
     );
+    console.log(`${playersToRemove.name} left the lobby '${this.context.lobbyId}'`);
     if (playersToRemove.length != 0) {
       this.broadcastLobbyState();
       if (this.phase == "game") {
@@ -81,12 +83,15 @@ export class Lobby {
 
   startGameSelection() {
     this.phase = "slot";
-    const gameIndex = 0; /* Select random minigame */
     this.broadcastLobbyState();
+
+    setTimeout(() => this.startSpin(), 5000);
+
+    setTimeout(() => this.advancePhase(), 15000);
   }
 
   startSpin() {
-    const gameIndex = Math.floor(Math.random() * 2);
+    const gameIndex = Math.floor(Math.random() * 3);
 
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
@@ -103,6 +108,9 @@ export class Lobby {
         break;
       case 1:
         this.currentGame = new KahootGame();
+        break;
+      case 2:
+        this.currentGame = new DrawingGame();
         break;
     }
   }
@@ -137,6 +145,7 @@ export class Lobby {
       lobbyId: this.context.lobbyId,
       players: this.context.players.map((x) => {
         return {
+          id: x.id,
           name: x.name,
         };
       }),
