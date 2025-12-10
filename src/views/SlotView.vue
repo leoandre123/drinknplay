@@ -66,5 +66,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: absolute;
+  top: 0;
 }
 </style>

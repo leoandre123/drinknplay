@@ -42,8 +42,9 @@ export class Lobby {
 
   onPlayerDisconnected(playerId) {
     const playersToRemove = this.context.players.splice(
-      this.context.players.findIndex((x) => x.id != playerId)
+      this.context.players.findIndex((x) => x.id == playerId)
     );
+    console.log(`${playersToRemove.name} left the lobby '${this.context.lobbyId}'`);
     if (playersToRemove.length != 0) {
       this.broadcastLobbyState();
       if (this.phase == "game") {
@@ -82,8 +83,11 @@ export class Lobby {
 
   startGameSelection() {
     this.phase = "slot";
-    const gameIndex = 0; /* Select random minigame */
     this.broadcastLobbyState();
+
+    setTimeout(() => this.startSpin(), 5000);
+
+    setTimeout(() => this.advancePhase(), 15000);
   }
 
   startSpin() {
