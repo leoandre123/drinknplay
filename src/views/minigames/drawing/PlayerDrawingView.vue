@@ -32,7 +32,7 @@ export default {
                 brushSize: 10,
                 isBucketSelected: false,
             },
-            isDrawingModeActive: false,
+            isDrawingModeActive: true,
             canvasPNG: null
         };
     },

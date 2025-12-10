@@ -2,8 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
 import ResultView from "../views/ResultView.vue";
-import drawingCanvas from "../components/drawingCanvas.vue";
-import DrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
+import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
 import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
 
 const router = createRouter({
@@ -26,7 +25,7 @@ const router = createRouter({
      {
       path: "/canvas",
       name: "Canvas",
-      component: DrawingView,
+      component: PlayerDrawingView,
     },
     {
       path: "/create",
