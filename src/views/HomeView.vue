@@ -58,6 +58,7 @@ export default {
 
 <style scoped>
 .home-container {
+  display: grid;
   width: 100vw;
   height: 100vh;
   justify-items: center;
