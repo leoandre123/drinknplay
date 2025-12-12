@@ -10,7 +10,7 @@
         <button class="add-button" @click="add" > + </button>
         
     <div class ="done-button-container">
-    <button class="submit-button" @click="" > DONE </button>
+    <button class="submit-button" @click="submit" > DONE </button>
             </div>
         </div>
     </div>
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { socket } from "../../../socket";
+
 export default {
   name: "ReactionGamePlayerView",
   data: function () {
@@ -25,17 +27,57 @@ export default {
       amount: 0
     };
   },
+
+  created() {
+    // Hämta lobbyId från URL: /reactionplayer?id=LOBBYID
+    console.log("ReactionGamePlayerView created");
+    const lobbyId = this.$route.query.id;
+    const name = this.$route.query.name ?? "player";
+    console.log("Joining lobby with ID:", lobbyId, "as", name);
+
+    if (!lobbyId) {
+      console.log("Ingen lobbyId i URL");
+      return;
+    }
+
+    // VIKTIGT: spelaren måste joina lobbyn
+    socket.emit("joinLobby", lobbyId, name);
+  },
+
+
   methods: {
+         playSound() {
+    const audio = new Audio('/sounds/buttonclick.mp3');
+    audio.play();
+  },
+  playSubmitSound() {
+    const audio = new Audio('/sounds/submitbutton.mp3');
+    audio.play();
+  },
     remove(){
-        if (this.amount > 0)
+        if (this.amount > 0) {
         this.amount--;
+        this.playSound(); }
       console.log("remove")
     },
     add(){
+        this.playSound();
         this.amount++;
       console.log("add")
+    },
+    submit() {
+    this.playSubmitSound();
+    console.log("submit:", this.amount);
+    const lobbyId = this.$route.query.id;
+    if (!lobbyId) {
+        console.log("submit: saknar lobbyId i URL");
+        return;
+        }
+    socket.emit("reaction:submit", lobbyId, this.amount, this.$route.query.name);
+    console.log("submit:", this.amount, "from", this.$route.query.name);
     }
-  },
+    }
+    
 };
 
 </script>
@@ -43,6 +85,7 @@ export default {
 <style>
     .reaction-game-player-container {  
         display: grid;
+        min-height: 100vh; 
         width: 100vw;
         height: 100vh;
         justify-items: center;
@@ -56,7 +99,6 @@ export default {
         color: white;
         
     } 
-    
     .amount-display {
         margin-top: 50px;
         font-size: 100px;
@@ -75,15 +117,35 @@ export default {
         margin: 20px;
     }
     .add-button {
-        background-color: #4CAF50;
+        background-color: #40bf44;
         color: black;
         border: none;
         border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     }
     .remove-button {
-        background-color: #f44336; /* Red */
+        background-color: #d54339; /* Red */
         color: black;
         border: none;
         border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        
+    }
+    .done-button-container { 
+        position: fixed;      
+        right: 20px;
+        top: 20px;
+    }
+    .submit-button {
+        display: grid;
+        justify-content: center;
+        width: 300px;
+        padding-top:300px;
+        padding-bottom:10px;
+        margin: 10px;
+        font-weight: bold;
+        font-size: 30;
+        background-color: rgb(239, 215, 244);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     }
 </style>    

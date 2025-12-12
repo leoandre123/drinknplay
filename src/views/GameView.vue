@@ -54,6 +54,11 @@
         <button @click="joinLobby('lobby', 'player_' + Math.floor(Math.random() * 1000))">
           Join lobby as player
         </button>
+        <br />
+        <br />
+
+        <button @click="openReactionHost">Open Reaction HOST</button>
+        <button @click="openReactionPlayer">Open Reaction PLAYER</button>
       </div>
     </div>
   </div>
@@ -165,7 +170,22 @@ export default {
     advance() {
       socket.emit("advancePhase");
     },
+
+  openReactionHost() {
+    console.log("openReactionHost");
+    const lobbyId = "lobby"; // eller "race" / "kahoot" (måste finnas i LobbyManager)
+    this.$router.push({ path: "/reactiongame", query: { id: lobbyId, mode: "host" } });
   },
+
+  openReactionPlayer() {
+    console.log("openReactionPlayer");
+    const lobbyId = "lobby";
+    const name = "player_" + Math.floor(Math.random() * 1000);
+    this.$router.push({ path: "/reactiongameplayerview", query: { id: lobbyId, name, mode: "client" } });
+  }
+}
+
+
 };
 </script>
 

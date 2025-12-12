@@ -1,7 +1,7 @@
 <template> 
   <div class="reaction-game-container">
     <h1>REACTION GAME</h1>
-    <p>Count the figues in the picture as fast as you can!</p>
+    <p>Count the figures in the picture as fast as you can!</p>
     <div v-if="!gameStarted" class="button-container">
       <button class = "start-button" @click="generatepicture"> START GAME </button>
     </div>
@@ -13,23 +13,56 @@
         :style="getRandomPositions()"
       />
         </div>
-    </div>
+  </div>
 </template>
 
 <script>
+import { socket } from "../../../socket";
 import mascot from "@/assets/mascot.png";
+
 export default {
+  name: "ReactionGameHostView",
+
   data() {
     return {
-        gameStarted: false,
-        figureCount: 0,
-        mascot: mascot,
+      gameStarted: false,
+      figureCount: 0,
+      mascot,
+      amount: 0,
     };
   },
+
+  created() {
+    // /reactiongame?id=LOBBYID
+    const lobbyId = this.$route.query.id;
+    console.log("Joining lobby with ID:", lobbyId);
+
+    if (!lobbyId) {
+      console.log("Ingen lobbyId i URL. Ex: /reactiongame?id=lobby");
+      return;
+    }
+    socket.emit("joinLobbyHost", lobbyId);
+
+    // ta emot amount från servern (din sockets.js skickar hit)
+    socket.on("reaction:hostUpdate", (data) => {
+      this.amount = data.amount;
+      this.name = data.name;
+      console.log("Host received amount:", this.amount, "from", this.name);
+    });
+  },
+
+  beforeUnmount() {
+    socket.off("reaction:hostUpdate");
+  },
+
     methods: {
+        playSound() {
+    const audio = new Audio('/sounds/submitbutton.mp3');
+    audio.play();
+  },
     generatepicture() {
+        this.playSound();
       this.gameStarted = true;
-      // slumpa hur många figurer (t.ex. 3–10)
       this.figureCount = Math.floor(Math.random() * 8) + 3;
     },
     getRandomPositions() {
@@ -41,7 +74,7 @@ export default {
         left: x + "%",
       };
     },
-  },
+    }
 };
 
 

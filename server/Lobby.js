@@ -3,6 +3,9 @@ import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { RacingGame } from "./minigames/RacingGame.js";
 import { KahootGame } from "./minigames/KahootGame.js";
 
+import { ReactionGame } from "./minigames/ReactionGame.js";
+
+
 export class Lobby {
   constructor(io, lobbyId) {
     this.context = new ServerLobbyContext(io, lobbyId);
@@ -86,7 +89,7 @@ export class Lobby {
   }
 
   startSpin() {
-    const gameIndex = Math.floor(Math.random() * 2);
+    const gameIndex = Math.floor(Math.random() * 3);
 
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
@@ -103,6 +106,9 @@ export class Lobby {
         break;
       case 1:
         this.currentGame = new KahootGame();
+        break;
+        case 2:
+        this.currentGame = new ReactionGame();
         break;
     }
   }
