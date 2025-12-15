@@ -3,6 +3,7 @@ import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { RacingGame } from "./minigames/RacingGame.js";
 import { KahootGame } from "./minigames/KahootGame.js";
 import { DrawingGame } from "./minigames/drawingGame.js";
+import { ReactionGame } from "./minigames/ReactionGame.js";
 
 export class Lobby {
   constructor(io, lobbyId) {
@@ -117,6 +118,9 @@ export class Lobby {
         break;
       case 2:
         this.currentGame = new DrawingGame();
+        break;
+      case 3:
+        this.currentGame = new ReactionGame();
         break;
     }
   }

@@ -19,12 +19,16 @@ export class LobbyManager {
     drawLobby.selectGame(2);
     drawLobby.startMinigame();
 
+    const reactionLobby = new Lobby(io, "reaction");
+    reactionLobby.selectGame(3);
+    reactionLobby.startMinigame();
+
     const resultLobby = new Lobby(io, "result");
     resultLobby.startResultScreen();
 
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby];
+    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby, reactionLobby];
   }
 
   createLobby() {

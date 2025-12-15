@@ -12,6 +12,7 @@
         <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
         <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
         <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+        <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
       </div>
     </div>
   </div>
@@ -19,6 +20,7 @@
     <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
     <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
     <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+    <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
   </div>
 </template>
 
@@ -30,6 +32,8 @@ import KahootView from "./minigames/kahoot/KahootView.vue";
 import KahootPlayerView from "./minigames/kahoot/KahootPlayerView.vue";
 import HostDrawingView from "./minigames/drawing/HostDrawingView.vue";
 import PlayerDrawingView from "./minigames/drawing/PlayerDrawingView.vue";
+import ReactionGame from "./minigames/reaction/ReactionGame.vue";
+import ReactionGamePlayerView from "./minigames/reaction/ReactionGamePlayerView.vue";
 
 export default {
   name: "MinigameView",
@@ -44,6 +48,8 @@ export default {
     KahootPlayerView,
     HostDrawingView,
     PlayerDrawingView,
+    ReactionGame,
+    ReactionGamePlayerView,
   },
   async created() {},
 
