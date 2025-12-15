@@ -1,7 +1,15 @@
 <template>
     <div class="reaction-game-player-container">
         <h1>REACTION GAME - PLAYER VIEW</h1>
-
+        <div v-if="winner === myId && showRoundResult">
+            <h2>YOU WIN THIS ROUND!</h2>
+        </div>
+        <div v-else-if="winner && showRoundResult">
+            <h2>{{ this.winner }} WON THIS ROUND!</h2>
+        </div>
+        <div v-else-if="showRoundResult">
+            <h2>No winner this round</h2>
+        </div>
         <div class="amount-display">
             <h2>{{ amount }}</h2>
 
@@ -25,15 +33,52 @@ export default {
     data: function () {
         return {
             amount: 0,
+            winner: null,
+            showRoundResult: false,
         };
     },
 
     created() {
+        socket.on("reaction:roundResult", ({ winner, scores }) => {
+            console.log("Round result received:", { winner, scores });
+            this.amount = 0;
+            this.winner = winner;
+            this.showRoundResult = true;
+            this.playRoundResultSound();
+            setTimeout(() => (this.showRoundResult = false), 1500);
+        });
 
     },
 
+    computed: {
+        myId() {
+            return socket.id;
+        }
+    },
+
+    beforeUnmount() {
+        socket.off("reaction:roundResult");
+        socket.off("connect");
+    },
 
     methods: {
+
+        playRoundResultSound() {
+            if (!this.showRoundResult) return;
+
+            if (this.winner === null) {
+                const audio = new Audio("/sounds/nowinner.mp3");
+                audio.play();
+                return;
+            }
+
+            if (this.winner) {
+                const audio = new Audio("/sounds/winner.mp3");
+                audio.play();
+                return;
+            }
+        },
+
         playSound() {
             const audio = new Audio('/sounds/buttonclick.mp3');
             audio.play();
@@ -54,9 +99,7 @@ export default {
         },
         submit() {
             this.playSubmitSound();
-
-            socket.emit("reaction:submit",{ amount: this.amount, time: Date.now() });
-            console.log("submit:", this.amount, "from", this.$route.query.name);
+            socket.emit("reaction:submit", { amount: this.amount, time: Date.now() });
         }
     }
 
@@ -121,8 +164,8 @@ export default {
 
 .done-button-container {
     position: fixed;
-    right: 20px;
-    top: 20px;
+    right: 100px;
+    top: 200px;
 }
 
 .submit-button {

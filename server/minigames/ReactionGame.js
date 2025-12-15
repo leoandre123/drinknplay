@@ -38,6 +38,7 @@ export class ReactionGame extends Minigame {
     startRound() {
         this.submissions = [];
         this.winner = null;
+        this.amount = 0;
         this.roundStartTime = Date.now();
         this.figureCount = Math.floor(Math.random() * 5 + 1);
         this.broadcast("reaction:startRound", this.figureCount);
@@ -71,7 +72,7 @@ export class ReactionGame extends Minigame {
 
             this.broadcast("reaction:roundResult", {
                 winner: playerId,
-                scores: Object.fromEntries(this.scores)
+                scores: Object.fromEntries(this.scores),
             });
             this.finishRound();
             return;
@@ -80,6 +81,10 @@ export class ReactionGame extends Minigame {
         const totalPlayers = this.context.players.length;
         if (this.submissions.length >= totalPlayers) {
             this.finishRound();
+            this.broadcast("reaction:roundResult", {
+                winner: null,
+                scores: Object.fromEntries(this.scores),
+            });
         }
     }
     finishRound() {

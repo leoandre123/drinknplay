@@ -55,7 +55,7 @@ export default {
         });
         console.log("figureCount:", this.figureCount);
 
-        socket.on("reaction:roundResult", ({ winner, scores }) => {
+        socket.on("reaction:roundResult", ({ winner, scores, show }) => {
             this.winner = winner;
             console.log("Winner of the round:", this.winner);
             console.log(
@@ -139,6 +139,21 @@ export default {
                 top: y + "%",
                 left: x + "%",
             };
+        },
+        
+        noWinnerSound() {
+            if (this.winner === null && showRoundResult)
+             {
+            const audio = new Audio('/sounds/nowinner.mp3');
+            audio.play(); 
+            }
+        },
+
+        winnerSound() {
+            if (this.winner === this.myId && showRoundResult) {
+            const audio = new Audio('/sounds/winner.mp3');
+            audio.play();
+            }
         },
     }
 };
