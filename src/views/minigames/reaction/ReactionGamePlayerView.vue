@@ -47,18 +47,15 @@ export default {
                 this.amount--;
                 this.playSound();
             }
-            console.log("remove")
         },
         add() {
             this.playSound();
             this.amount++;
-            console.log("add")
         },
         submit() {
             this.playSubmitSound();
-            console.log("submit:", this.amount);
 
-            socket.emit("reaction:submit", this.amount);
+            socket.emit("reaction:submit",{ amount: this.amount, time: Date.now() });
             console.log("submit:", this.amount, "from", this.$route.query.name);
         }
     }
@@ -97,8 +94,8 @@ export default {
     justify-items: center;
     grid-template-rows: 100px;
 
-    width: 300px;
-    height: 300px;
+    width: 200px;
+    height: 200px;
     font-size: 50px;
     font-weight: bold;
     margin: 20px;
@@ -131,8 +128,8 @@ export default {
 .submit-button {
     display: grid;
     justify-content: center;
-    width: 300px;
-    padding-top: 300px;
+    width: 200px;
+    padding-top: 200px;
     padding-bottom: 10px;
     margin: 10px;
     font-weight: bold;

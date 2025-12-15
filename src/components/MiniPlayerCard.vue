@@ -3,9 +3,12 @@
   <div class="mini-card">
     <span class="place">{{ place + 1 }}</span>
     <span class="name">{{ player.name }}</span>
-    <span class="score">{{ player.score }}</span>
+    <span v-if="isWinner" class="winner">WINNER!</span>
     <span class="amount">{{ player.amount ?? "-" }}</span>
   </div>
+  <div style="font-size:12px; opacity:0.7;">
+  id: {{ player.id }} | winner? {{ isWinner }}
+</div>
 </template>
 
 <script>
@@ -14,7 +17,8 @@ export default {
   name: "MiniPlayerCard",
   props: {
     player: { type: Object, required: true },
-    place: { type: Number, required: true }
+    place: { type: Number, required: true },
+    isWinner: Boolean
   }
 };
 </script>
@@ -39,6 +43,18 @@ export default {
   text-align: center;
   color: bisque;
 }
+
+.winner{
+  position: relative;
+  z-index: 9999;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  background: gold;
+  color: black;
+}
+
 
 .name {
   overflow: hidden;

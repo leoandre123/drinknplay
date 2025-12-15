@@ -98,7 +98,7 @@ export class Lobby {
   }
 
   startSpin() {
-    const gameIndex = Math.floor(Math.random() * 3);
+    const gameIndex = Math.floor(Math.random() * 4);
 
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);

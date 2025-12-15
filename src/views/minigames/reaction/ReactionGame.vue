@@ -1,20 +1,23 @@
 <template>
     <div class="reaction-game-container">
-        <h1>REACTION GAME</h1>
-        <p>Count the figures in the picture as fast as you can!</p>
-        <div v-if="!gameStarted" class="button-container">
-            <button class="start-button" @click="startCountdown"> START GAME </button>
-        </div>
-        <div v-else class="picture-container">
-            <img v-for="n in figureCount" :key="n" :src="mascot" :style="getRandomPositions()" />
-        </div>
         <div class="players-grid">
             <MiniPlayerCard v-for="(player, index) in sortedPlayers" :key="player.id || player.name" :player="player"
-                :place="index" />
+                :place="index" :is-winner="player.id === winner" />
         </div>
-
-
+        <div class="game-area">
+            <h1>REACTION GAME</h1>
+            <p>Count the figures in the picture as fast as you can!</p>
+            <div v-if="countdown != 0" class="countdown-container">
+                <p>{{ countdownText }}</p>
+            </div>
+            <div v-else class="picture-overlay">
+                <div class="picture-container">
+                    <img v-for="n in figureCount" :key="n" :src="mascot" :style="getRandomPositions()" />
+                </div>
+            </div>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -34,32 +37,43 @@ export default {
             gameStarted: false,
             figureCount: 0,
             mascot,
-            amount: 0,
             playerScores: new Map(),
-            playerAmounts: new Map(),
-            countdown: 6,          // antal sekunder
+            countdown: 6,
             countdownActive: false,
             countdownInterval: null,
             tickSound: null,
             goSound: null,
+            winner: null,
         };
     },
 
-
-
     created() {
-        socket.on("reaction:setSubmissions", (submissions) => this.onSubbmissionsUpdate(submissions));
+        socket.on("reaction:startRound", (figureCount) => {
+            this.figureCount = figureCount;
+            this.winner = null;
+            this.startCountdown();
+        });
+        console.log("figureCount:", this.figureCount);
 
+        socket.on("reaction:roundResult", ({ winner, scores }) => {
+            this.winner = winner;
+            console.log("Winner of the round:", this.winner);
+            console.log(
+                "player ids in host:",
+                context.state.players.map(p => p.id)
+            );
+            this.playerScores = new Map(Object.entries(scores));
+            console.log("Round result received:", winner, scores);
+
+        });
     },
 
     computed: {
         players() {
             return context.state.players.map((player) => ({
-
                 id: player.id,
                 name: player.name,
                 score: this.playerScores.get(player.id) || 0,
-                amount: this.playerAmounts.get(player.id) || 0,
 
             }));
         },
@@ -72,17 +86,18 @@ export default {
     },
 
     beforeUnmount() {
-
+        socket.off("reaction:startRound");
+        socket.off("reaction:roundResult");
+        if (this.countdownInterval) clearInterval(this.countdownInterval);
     },
 
     mounted() {
-        this.tickSound = new Audio("/sounds/tick.mp3");
-        this.goSound = new Audio("/sounds/go.mp3");
+
     },
 
     methods: {
+
         startCountdown() {
-            this.playSound();
             const tickSound = new Audio("/sounds/tick.mp3");
             tickSound.play();
 
@@ -100,7 +115,7 @@ export default {
                     this.countdownInterval = null;
                     this.countdownActive = false;
 
-                    this.generatepicture(); // starta spelet direkt
+                    this.generatepicture();
                 }
 
             }, 1000);
@@ -111,10 +126,10 @@ export default {
             audio.play();
         },
         generatepicture() {
+            this.winner = null;
             const goSound = new Audio("/sounds/go.mp3");
             goSound.play();
             this.gameStarted = true;
-            this.figureCount = Math.floor(Math.random() * 8) + 3;
         },
         getRandomPositions() {
             const x = Math.random() * 90;
@@ -125,16 +140,6 @@ export default {
                 left: x + "%",
             };
         },
-
-        onSubbmissionsUpdate(submissions) {
-            console.log("Received submissions update:", submissions);
-            for (const submission of submissions) {
-                this.playerAmounts.set(submission.id, submission.amount);
-            }
-
-            console.log("Player amounts updated:", this.playerAmounts);
-            console.log("Current players:", this.players);
-        },
     }
 };
 </script>
@@ -142,6 +147,7 @@ export default {
 <style>
 .reaction-game-container {
     display: grid;
+    position: relative;
     width: 100vw;
     height: 100vh;
     justify-items: center;
@@ -151,6 +157,7 @@ export default {
             rgb(116, 18, 92) 49.5%,
             rgb(164, 34, 144) 90%);
     color: white;
+    overflow: hidden;
 
 }
 
@@ -158,22 +165,27 @@ export default {
     position: absolute;
     left: 1rem;
     top: 1rem;
-    display: flex;
+    display: grid;
     flex-direction: column;
     gap: 0.4rem;
 }
 
 
 .picture-container {
+    width: 100%;
+    height: 100%;
+    background: whitesmoke;
     position: relative;
-    margin-top: 20px;
-    width: 900px;
-    height: 600px;
-    border: 2px solid white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: whitesmoke;
+    overflow: hidden;
+    border: none;
+}
+
+.picture-overlay {
+    position: absolute;
+    inset: 0;
+    /* top:0 right:0 bottom:0 left:0 */
+    z-index: 5;
+    display: grid;
 }
 
 .start-button {
