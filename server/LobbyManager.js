@@ -35,6 +35,7 @@ export class LobbyManager {
     const lobby = new Lobby(this.io, id);
 
     this.lobbies.push(lobby);
+    return id;
   }
 
   getLobby(lobbyId) {

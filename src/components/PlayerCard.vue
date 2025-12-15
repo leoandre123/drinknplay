@@ -1,9 +1,9 @@
 <template>
   <div class="player-card">
     <p class="player-name">{{ player.name }}</p>
-    <p class="player-score">Score: {{ player.score }}</p>
+    <p class="player-score">Score: {{ score }}</p>
     <div class="drinking-glass">
-      <DrinkingGlass :level="player.glasslevel" />
+      <DrinkingGlass :level="player.glassFillLevel" />
     </div>
     <div class="drunkometer">
       <div class="drunkometer-title">Drunkometer</div>
@@ -19,7 +19,11 @@ import DrinkingGlass from "./DrinkingGlass.vue";
 import Drunkometer from "./Drunkometer.vue";
 export default {
   components: { DrinkingGlass, Drunkometer },
-  props: { player: Object, place: Number },
+  props: {
+    player: Object,
+    score: Number,
+    place: Number,
+  },
   data: function () {
     return {};
   },

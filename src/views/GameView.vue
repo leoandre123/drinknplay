@@ -4,9 +4,14 @@
     <div v-if="showDebug">
       <div class="debug-box">
         <p>Connected: {{ context.isConnected }}</p>
+        <p>LobbyID: {{ context.state?.lobbyId }}</p>
         <p>Phase: {{ context.state?.phase ?? "undefined" }}</p>
         <p>Host: {{ context.isHost }}</p>
         <p>Players: {{ context.state?.players.map((x) => x.name) }}</p>
+        <p>Environment: {{ env }}</p>
+        <p>Mobile: {{ isMobile }}</p>
+        <p>SocketID: {{ socket.id }}</p>
+        <p>You: {{ context.getCurrentPlayer() }}</p>
       </div>
       <div class="debug-box">
         <p v-for="msg in incomingMessages">{{ msg }}</p>
@@ -59,13 +64,14 @@
   </div>
 
   <div v-if="context.isConnected" class="game-container">
-    <RetroContainer>
-      <LobbyView v-if="context.state?.phase == 'lobby'" />
-      <SlotView v-if="context.state?.phase == 'slot'" />
-      <LoadingView v-if="context.state?.phase == 'loading'" />
-      <MinigameView v-if="context.state?.phase == 'game'" />
-      <ResultView v-if="context.state?.phase == 'result'" />
-    </RetroContainer>
+    <LobbyView v-if="context.state?.phase == 'lobby'" />
+    <SlotView v-if="context.state?.phase == 'slot'" />
+    <LoadingView v-if="context.state?.phase == 'loading'" />
+    <MinigameView v-if="context.state?.phase == 'game'" />
+    <template v-if="context.state?.phase == 'result'">
+      <ResultView v-if="context.isHost" />
+      <ResultPlayerView v-if="!context.isHost" />
+    </template>
   </div>
 </template>
 
@@ -79,35 +85,45 @@ import LobbyView from "./LobbyView.vue";
 import { socket } from "../socket";
 import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
-import RetroContainer from "../components/RetroContainer.vue";
 import Mascot from "../components/Mascot.vue";
+import { useDevice } from "../UseDevice.js";
+import ResultPlayerView from "./ResultPlayerView.vue";
 
 export default {
   name: "GameView",
 
   data() {
     return {
+      socket,
       context,
       showDebug: false,
       incomingMessages: [],
       isAngry: false,
     };
   },
+  computed: {
+    env() {
+      return import.meta.env.MODE;
+    },
+  },
   setup() {
     const { locale } = useI18n();
     function switchLang(lang) {
       locale.value = lang;
     }
-    return { locale, switchLang };
+
+    const { isMobile } = useDevice();
+
+    return { locale, switchLang, isMobile };
   },
   components: {
     MinigameView,
     LoadingView,
     SlotView,
     ResultView,
+    ResultPlayerView,
     LobbyView,
     Flag,
-    RetroContainer,
     Mascot,
   },
   mounted() {

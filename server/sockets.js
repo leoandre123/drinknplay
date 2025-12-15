@@ -1,5 +1,4 @@
 function sockets(io, socket, lobbyManager) {
-
   socket.on("checkLobbyCode", function (lobbyCode) {
     const lobby = lobbyManager.getLobby(lobbyCode);
     console.log(`Check lobby with code ${lobbyCode}`);
@@ -7,10 +6,16 @@ function sockets(io, socket, lobbyManager) {
     if (lobby == undefined) {
       socket.emit("checkLobbyCodeResponse", { available: false, reason: "no_lobby" });
     } else if (lobby.phase != "lobby") {
-      socket.emit("checkLobbyCodeResponse", { available: true, reason: "started" });
+      socket.emit("checkLobbyCodeResponse", { available: false, reason: "started" });
     } else {
       socket.emit("checkLobbyCodeResponse", { available: true });
     }
+  });
+
+  socket.on("createLobby", function () {
+    const lobbyCode = lobbyManager.createLobby();
+
+    socket.emit("lobbyCreated", lobbyCode);
   });
 
   socket.on("joinLobby", function (lobbyCode, name) {
@@ -24,7 +29,6 @@ function sockets(io, socket, lobbyManager) {
   socket.on("disconnect", function () {
     lobbyManager.getLobby(socket.data.lobbyId)?.onPlayerDisconnected(socket.id);
   });
-
 }
 
 export { sockets };

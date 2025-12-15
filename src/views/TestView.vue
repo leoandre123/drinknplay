@@ -1,7 +1,12 @@
 <template>
   <div class="slot-container">
     <RetroContainer>
-      <SlotMachine :symbols="availableGames.map((x) => x.symbol)" text="test" />
+      <SlotMachine
+        :symbols="availableGames.map((x) => x.symbol)"
+        text="Waiting for minigame selection"
+        ref="slot"
+      />
+      <button @click="$refs.slot.spin()">SPIN</button>
     </RetroContainer>
   </div>
 </template>
@@ -34,7 +39,6 @@ export default {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 3rem;
   gap: 1rem;
 }
 </style>

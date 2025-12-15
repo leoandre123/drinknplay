@@ -62,7 +62,7 @@ h1 {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(90deg, #fdbb2d 0%, #3a1c71 100%);
+  background: linear-gradient(to right top, #782c64, #633260, #513558, #42364c, #37343e);
   display: flex;
   flex-direction: column;
   padding: 5rem;
