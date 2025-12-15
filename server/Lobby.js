@@ -141,11 +141,7 @@ export class Lobby {
   broadcastLobbyState() {
     const state = {
       lobbyId: this.context.lobbyId,
-      players: this.context.players.map((x) => {
-        return {
-          name: x.name,
-        };
-      }),
+      players: this.context.players.map(({socket, ...rest}) => rest),
       phase: this.phase,
       gameIndex: this.gameIndex,
     };

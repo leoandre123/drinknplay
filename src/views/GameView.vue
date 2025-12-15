@@ -57,8 +57,8 @@
         <br />
         <br />
 
-        <button @click="openReactionHost">Open Reaction HOST</button>
-        <button @click="openReactionPlayer">Open Reaction PLAYER</button>
+        <button @click="joinLobbyAsHost('reaction')">Open Reaction HOST</button>
+        <button @click="joinLobby('reaction', 'player_'+ Math.floor(Math.random() * 1000))">Open Reaction PLAYER</button>
       </div>
     </div>
   </div>

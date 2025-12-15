@@ -11,12 +11,14 @@
       <div class="minigame-container">
         <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
         <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
+        <ReactionGame v-if="context.state.gameIndex == 2" class="minigame" />
       </div>
     </div>
   </div>
   <div v-if="!context.isHost" class="client-container">
     <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
     <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
+    <ReactionGamePlayerView v-if="context.state.gameIndex == 2" class="minigame" />
   </div>
 </template>
 
@@ -26,6 +28,8 @@ import RacingControllerView from "./minigames/racing/RacingControllerView.vue";
 import { context } from "../context";
 import KahootView from "./minigames/kahoot/KahootView.vue";
 import KahootPlayerView from "./minigames/kahoot/KahootPlayerView.vue";
+import ReactionGame from "./minigames/reaction/ReactionGame.vue";
+import ReactionGamePlayerView from "./minigames/reaction/ReactionGamePlayerView.vue";
 
 export default {
   name: "MinigameView",
@@ -33,7 +37,7 @@ export default {
   data() {
     return { context };
   },
-  components: { RacingView, RacingControllerView, KahootView, KahootPlayerView },
+  components: { RacingView, RacingControllerView, KahootView, KahootPlayerView, ReactionGame, ReactionGamePlayerView},
   async created() {},
 
   methods: {},
