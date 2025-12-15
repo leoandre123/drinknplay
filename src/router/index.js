@@ -3,9 +3,8 @@ import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
 import ResultView from "../views/ResultView.vue";
 import drawingCanvas from "../components/drawingCanvas.vue";
-import DrawingView from "../views/DrawingView.vue";
-import ReactionGame from "../views/minigames/reaction/ReactionGame.vue";
-import ReactionGamePlayerView from "../views/minigames/reaction/ReactionGamePlayerView.vue";
+import DrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
+import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,9 +18,14 @@ const router = createRouter({
       path: "/join",
       redirect: "/",
     },
+    {
+      path: "/hostcanvas",
+      name: "HostCanvas",
+      component: HostDrawingView
+    },
      {
       path: "/canvas",
-      name: "canvas",
+      name: "Canvas",
       component: DrawingView,
     },
     {
@@ -58,16 +62,6 @@ const router = createRouter({
       path: "/game",
       name: "GameView",
       component: () => import("../views/GameView.vue"),
-    },
-    {
-      path: "/reactiongame",
-      name: "ReactionGame",
-      component: () => import("../views/minigames/reaction/ReactionGame.vue"),
-    },
-    { 
-      path: "/reactiongameplayerview",
-      name: "ReactionGamePlayerView",
-      component: ReactionGamePlayerView,
     },
   ],
 });

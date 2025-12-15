@@ -1,5 +1,5 @@
 <template>
-  <div class="background-80s animated-clouds stars" style="--background-height: 100vh">
+  <div class="background-80s animated-clouds stars">
     <div class="sun"></div>
     <div
       class="grid"
@@ -288,13 +288,13 @@ export default {
       #0c1142 65%
     )
     fixed;
-  background-size: 100% var(--background-height, 100vh);
+  background-size: 100% 100dvh;
   overflow: hidden;
   position: absolute;
   left: 0;
   top: 0;
-  width: 100vw;
-  height: var(--background-height, 100vh);
+  width: 100dvw;
+  height: 100dvh;
   z-index: -2;
 }
 

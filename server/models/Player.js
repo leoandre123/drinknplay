@@ -7,5 +7,7 @@ export class Player {
     this.glassFillLevel = 0;
     this.drunkness = 0;
     this.score = 0;
+
+    this.isReady = false;
   }
 }

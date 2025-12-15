@@ -2,9 +2,7 @@ import { Player } from "./models/Player.js";
 import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { RacingGame } from "./minigames/RacingGame.js";
 import { KahootGame } from "./minigames/KahootGame.js";
-
-import { ReactionGame } from "./minigames/ReactionGame.js";
-
+import { DrawingGame } from "./minigames/drawingGame.js";
 
 export class Lobby {
   constructor(io, lobbyId) {
@@ -17,6 +15,12 @@ export class Lobby {
     console.log(`${name} joined lobby '${this.context.lobbyId}'`);
     socket.join(this.context.lobbyId + "_PLAYERS");
     socket.data.lobbyId = this.context.lobbyId;
+
+    socket.on("fillGlassIndex", (id) => this.onGlassFilled(id));
+    socket.on("ready", (isReady) => {
+      this.onPlayerReady(socket.id, isReady);
+    });
+
     socket.emit("joinLobbyResponse", this.context.lobbyId);
 
     const player = new Player(name, socket.id, socket);
@@ -35,17 +39,18 @@ export class Lobby {
 
     socket.on("startGame", () => this.start());
     socket.on("advancePhase", () => this.advancePhase());
-
     socket.on("startSpin", () => this.startSpin());
 
     socket.emit("joinLobbyHostResponse", this.context.lobbyId);
+
     this.broadcastLobbyState();
   }
 
   onPlayerDisconnected(playerId) {
-    const playersToRemove = this.context.players.splice(
-      this.context.players.findIndex((x) => x.id != playerId)
-    );
+    const playerIndex = this.context.players.findIndex((x) => x.id == playerId);
+    if (playerIndex == -1) return;
+    const playersToRemove = this.context.players.splice(playerIndex);
+    console.log(`${playersToRemove.name} left the lobby '${this.context.lobbyId}'`);
     if (playersToRemove.length != 0) {
       this.broadcastLobbyState();
       if (this.phase == "game") {
@@ -84,8 +89,11 @@ export class Lobby {
 
   startGameSelection() {
     this.phase = "slot";
-    const gameIndex = 0; /* Select random minigame */
     this.broadcastLobbyState();
+
+    setTimeout(() => this.startSpin(), 5000);
+
+    setTimeout(() => this.advancePhase(), 15000);
   }
 
   startSpin() {
@@ -107,13 +115,14 @@ export class Lobby {
       case 1:
         this.currentGame = new KahootGame();
         break;
-        case 2:
-        this.currentGame = new ReactionGame();
+      case 2:
+        this.currentGame = new DrawingGame();
         break;
     }
   }
 
   startLoadingScreen() {
+    this.context.players.forEach((p) => (p.isReady = false));
     this.phase = "loading";
     this.broadcastLobbyState();
   }
@@ -128,8 +137,16 @@ export class Lobby {
       this.currentGame.registerListeners(player.socket);
     }
 
-    this.currentGame.onFinished = () => this.startResultScreen();
+    this.currentGame.onFinished = (results) => this.finishGame(results);
     this.currentGame.start();
+  }
+
+  finishGame(results) {
+    for (let res of results) {
+      this.context.players.find((x) => x.id == res.id).score += res.score;
+    }
+
+    this.startResultScreen();
   }
 
   startResultScreen() {
@@ -138,10 +155,32 @@ export class Lobby {
     this.broadcastLobbyState();
   }
 
+  onGlassFilled(id) {
+    const player = this.context.players.find((x) => x.id == id);
+    player.glassFillLevel += 0.2; //TODO: Based on setting
+
+    while (player.glassFillLevel >= 1) {
+      player.drunkness++;
+      player.glassFillLevel--;
+    }
+
+    this.broadcastLobbyState();
+  }
+
+  onPlayerReady(id, isReady) {
+    if (this.phase != "loading") return;
+    const player = this.context.players.find((x) => x.id == id);
+    player.isReady = isReady;
+
+    if (this.context.players.filter((p) => p.isReady).length > this.context.players.length / 2) {
+      this.advancePhase();
+    }
+  }
+
   broadcastLobbyState() {
     const state = {
       lobbyId: this.context.lobbyId,
-      players: this.context.players.map(({socket, ...rest}) => rest),
+      players: this.context.players.map(({ socket, ...rest }) => rest),
       phase: this.phase,
       gameIndex: this.gameIndex,
     };

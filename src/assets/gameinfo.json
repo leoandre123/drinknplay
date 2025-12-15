@@ -13,5 +13,14 @@
         "tips": [
             "Try to to answer the right question"
         ]
+    },
+    {
+        "title": "Drink n' Draw",
+        "imageUri": "game_backgrounds/drawing_2.jpg",
+        "tips": [
+            "Draw nice things",
+            "If you draw better than the other players, that is good!",
+            "The better you draw, the more points you get!"
+        ]
     }
 ]

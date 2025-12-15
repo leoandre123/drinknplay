@@ -14,17 +14,17 @@ export class LobbyManager {
     const kahootLobby = new Lobby(io, "kahoot");
     kahootLobby.selectGame(1);
     kahootLobby.startMinigame();
-    
-     const reactionLobby = new Lobby(io, "reaction");
-    reactionLobby.selectGame(2);
-    reactionLobby.startMinigame();
+
+    const drawLobby = new Lobby(io, "draw");
+    drawLobby.selectGame(2);
+    drawLobby.startMinigame();
 
     const resultLobby = new Lobby(io, "result");
     resultLobby.startResultScreen();
 
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, reactionLobby];
+    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby];
   }
 
   createLobby() {
@@ -35,6 +35,7 @@ export class LobbyManager {
     const lobby = new Lobby(this.io, id);
 
     this.lobbies.push(lobby);
+    return id;
   }
 
   getLobby(lobbyId) {

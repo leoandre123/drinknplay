@@ -6,8 +6,6 @@
       :text="text"
       @spin-finished="onSpinFinished"
     />
-    <button @click="spinWheel" :disabled="!context.isHost">Spin</button>
-    <button @click="advance" :disabled="!context.isHost">Advance</button>
   </div>
   <div v-if="!context.isHost">Look at the screen</div>
 </template>
@@ -66,5 +64,9 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

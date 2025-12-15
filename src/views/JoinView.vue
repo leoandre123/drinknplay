@@ -10,7 +10,7 @@
       <button :disabled="name.length == 0" @click="joinGame">Join game</button>
     </div>
   </div>
-  <div v-if="lobbyAvailable === false">hej</div>
+  <div v-if="lobbyAvailable === false">LOBBY STARTED</div>
 </template>
 
 <script>

@@ -6,9 +6,10 @@
       <div class="menu">
         <p>Lobby Code</p>
         <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
+        <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
         <br />
         <br />
-        <button @click="joinGame" :disabled="lobbyCode.length == 0">Join game</button>
+        <button @click="tryJoinGame" :disabled="lobbyCode.length == 0">Join game</button>
         <div>
           <p>
             If you want to host a game press <span class="create" @click="createGame">here</span>
@@ -30,22 +31,33 @@ export default {
     return {
       isConnected: false,
       lobbyCode: "",
+      errorMsg: "",
     };
   },
   mounted() {
     this.isConnected = socket.connected;
     socket.on("connect", () => (this.isConnected = true));
     socket.on("disconnect", () => (this.isConnected = false));
+    socket.on("checkLobbyCodeResponse", (resp) => this.onLobbyResponse(resp));
   },
   beforeUnmount() {
     socket.off("connect");
     socket.off("disconnect");
+    socket.off("checkLobbyCodeResponse");
   },
   methods: {
-    joinGame() {
-      this.$router.push({
-        path: `/join/${this.lobbyCode}`,
-      });
+    tryJoinGame() {
+      socket.emit("checkLobbyCode", this.lobbyCode);
+    },
+    onLobbyResponse(resp) {
+      console.log(resp);
+      if (resp.available) {
+        this.$router.push({
+          path: `/join/${this.lobbyCode}`,
+        });
+      } else {
+        this.errorMsg = resp.reason;
+      }
     },
     createGame() {
       this.$router.push({
@@ -74,6 +86,11 @@ export default {
   font-weight: bold;
   min-width: 15rem;
   max-width: 25rem;
+}
+
+.error-msg {
+  color: rgb(255, 0, 0);
+  text-shadow: 0 0 2px black;
 }
 
 .menu p {
