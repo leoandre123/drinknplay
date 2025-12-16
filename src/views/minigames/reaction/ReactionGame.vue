@@ -10,11 +10,18 @@
             <div v-if="countdown != 0" class="countdown-container">
                 <p>{{ countdownText }}</p>
             </div>
-            <div v-else class="picture-overlay">
-                <div class="picture-container">
-                    <img v-for="n in figureCount" :key="n" :src="mascot" :style="getRandomPositions()" />
-                </div>
+
+            <div v-if="roundActive && !showRoundResult" class="picture-container">
+                <img v-for="(pos, i) in positions" :key="i" :src="mascot" class=" figure" :style="{
+                    left: pos.leftVh + 'vh',
+                    top: pos.topVh + 'vh'
+                }" />
             </div>
+            <div v-else class="round-result">
+                <h2 v-if="winnerName">Winner: {{ winnerName }}</h2>
+                <h2 v-if="showRoundResult && !winnerName" >No winner this round</h2>
+            </div>
+
         </div>
     </div>
 
@@ -39,31 +46,42 @@ export default {
             mascot,
             playerScores: new Map(),
             countdown: 6,
+            amount: 0,
             countdownActive: false,
             countdownInterval: null,
             tickSound: null,
             goSound: null,
             winner: null,
+            winnerName: null,
+            positions: [],
+            showRoundResult: false,
+            roundActive: false,
+
         };
     },
 
     created() {
-        socket.on("reaction:startRound", (figureCount) => {
+        socket.on("reaction:startRound", ({ figureCount, positions }) => {
             this.figureCount = figureCount;
             this.winner = null;
+            this.positions = positions;
+            this.showRoundResult = false;
+            this.roundActive = false;
             this.startCountdown();
         });
-        console.log("figureCount:", this.figureCount);
 
-        socket.on("reaction:roundResult", ({ winner, scores, show }) => {
-            this.winner = winner;
-            console.log("Winner of the round:", this.winner);
-            console.log(
-                "player ids in host:",
-                context.state.players.map(p => p.id)
-            );
+        socket.on("reaction:playerAmount", ({ playerId, amount }) => {
+            const p = context.state.players.find(x => x.id === playerId);
+            if (p) p.amount = amount;
+        });
+
+        socket.on("reaction:roundResult", ({ winnerId, winnerName, scores }) => {
+            this.winner = winnerId;
+            this.winnerName = winnerName;
+            this.showRoundResult = true;
+            this.roundActive = false;
+
             this.playerScores = new Map(Object.entries(scores));
-            console.log("Round result received:", winner, scores);
 
         });
     },
@@ -74,6 +92,8 @@ export default {
                 id: player.id,
                 name: player.name,
                 score: this.playerScores.get(player.id) || 0,
+                amount: player.amount || 0,
+
 
             }));
         },
@@ -88,6 +108,7 @@ export default {
     beforeUnmount() {
         socket.off("reaction:startRound");
         socket.off("reaction:roundResult");
+        socket.off("reaction:playerAmount");
         if (this.countdownInterval) clearInterval(this.countdownInterval);
     },
 
@@ -114,8 +135,11 @@ export default {
                     clearInterval(this.countdownInterval);
                     this.countdownInterval = null;
                     this.countdownActive = false;
+                    this.roundActive = true;     // <-- detta gör att picture-container syns
 
-                    this.generatepicture();
+
+                    this.playGoSound();
+
                 }
 
             }, 1000);
@@ -125,8 +149,7 @@ export default {
             const audio = new Audio('/sounds/submitbutton.mp3');
             audio.play();
         },
-        generatepicture() {
-            this.winner = null;
+        playGoSound() {
             const goSound = new Audio("/sounds/go.mp3");
             goSound.play();
             this.gameStarted = true;
@@ -140,19 +163,18 @@ export default {
                 left: x + "%",
             };
         },
-        
+
         noWinnerSound() {
-            if (this.winner === null && showRoundResult)
-             {
-            const audio = new Audio('/sounds/nowinner.mp3');
-            audio.play(); 
+            if (this.winner === null && showRoundResult) {
+                const audio = new Audio('/sounds/nowinner.mp3');
+                audio.play();
             }
         },
 
         winnerSound() {
             if (this.winner === this.myId && showRoundResult) {
-            const audio = new Audio('/sounds/winner.mp3');
-            audio.play();
+                const audio = new Audio('/sounds/winner.mp3');
+                audio.play();
             }
         },
     }
@@ -185,22 +207,30 @@ export default {
     gap: 0.4rem;
 }
 
+.round-result {
+    display: grid;
+    justify-items: top;
+    align-items: top;
 
-.picture-container {
-    width: 100%;
-    height: 100%;
-    background: whitesmoke;
-    position: relative;
-    overflow: hidden;
-    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: rgb(175, 87, 226);
+    font-size: 1rem;
+    font-weight: bold;
 }
 
-.picture-overlay {
+.picture-container {
+    width: 100vh;
+    height: 55vh;
+    position: relative;
+    overflow: hidden;
+    background: whitesmoke;
+}
+
+.figure {
     position: absolute;
-    inset: 0;
-    /* top:0 right:0 bottom:0 left:0 */
-    z-index: 5;
-    display: grid;
+    width: 7vh;
+    height: auto;
+    transform: translate(-50%, -50%);
 }
 
 .start-button {

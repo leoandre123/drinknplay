@@ -5,7 +5,7 @@
             <h2>YOU WIN THIS ROUND!</h2>
         </div>
         <div v-else-if="winner && showRoundResult">
-            <h2>{{ this.winner }} WON THIS ROUND!</h2>
+            <h2>{{ winnerName }} WON THIS ROUND!</h2>
         </div>
         <div v-else-if="showRoundResult">
             <h2>No winner this round</h2>
@@ -34,15 +34,17 @@ export default {
         return {
             amount: 0,
             winner: null,
+            winnerName: null,
             showRoundResult: false,
         };
     },
 
     created() {
-        socket.on("reaction:roundResult", ({ winner, scores }) => {
-            console.log("Round result received:", { winner, scores });
+        socket.on("reaction:roundResult", ({ winner, winnerName, scores }) => {
+            console.log("Round result received:", { winnerName, scores });
             this.amount = 0;
             this.winner = winner;
+            this.winnerName = winnerName;
             this.showRoundResult = true;
             this.playRoundResultSound();
             setTimeout(() => (this.showRoundResult = false), 1500);
@@ -136,12 +138,12 @@ export default {
 .add-button {
     justify-items: center;
     grid-template-rows: 100px;
-
     width: 200px;
     height: 200px;
     font-size: 50px;
     font-weight: bold;
     margin: 20px;
+    touch-action: manipulation;
 }
 
 .add-button {
