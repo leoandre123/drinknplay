@@ -18,7 +18,7 @@
                 <button class="add-button" @click="add"> + </button>
 
                 <div class="done-button-container">
-                    <button class="submit-button" @click="submit"> DONE </button>
+                    <button class="submit-button" @click="submit" :disabled="submitDisabled"> DONE </button>
                 </div>
             </div>
         </div>
@@ -36,6 +36,8 @@ export default {
             winner: null,
             winnerName: null,
             showRoundResult: false,
+            submitDisabled: true,   
+
         };
     },
 
@@ -48,6 +50,12 @@ export default {
             this.showRoundResult = true;
             this.playRoundResultSound();
             setTimeout(() => (this.showRoundResult = false), 1500);
+            this.submitDisabled = true;
+        });
+        socket.on("reaction:startRound", () => {
+             setTimeout(() => {
+                this.submitDisabled = false;
+            }, 5000);
         });
 
     },
@@ -152,6 +160,12 @@ export default {
     border: none;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.submit-button:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
 }
 
 .remove-button {

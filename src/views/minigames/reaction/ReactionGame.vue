@@ -122,7 +122,7 @@ export default {
             const tickSound = new Audio("/sounds/tick.mp3");
             tickSound.play();
 
-            // Säkerhet: stoppa om något redan kör
+    
             if (this.countdownInterval) clearInterval(this.countdownInterval);
 
             this.countdown = 6;
@@ -135,7 +135,7 @@ export default {
                     clearInterval(this.countdownInterval);
                     this.countdownInterval = null;
                     this.countdownActive = false;
-                    this.roundActive = true;     // <-- detta gör att picture-container syns
+                    this.roundActive = true;    
 
 
                     this.playGoSound();

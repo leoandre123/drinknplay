@@ -12,7 +12,7 @@ export class ReactionGame extends Minigame {
         this.winnername = null;
         this.scores = new Map();
         this.roundActive = false;
-        
+
     }
 
     onPlayerJoined(player) {
@@ -77,8 +77,6 @@ export class ReactionGame extends Minigame {
         this.broadcast("reaction:startRound", {
             figureCount: this.figureCount,
             positions: this.figurePositions,
-            //round: this.currentRound + 1,
-            //maxRounds: this.maxRounds,
         });
     }
 
