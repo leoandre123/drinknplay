@@ -19,7 +19,7 @@
             </div>
             <div v-else class="round-result">
                 <h2 v-if="winnerName">Winner: {{ winnerName }}</h2>
-                <h2 v-if="showRoundResult && !winnerName" >No winner this round</h2>
+                <h2 v-if="showRoundResult && !winnerName">No winner this round</h2>
             </div>
 
         </div>
@@ -75,8 +75,15 @@ export default {
             if (p) p.amount = amount;
         });
 
-        socket.on("reaction:roundResult", ({ winnerId, winnerName, scores }) => {
-            this.winner = winnerId;
+        socket.on("reaction:resetAmounts", () => {
+            context.state.players.forEach(p => {
+                p.amount = null;   // eller 0
+            });
+        });
+
+
+        socket.on("reaction:roundResult", ({ winner, winnerName, scores }) => {
+            this.winner = winner;
             this.winnerName = winnerName;
             this.showRoundResult = true;
             this.roundActive = false;
@@ -92,7 +99,7 @@ export default {
                 id: player.id,
                 name: player.name,
                 score: this.playerScores.get(player.id) || 0,
-                amount: player.amount || 0,
+                amount: player.amount ?? null,
 
 
             }));
@@ -109,6 +116,9 @@ export default {
         socket.off("reaction:startRound");
         socket.off("reaction:roundResult");
         socket.off("reaction:playerAmount");
+        socket.off("reaction:resetAmounts");
+
+
         if (this.countdownInterval) clearInterval(this.countdownInterval);
     },
 
@@ -122,7 +132,7 @@ export default {
             const tickSound = new Audio("/sounds/tick.mp3");
             tickSound.play();
 
-    
+
             if (this.countdownInterval) clearInterval(this.countdownInterval);
 
             this.countdown = 6;
@@ -135,7 +145,7 @@ export default {
                     clearInterval(this.countdownInterval);
                     this.countdownInterval = null;
                     this.countdownActive = false;
-                    this.roundActive = true;    
+                    this.roundActive = true;
 
 
                     this.playGoSound();

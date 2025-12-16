@@ -28,12 +28,8 @@ export class ReactionGame extends Minigame {
     registerListeners(socket) {
         socket.on("reaction:submit", ({ amount, time }) => {
             this.onSubmit(socket.id, amount, time);
-            this.broadcastHosts("reaction:playerAmount", {
-                socketId: socket.id,
-                amount: Number(amount),
-            })
         });
-        
+
     }
 
     unregisterListeners(socket) {
@@ -70,7 +66,6 @@ export class ReactionGame extends Minigame {
         this.winner = null;
         this.winnerName = null;
         this.roundStartTime = Date.now();
-        this.submissionpermitted = false;
         this.figureCount = Math.floor(Math.random() * 5 + 1);
         this.figurePositions = this.generatePositions(this.figureCount);
 
@@ -78,6 +73,7 @@ export class ReactionGame extends Minigame {
             figureCount: this.figureCount,
             positions: this.figurePositions,
         });
+          this.broadcast("reaction:resetAmounts");
     }
 
     stop() {
@@ -96,6 +92,7 @@ export class ReactionGame extends Minigame {
         amount = Number(amount);
 
         this.submissions.push({ id: playerId, amount, time: responseTime });
+        this.broadcast("reaction:playerAmount", { playerId, amount });
 
         if (amount === this.figureCount) {
             this.winner = playerId;
@@ -128,7 +125,6 @@ export class ReactionGame extends Minigame {
     }
     finishRound() {
         console.log("ROUND FINISHED");
-        this.submissionpermitted = false;
         this.currentRound++;
 
         if (this.currentRound < this.maxRounds) {
