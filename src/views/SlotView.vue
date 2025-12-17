@@ -18,8 +18,8 @@ import { context } from "../context";
 const availableGames = [
   { name: "Racing game", symbol: "🚗" },
   { name: "Questions game", symbol: "❓" },
+  { name: "Drink n' draw", symbol: "✍️" },
   { name: "Drink", symbol: "🍻" },
-  { name: "Draw and rate", symbol: "✍️" },
 ];
 
 export default {

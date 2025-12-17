@@ -25,7 +25,7 @@ export default {
 
 <style scoped>
 .chrome {
-  font-family: "Montserrat";
+  font-family: "Jersey 25", sans-serif;
   font-weight: 900;
   font-size: calc(30px + 10vh);
   background-image: linear-gradient(

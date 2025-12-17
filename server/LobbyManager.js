@@ -1,6 +1,6 @@
 import { Lobby } from "./Lobby.js";
 import { RacingGame } from "./minigames/RacingGame.js";
-import { KahootGame } from "./minigames/KahootGame.js";
+import { GenerateID } from "./Utils.js";
 
 export class LobbyManager {
   constructor(io) {
@@ -27,13 +27,12 @@ export class LobbyManager {
     this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby];
   }
 
-  createLobby() {
-    const id = Math.floor(Math.random() * 100000)
-      .toString()
-      .padStart(5, "0");
-    //TODO: Check for collisions
-    const lobby = new Lobby(this.io, id);
-
+  createLobby(gameSettings) {
+    let id;
+    do {
+      id = GenerateID(3);
+    } while (this.lobbies.some((x) => x.context.lobbyId == id));
+    const lobby = new Lobby(this.io, id, gameSettings);
     this.lobbies.push(lobby);
     return id;
   }

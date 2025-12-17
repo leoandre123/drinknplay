@@ -3,12 +3,14 @@ import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { RacingGame } from "./minigames/RacingGame.js";
 import { KahootGame } from "./minigames/KahootGame.js";
 import { DrawingGame } from "./minigames/drawingGame.js";
+import { DefaultSettings } from "../shared/GameSettings.js";
 
 export class Lobby {
-  constructor(io, lobbyId) {
+  constructor(io, lobbyId, settings = DefaultSettings) {
     this.context = new ServerLobbyContext(io, lobbyId);
     this.currentGame = null;
     this.phase = "lobby";
+    this.settings = settings;
   }
 
   onPlayerJoined(socket, name) {
@@ -16,12 +18,12 @@ export class Lobby {
     socket.join(this.context.lobbyId + "_PLAYERS");
     socket.data.lobbyId = this.context.lobbyId;
 
-    socket.on("fillGlassIndex", (id) => this.onGlassFilled(id));
+    socket.on("results:fillGlassIndex", (id) => this.onGlassFilled(id));
     socket.on("ready", (isReady) => {
       this.onPlayerReady(socket.id, isReady);
     });
 
-    socket.emit("joinLobbyResponse", this.context.lobbyId);
+    socket.emit("lobby:joinResponse", this.context.lobbyId);
 
     const player = new Player(name, socket.id, socket);
 
@@ -37,12 +39,10 @@ export class Lobby {
     socket.join(this.context.lobbyId + "_HOST");
     socket.data.lobbyId = this.context.lobbyId;
 
-    socket.on("startGame", () => this.start());
-    socket.on("advancePhase", () => this.advancePhase());
-    socket.on("startSpin", () => this.startSpin());
+    socket.on("lobby:start", () => this.start());
+    socket.on("lobby:advancePhase", () => this.advancePhase());
 
-    socket.emit("joinLobbyHostResponse", this.context.lobbyId);
-
+    socket.emit("lobby:joinHostResponse", this.context.lobbyId);
     this.broadcastLobbyState();
   }
 
@@ -174,6 +174,8 @@ export class Lobby {
 
     if (this.context.players.filter((p) => p.isReady).length > this.context.players.length / 2) {
       this.advancePhase();
+    } else {
+      this.broadcastLobbyState();
     }
   }
 
@@ -181,13 +183,12 @@ export class Lobby {
     const state = {
       lobbyId: this.context.lobbyId,
       players: this.context.players.map(({ socket, ...rest }) => rest),
+      settings: this.settings,
       phase: this.phase,
       gameIndex: this.gameIndex,
     };
-    console.log(`Broadcasting state`);
-    console.log(state);
-    this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("updateLobbyState", state);
-    this.context.io.to(this.context.lobbyId + "_HOST").emit("updateLobbyState", state);
+    this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("lobby:updateState", state);
+    this.context.io.to(this.context.lobbyId + "_HOST").emit("lobby:updateState", state);
   }
 
   /*

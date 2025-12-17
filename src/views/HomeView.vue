@@ -4,16 +4,16 @@
     <div v-if="isConnected" class="home-container">
       <RetroText>DRINK N' DRAW</RetroText>
       <div class="menu">
-        <p>Lobby Code</p>
+        <h2>{{ $t("lobby.lobbyCode") }}</h2>
         <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
-        <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
+        <p v-if="errorMsg" class="error-msg">{{ $t(`lobby.lobbyUnavailable.${errorMsg}`) }}</p>
         <br />
         <br />
         <button @click="tryJoinGame" :disabled="lobbyCode.length == 0">Join game</button>
         <div>
-          <p>
+          <h3>
             If you want to host a game press <span class="create" @click="createGame">here</span>
-          </p>
+          </h3>
         </div>
       </div>
     </div>
@@ -38,16 +38,16 @@ export default {
     this.isConnected = socket.connected;
     socket.on("connect", () => (this.isConnected = true));
     socket.on("disconnect", () => (this.isConnected = false));
-    socket.on("checkLobbyCodeResponse", (resp) => this.onLobbyResponse(resp));
+    socket.on("lobby:checkCodeResponse", (resp) => this.onLobbyResponse(resp));
   },
   beforeUnmount() {
     socket.off("connect");
     socket.off("disconnect");
-    socket.off("checkLobbyCodeResponse");
+    socket.off("lobby:checkCodeResponse");
   },
   methods: {
     tryJoinGame() {
-      socket.emit("checkLobbyCode", this.lobbyCode);
+      socket.emit("lobby:checkCode", this.lobbyCode);
     },
     onLobbyResponse(resp) {
       console.log(resp);
