@@ -6,9 +6,10 @@
     <div v-if="debug.showDebug">
       <div class="debug-box">
         <p>Connected: {{ context.isConnected }}</p>
-        <p>LobbyID: {{ context.state?.lobbyId }}</p>
+        <p>LobbyID: {{ context.lobbyId }}</p>
         <p>Phase: {{ context.state?.phase ?? "undefined" }}</p>
         <p>Host: {{ context.isHost }}</p>
+        <p>PlayerID: {{ context.playerId }}</p>
         <p>Players: {{ context.state?.players.map((x) => x.name) }}</p>
         <p>Environment: {{ env }}</p>
         <p>Mobile: {{ isMobile }}</p>
@@ -21,6 +22,8 @@
 
       <div class="debug-box">
         <button @click="advance" :disabled="!context.isHost">Advance</button>
+        <input type="number" v-model="debug.gameIndex" />
+        <button @click="startMinigame" :disabled="!context.isHost">Start Game</button>
       </div>
     </div>
   </div>
@@ -39,7 +42,9 @@
             <h4>{{ lobby.id }}</h4>
             <p>Players: {{ lobby.playerCount }}</p>
             <button @click="joinLobbyAsHost(lobby.id)">Host</button>
-            <button @click="joinLobby(lobby.id, 'player_' + Math.floor(Math.random() * 1000))">
+            <button
+              @click="joinLobby(lobby.id, null, 'player_' + Math.floor(Math.random() * 1000))"
+            >
               player
             </button>
           </div>
@@ -72,6 +77,7 @@ import { Flag } from "vue-flag-icon/components";
 import Mascot from "../components/Mascot.vue";
 import { useDevice } from "../UseDevice.js";
 import ResultPlayerView from "./ResultPlayerView.vue";
+import { DefaultAvatar } from "../components/Avatar.vue";
 
 export default {
   name: "GameView",
@@ -85,6 +91,7 @@ export default {
         showDebug: false,
         incomingMessages: [],
         availableLobbies: [],
+        gameIndex: 0,
       },
     };
   },
@@ -110,15 +117,22 @@ export default {
     socket.on("lobby:joinResponse", (response) => {
       context.isHost = false;
       context.isConnected = true;
+      context.lobbyId = response.lobbyId;
+      context.playerId = response.playerId;
+
+      console.log(response);
+      localStorage.setItem("playerId", response.playerId);
     });
     socket.on("lobby:joinHostResponse", (response) => {
       context.isHost = true;
       context.isConnected = true;
+      context.lobbyId = response.lobbyId;
     });
     socket.on("lobby:updateState", (state) => {
       context.state = state;
     });
 
+    console.log(this.$route);
     const queryLobbyId = this.$route.query.id;
     const queryPlayerName = this.$route.query.name ?? "Unknown player";
     const queryMode = this.$route.query.mode ?? "client";
@@ -128,7 +142,13 @@ export default {
       if (queryMode == "host") {
         this.joinLobbyAsHost(queryLobbyId);
       } else {
-        this.joinLobby(queryLobbyId, queryPlayerName);
+        const avatar = sessionStorage.getItem("avatar");
+        console.log(avatar);
+        const avatarSettings = avatar != null ? JSON.parse(avatar) : DefaultAvatar;
+        console.log(avatarSettings);
+
+        const playerId = localStorage.getItem("playerId");
+        this.joinLobby(queryLobbyId, playerId, queryPlayerName, avatarSettings);
       }
     }
 
@@ -160,14 +180,17 @@ export default {
 
       socket.emit("debug:getAllLobbies");
     },
-    joinLobby(lobbyId, name) {
-      socket.emit("lobby:joinAsPlayer", lobbyId, name);
+    joinLobby(lobbyId, playerId, name, avatarSettings = DefaultAvatar) {
+      socket.emit("lobby:joinAsPlayer", lobbyId, playerId, name, avatarSettings);
     },
     joinLobbyAsHost(lobbyId) {
       socket.emit("lobby:joinAsHost", lobbyId);
     },
     advance() {
       socket.emit("lobby:advancePhase");
+    },
+    startMinigame() {
+      socket.emit("debug:startMinigame", this.debug.gameIndex);
     },
   },
 };
@@ -237,7 +260,8 @@ export default {
   padding: 5px;
   width: 50%;
 }
-.debug-container button {
+.debug-container input,
+button {
   pointer-events: all;
 }
 .debug-container p {

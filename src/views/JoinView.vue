@@ -68,6 +68,7 @@ export default {
   },
   methods: {
     joinGame() {
+      sessionStorage.setItem("avatar", JSON.stringify(this.avatarSettings));
       this.$router.push({
         path: "/game",
         query: {

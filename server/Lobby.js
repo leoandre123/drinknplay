@@ -1,9 +1,8 @@
 import { Player } from "./models/Player.js";
 import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
-import { RacingGame } from "./minigames/RacingGame.js";
-import { KahootGame } from "./minigames/KahootGame.js";
-import { DrawingGame } from "./minigames/drawingGame.js";
 import { DefaultSettings } from "../shared/GameSettings.js";
+import { GenerateID } from "./Utils.js";
+import { ALL_GAMES } from "./GamesRegistry.js";
 
 export class Lobby {
   constructor(io, lobbyId, settings = DefaultSettings) {
@@ -13,24 +12,50 @@ export class Lobby {
     this.settings = settings;
   }
 
-  onPlayerJoined(socket, name) {
-    console.log(`${name} joined lobby '${this.context.lobbyId}'`);
-    socket.join(this.context.lobbyId + "_PLAYERS");
-    socket.data.lobbyId = this.context.lobbyId;
+  getPlayer(id) {
+    if (!id) return undefined;
+    return this.context.players.find((x) => x.id == id);
+  }
 
+  onPlayerJoined(socket, playerId, name, avatarSettings) {
+    console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
+    let player = this.getPlayer(playerId);
+    const isNewPlayer = player == undefined;
+
+    if (!isNewPlayer) {
+      console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
+
+      player.connected = false;
+      player.disconnectedAt = null;
+      player.socket = socket;
+      clearTimeout(player.disconnectTimer);
+    } else {
+      console.log(`${name} joined lobby '${this.context.lobbyId}'`);
+
+      playerId = GenerateID(5);
+      player = new Player(name, playerId, socket, avatarSettings);
+      this.context.players.push(player);
+    }
+
+    socket.join(this.context.lobbyId + "_PLAYERS");
     socket.on("results:fillGlassIndex", (id) => this.onGlassFilled(id));
     socket.on("ready", (isReady) => {
-      this.onPlayerReady(socket.id, isReady);
+      this.onPlayerReady(playerId, isReady);
     });
 
-    socket.emit("lobby:joinResponse", this.context.lobbyId);
+    socket.data.lobbyId = this.context.lobbyId;
+    socket.data.playerId = playerId;
 
-    const player = new Player(name, socket.id, socket);
+    socket.emit("lobby:joinResponse", {
+      lobbyId: this.context.lobbyId,
+      playerId: playerId,
+    });
 
-    this.context.players.push(player);
     this.broadcastLobbyState();
     if (this.phase == "game") {
-      this.currentGame?.onPlayerJoined(player);
+      if (isNewPlayer) {
+        this.currentGame?.onPlayerJoined(player);
+      }
       this.currentGame?.registerListeners(player.socket);
     }
   }
@@ -47,11 +72,25 @@ export class Lobby {
   }
 
   onPlayerDisconnected(playerId) {
+    const player = this.getPlayer(playerId);
+    if (!player) return;
+
+    player.connected = false;
+    player.disconnectedAt = Date.now();
+    player.socket = null;
+
+    player.disconnectTimer = setTimeout(() => {
+      this.onPlayerLeft(playerId);
+    }, 5000);
+  }
+
+  onPlayerLeft(playerId) {
     const playerIndex = this.context.players.findIndex((x) => x.id == playerId);
     if (playerIndex == -1) return;
     const playersToRemove = this.context.players.splice(playerIndex);
-    console.log(`${playersToRemove.name} left the lobby '${this.context.lobbyId}'`);
+
     if (playersToRemove.length != 0) {
+      console.log(`${playersToRemove[0].name} left the lobby '${this.context.lobbyId}'`);
       this.broadcastLobbyState();
       if (this.phase == "game") {
         this.currentGame?.onPlayerDisconnected(playersToRemove[0]);
@@ -97,7 +136,7 @@ export class Lobby {
   }
 
   startSpin() {
-    const gameIndex = Math.floor(Math.random() * 3);
+    const gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
 
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
@@ -108,17 +147,7 @@ export class Lobby {
   selectGame(gameIndex) {
     console.log(`Selecting game: ${gameIndex}`);
     this.gameIndex = gameIndex;
-    switch (gameIndex) {
-      case 0:
-        this.currentGame = new RacingGame();
-        break;
-      case 1:
-        this.currentGame = new KahootGame();
-        break;
-      case 2:
-        this.currentGame = new DrawingGame();
-        break;
-    }
+    this.currentGame = new ALL_GAMES[gameIndex]();
   }
 
   startLoadingScreen() {

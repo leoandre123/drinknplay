@@ -9,7 +9,7 @@
         </h1>
         <div>
           <div v-for="player in context.state.players" class="player">
-            <Avatar />
+            <Avatar :settings="player.avatarSettings" />
             <p>
               {{ player.name }}
             </p>
@@ -48,7 +48,10 @@
         </p>
       </div>
     </div>
-    <div v-if="!context.isHost" class="waiting">{{ $t("lobby.waitingForHost") }}...</div>
+    <div v-if="!context.isHost" class="waiting">
+      <p>{{ context.getCurrentPlayer()?.name }} - {{ context.getCurrentPlayer()?.id }}</p>
+      <p>{{ $t("lobby.waitingForHost") }}...</p>
+    </div>
   </RetroContainer>
 </template>
 

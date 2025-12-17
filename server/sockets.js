@@ -24,8 +24,8 @@ function sockets(io, socket, lobbyManager) {
     socket.emit("lobby:created", lobbyCode);
   });
 
-  socket.on("lobby:joinAsPlayer", function (lobbyCode, name) {
-    lobbyManager.getLobby(lobbyCode)?.onPlayerJoined(socket, name);
+  socket.on("lobby:joinAsPlayer", function (lobbyCode, playerId, name, avatarSettings) {
+    lobbyManager.getLobby(lobbyCode)?.onPlayerJoined(socket, playerId, name, avatarSettings);
   });
 
   socket.on("lobby:joinAsHost", function (lobbyCode) {
@@ -33,7 +33,7 @@ function sockets(io, socket, lobbyManager) {
   });
 
   socket.on("disconnect", function () {
-    lobbyManager.getLobby(socket.data.lobbyId)?.onPlayerDisconnected(socket.id);
+    lobbyManager.getLobby(socket.data.lobbyId)?.onPlayerDisconnected(socket.data.playerId);
   });
 
   socket.on("debug:getAllLobbies", function () {
@@ -46,6 +46,11 @@ function sockets(io, socket, lobbyManager) {
         };
       })
     );
+  });
+  socket.on("debug:startMinigame", function (gameIndex) {
+    const lobby = lobbyManager.getLobby(socket.data.lobbyId);
+    lobby?.selectGame(gameIndex);
+    lobby?.startLoadingScreen();
   });
 }
 
