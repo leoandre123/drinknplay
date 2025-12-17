@@ -1,19 +1,5 @@
 <template>
-  <svg view-box="0 0 100 100" fill="none">
-    <path :d="`M 15 50 A25 25 0 1 1 85 50`" stroke="orange" stroke-width="30" />
-    <path
-      :d="`M 15 50 A25 25 0 1 1 85 50`"
-      stroke="green"
-      stroke-width="30"
-      stroke-dasharray="22 1000"
-    />
-    <path
-      :d="`M 15 50 A25 25 0 1 1 85 50`"
-      stroke="red"
-      stroke-width="30"
-      stroke-dasharray="22 88"
-      stroke-dashoffset="22"
-    />
+  <svg viewBox="0 0 100 50" fill="none" class="view-box-drunkometer">
     <path
       v-for="(l, i) in levels"
       :d="`M ${50 + Math.cos(l.start) * 35} ${50 + Math.sin(l.start) * 35}
@@ -87,4 +73,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.view-box-drunkometer {
+  overflow: hidden;
+}
+
+svg {
+  display: block;
+}
+</style>

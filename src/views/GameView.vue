@@ -1,70 +1,71 @@
 <template>
   <div class="debug-container">
-    <button @click="showDebug = !showDebug">{{ showDebug ? "Hide debug" : "Show debug" }}</button>
-    <div v-if="showDebug">
+    <button @click="debug.showDebug = !debug.showDebug">
+      {{ debug.showDebug ? "Hide debug" : "Show debug" }}
+    </button>
+    <div v-if="debug.showDebug">
       <div class="debug-box">
         <p>Connected: {{ context.isConnected }}</p>
+        <p>LobbyID: {{ context.lobbyId }}</p>
         <p>Phase: {{ context.state?.phase ?? "undefined" }}</p>
         <p>Host: {{ context.isHost }}</p>
+        <p>PlayerID: {{ context.playerId }}</p>
         <p>Players: {{ context.state?.players.map((x) => x.name) }}</p>
+        <p>Environment: {{ env }}</p>
+        <p>Mobile: {{ isMobile }}</p>
+        <p>SocketID: {{ socket.id }}</p>
+        <p>You: {{ context.getCurrentPlayer() }}</p>
       </div>
       <div class="debug-box">
-        <p v-for="msg in incomingMessages">{{ msg }}</p>
+        <p v-for="msg in debug.incomingMessages">{{ msg }}</p>
       </div>
 
       <div class="debug-box">
         <button @click="advance" :disabled="!context.isHost">Advance</button>
+        <input type="number" v-model="debug.gameIndex" />
+        <button @click="startMinigame" :disabled="!context.isHost">Start Game</button>
       </div>
     </div>
   </div>
-  <div class="language-switcher">
-    <div @click="switchLang('sv')"><Flag iso="se" :squared="false" /></div>
-    <div @click="switchLang('en')"><Flag iso="gb" :squared="false" /></div>
+
+  <div class="mascot-container">
+    <Mascot />
   </div>
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
-        <p>Not connected</p>
-        <button @click="joinLobby('kahoot', 'player_' + Math.floor(Math.random() * 1000))">
-          Join kahoot game as player
-        </button>
-        <br />
-        <button @click="joinLobbyAsHost('kahoot')">Join kahoot game as host</button>
-        <br />
-        <br />
-        <button @click="joinLobby('race', 'player_' + Math.floor(Math.random() * 1000))">
-          Join race game as player
-        </button>
-        <br />
-        <button @click="joinLobbyAsHost('race')">Join race game as host</button>
-        <br />
-        <br />
-        <button @click="joinLobbyAsHost('result')">Join result as host</button>
-        <br />
-        <button @click="joinLobby('result', 'player_' + Math.floor(Math.random() * 1000))">
-          Join result as player
-        </button>
-        <br />
-        <br />
-        <button @click="joinLobbyAsHost('lobby')">Join lobby as host</button>
-        <br />
-        <button @click="joinLobby('lobby', 'player_' + Math.floor(Math.random() * 1000))">
-          Join lobby as player
-        </button>
+        <h1>Not connected</h1>
+        <h3>Available Lobbies</h3>
+        <button @click="socket.emit('debug:getAllLobbies')">Refresh</button>
+        <div class="debug-lobbies">
+          <div v-for="lobby in debug.availableLobbies" class="debug-lobby">
+            <h4>{{ lobby.id }}</h4>
+            <p>Players: {{ lobby.playerCount }}</p>
+            <button @click="joinLobbyAsHost(lobby.id)">Host</button>
+            <button
+              @click="joinLobby(lobby.id, null, 'player_' + Math.floor(Math.random() * 1000))"
+            >
+              player
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
   <div v-if="context.isConnected" class="game-container">
     <LobbyView v-if="context.state?.phase == 'lobby'" />
     <SlotView v-if="context.state?.phase == 'slot'" />
     <LoadingView v-if="context.state?.phase == 'loading'" />
     <MinigameView v-if="context.state?.phase == 'game'" />
-    <ResultView v-if="context.state?.phase == 'result'" />
+    <template v-if="context.state?.phase == 'result'">
+      <ResultView v-if="context.isHost" />
+      <ResultPlayerView v-if="!context.isHost" />
+    </template>
   </div>
 </template>
 
 <script>
-import { useI18n } from "vue-i18n";
 import LoadingView from "./LoadingView.vue";
 import MinigameView from "./MinigameView.vue";
 import SlotView from "./SlotView.vue";
@@ -73,74 +74,123 @@ import LobbyView from "./LobbyView.vue";
 import { socket } from "../socket";
 import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
+import Mascot from "../components/Mascot.vue";
+import { useDevice } from "../UseDevice.js";
+import ResultPlayerView from "./ResultPlayerView.vue";
+import { DefaultAvatar } from "../components/Avatar.vue";
 
 export default {
   name: "GameView",
 
   data() {
     return {
+      socket,
       context,
-      showDebug: false,
-      incomingMessages: [],
+      isAngry: false,
+      debug: {
+        showDebug: false,
+        incomingMessages: [],
+        availableLobbies: [],
+        gameIndex: 0,
+      },
     };
   },
-  setup() {
-    const { locale } = useI18n();
-    function switchLang(lang) {
-      locale.value = lang;
-    }
-    return { locale, switchLang };
+  computed: {
+    env() {
+      return import.meta.env.MODE;
+    },
   },
-  components: { MinigameView, LoadingView, SlotView, ResultView, LobbyView, Flag },
+  setup() {
+    const { isMobile } = useDevice();
+  },
+  components: {
+    MinigameView,
+    LoadingView,
+    SlotView,
+    ResultView,
+    ResultPlayerView,
+    LobbyView,
+    Flag,
+    Mascot,
+  },
   mounted() {
-    socket.on("joinLobbyResponse", (response) => {
-      console.log("resp");
+    socket.on("lobby:joinResponse", (response) => {
       context.isHost = false;
       context.isConnected = true;
+      context.lobbyId = response.lobbyId;
+      context.playerId = response.playerId;
+
+      console.log(response);
+      localStorage.setItem("playerId", response.playerId);
     });
-    socket.on("joinLobbyHostResponse", (response) => {
-      console.log("resp");
+    socket.on("lobby:joinHostResponse", (response) => {
       context.isHost = true;
       context.isConnected = true;
+      context.lobbyId = response.lobbyId;
     });
-    socket.on("updateLobbyState", (state) => {
-      console.log("state update");
-      console.log(state);
+    socket.on("lobby:updateState", (state) => {
       context.state = state;
     });
 
-    socket.onAny((event, ...args) => {
-      if (
-        this.incomingMessages.length != 0 &&
-        this.incomingMessages[this.incomingMessages.length - 1].name == event
-      ) {
-        this.incomingMessages[this.incomingMessages.length - 1].count++;
-      } else {
-        this.incomingMessages.push({ name: event, count: 1 });
-      }
-      if (this.incomingMessages.length > 10) this.incomingMessages.shift();
-    });
-
+    console.log(this.$route);
     const queryLobbyId = this.$route.query.id;
-    const queryPlayerName = this.$route.query.name;
+    const queryPlayerName = this.$route.query.name ?? "Unknown player";
+    const queryMode = this.$route.query.mode ?? "client";
+
     console.log(queryLobbyId);
-    if (queryLobbyId && queryPlayerName) {
-      this.joinLobby(queryLobbyId, queryPlayerName);
+    if (queryLobbyId) {
+      if (queryMode == "host") {
+        this.joinLobbyAsHost(queryLobbyId);
+      } else {
+        const avatar = sessionStorage.getItem("avatar");
+        console.log(avatar);
+        const avatarSettings = avatar != null ? JSON.parse(avatar) : DefaultAvatar;
+        console.log(avatarSettings);
+
+        const playerId = localStorage.getItem("playerId");
+        this.joinLobby(queryLobbyId, playerId, queryPlayerName, avatarSettings);
+      }
     }
+
+    this.setupDebug();
   },
   beforeUnmount() {
-    socket.off("joinLobbyResponse");
-    socket.off("updateLobbyState");
+    socket.off("lobby:joinResponse");
+    socket.off("lobby:joinHostResponse");
+    socket.off("lobby:updateState");
   },
   methods: {
-    joinLobby(lobbyId, name) {
-      socket.emit("joinLobby", lobbyId, name);
+    setupDebug() {
+      socket.on("debug:allLobbies", (lobbies) => {
+        console.log(lobbies);
+        this.debug.availableLobbies = lobbies;
+      });
+
+      socket.onAny((event, ...args) => {
+        if (
+          this.debug.incomingMessages.length != 0 &&
+          this.debug.incomingMessages[this.debug.incomingMessages.length - 1].name == event
+        ) {
+          this.debug.incomingMessages[this.debug.incomingMessages.length - 1].count++;
+        } else {
+          this.debug.incomingMessages.push({ name: event, count: 1 });
+        }
+        if (this.debug.incomingMessages.length > 10) this.debug.incomingMessages.shift();
+      });
+
+      socket.emit("debug:getAllLobbies");
+    },
+    joinLobby(lobbyId, playerId, name, avatarSettings = DefaultAvatar) {
+      socket.emit("lobby:joinAsPlayer", lobbyId, playerId, name, avatarSettings);
     },
     joinLobbyAsHost(lobbyId) {
-      socket.emit("joinLobbyHost", lobbyId);
+      socket.emit("lobby:joinAsHost", lobbyId);
     },
     advance() {
-      socket.emit("advancePhase");
+      socket.emit("lobby:advancePhase");
+    },
+    startMinigame() {
+      socket.emit("debug:startMinigame", this.debug.gameIndex);
     },
   },
 };
@@ -148,33 +198,10 @@ export default {
 
 <style scoped>
 .game-container {
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   justify-items: center;
   align-content: center;
-  background-image: radial-gradient(
-    circle farthest-corner at 10% 20%,
-    rgba(0, 51, 102, 1) 0%,
-    rgba(0, 102, 204, 1) 49.5%,
-    rgba(0, 191, 255, 1) 90%
-  );
-}
-
-.language-switcher {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  gap: 1rem;
-  font-size: 2rem;
-}
-.language-switcher span {
-  cursor: pointer;
-  border: 0.1rem solid black;
-  border-radius: 0.25rem;
-}
-.language-switcher span:hover {
-  transform: scale(1.1);
 }
 
 .connection-warning {
@@ -184,8 +211,7 @@ export default {
   align-content: center;
 }
 .connection-warning > div {
-  width: 30vw;
-  height: 30vh;
+  width: 50vw;
   align-items: center;
   align-content: center;
   background-color: red;
@@ -216,10 +242,35 @@ export default {
   pointer-events: none;
   touch-action: none;
 }
-.debug-container button {
+
+.debug-lobbies {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.debug-lobby {
+  padding: 0.5rem;
+  background-color: brown;
+  position: relative;
+  margin: 0;
+}
+.debug-lobby button {
+  padding: 5px;
+  width: 50%;
+}
+.debug-container input,
+button {
   pointer-events: all;
 }
 .debug-container p {
   margin: 0;
+}
+
+.mascot-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 </style>

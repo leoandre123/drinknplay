@@ -1,3 +1,9 @@
 {
-    "startGame": "Start Game"
+    "startGame": "Start Game",
+    "drunknessLevel": [
+        "Sober",
+        "Tipsy",
+        "Hammered",
+        "Black out drunk"
+    ]
 }

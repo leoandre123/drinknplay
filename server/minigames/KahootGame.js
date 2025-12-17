@@ -64,7 +64,9 @@ export class KahootGame extends Minigame {
   }
 
   registerListeners(socket) {
-    socket.on("submitAnswer", (index, time) => this.onAnswerSubmitted(socket.id, index, time));
+    socket.on("submitAnswer", (index, time) =>
+      this.onAnswerSubmitted(socket.data.playerId, index, time)
+    );
   }
   unregisterListeners(socket) {
     socket.off("submitAnswer");
@@ -73,6 +75,7 @@ export class KahootGame extends Minigame {
   start() {
     this.startQuestion();
   }
+
   stop() {}
 
   onAnswerSubmitted(playerId, answerIndex, time) {
@@ -102,7 +105,13 @@ export class KahootGame extends Minigame {
         this.currentQuestionIndex = 0;
         setTimeout(() => this.startQuestion(), 2000);
       } else {
-        this.onFinished();
+        const results = this.kahootPlayers.map((kp) => {
+          return {
+            id: kp.id,
+            score: kp.score,
+          };
+        });
+        this.onFinished(results);
       }
     } else {
       setTimeout(() => this.startQuestion(), 2000);

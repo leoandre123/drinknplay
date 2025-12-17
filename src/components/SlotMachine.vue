@@ -1,37 +1,19 @@
 <template>
-  <div class="slot-background">
-    <div class="slot-machine">
-      <div class="top-body">
-        <div>
-          <span class="label">MINIGAMES</span>
-        </div>
+  <div class="slot-machine-container">
+    <h1 class="glow">MINIGAMES</h1>
+    <div class="reels-container">
+      <div class="reels">
+        <svg class="reel-arrow reel-arrow-left" viewBox="0 0 100 100" width="100%" height="100%">
+          <polygon points="0,50 25,0 100,50 25,100" fill="red" />
+        </svg>
+        <SlotReel v-for="value in reelCount" ref="reel" :symbols="symbols" />
+        <svg class="reel-arrow reel-arrow-right" viewBox="0 0 100 100" width="100%" height="100%">
+          <polygon points="0,50 25,0 100,50 25,100" fill="red" />
+        </svg>
       </div>
-      <div class="main-body">
-        <div class="reels">
-          <svg
-            class="reel-arrow reel-arrow-left"
-            viewBox="0 0 100 100"
-            width="100%"
-            height="100%"
-          >
-            <polygon points="0,50 25,0 100,50 25,100" fill="red" />
-          </svg>
-          <SlotReel ref="reel1" :symbols="symbols" />
-          <SlotReel ref="reel2" :symbols="symbols" />
-          <SlotReel ref="reel3" :symbols="symbols" />
-          <svg
-            class="reel-arrow reel-arrow-right"
-            viewBox="0 0 100 100"
-            width="100%"
-            height="100%"
-          >
-            <polygon points="0,50 25,0 100,50 25,100" fill="red" />
-          </svg>
-        </div>
-        <div class="display">
-          <span class="label">{{ text }}</span>
-        </div>
-      </div>
+    </div>
+    <div class="display">
+      <span class="label">{{ text }}</span>
     </div>
   </div>
 </template>
@@ -45,7 +27,7 @@ export default {
   components: {
     SlotReel,
   },
-  props: { text: String, symbols: Array },
+  props: { text: String, symbols: Array, reelCount: { type: Number, default: 5 } },
   data() {
     return {};
   },
@@ -55,40 +37,19 @@ export default {
       return ((n % m) + m) % m;
     },
     spin(symbolIndex = 0) {
-      const MIN_SYMBOLS_1 = 50;
-      const MIN_SYMBOLS_2 = 75;
-      const MIN_SYMBOLS_3 = 100;
+      const MIN_SYMBOLS = 50;
       const MS_PER_SYMBOL = 25;
+      let time = 0;
+      for (let i = 0; i < this.reelCount; i++) {
+        const minSyms = MIN_SYMBOLS + i * 25;
+        const symsToRot =
+          minSyms +
+          this.mod(this.$refs.reel[i].currentPos - minSyms, this.symbols.length) -
+          symbolIndex;
 
-      const symbolsToRotate1 =
-        MIN_SYMBOLS_1 +
-        this.mod(
-          this.$refs.reel1.currentPos - MIN_SYMBOLS_1,
-          this.symbols.length
-        ) -
-        symbolIndex;
-      const symbolsToRotate2 =
-        MIN_SYMBOLS_2 +
-        this.mod(
-          this.$refs.reel2.currentPos - MIN_SYMBOLS_2,
-          this.symbols.length
-        ) -
-        symbolIndex;
-      const symbolsToRotate3 =
-        MIN_SYMBOLS_3 +
-        this.mod(
-          this.$refs.reel3.currentPos - MIN_SYMBOLS_3,
-          this.symbols.length
-        ) -
-        symbolIndex;
-
-      this.$refs.reel1.spin(Date.now(), symbolsToRotate1, MS_PER_SYMBOL);
-      this.$refs.reel2.spin(Date.now(), symbolsToRotate2, MS_PER_SYMBOL);
-      this.$refs.reel3.spin(Date.now(), symbolsToRotate3, MS_PER_SYMBOL);
-
-      const time =
-        Math.max(symbolsToRotate1, symbolsToRotate2, symbolsToRotate3) *
-        MS_PER_SYMBOL;
+        this.$refs.reel[i].spin(Date.now(), symsToRot, MS_PER_SYMBOL);
+        time = Math.max(time, symsToRot * MS_PER_SYMBOL);
+      }
 
       setTimeout(() => {
         this.$emit("spinFinished", symbolIndex);
@@ -99,60 +60,65 @@ export default {
 </script>
 
 <style scoped>
+.glow {
+  font-size: 5rem;
+  letter-spacing: 10px;
+  color: #fff;
+  font-family: "LimeLight Display";
+  -webkit-animation: glow 1s ease-in-out infinite alternate;
+  -moz-animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
+  width: auto;
+  background-color: darkmagenta;
+  margin: 1rem;
+  width: 50rem;
+  border: 0.2rem solid #fff;
+  border-radius: 2rem;
+  padding: 20px;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+}
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073,
+      0 0 60px #e60073, 0 0 70px #e60073;
+  }
+
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6,
+      0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+}
 div {
   box-shadow: #2e0f00 1 1;
 }
 
-.slot-machine {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.slot-background {
+.slot-machine-container {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgb(72, 32, 98) 0%, rgb(122, 37, 125) 100%);
   justify-items: center;
   align-content: center;
 }
 
-.top-body {
-  width: 80%;
-  aspect-ratio: 2/1;
-  overflow: hidden;
-}
-.top-body div {
-  background: #2e0f00;
-  width: calc(100%-2rem);
-  aspect-ratio: 1;
-  border: 1rem solid goldenrod;
-  border-style: ridge;
-  border-radius: 50% 50% 0 0;
-  overflow: hidden;
-}
-.top-body span {
-  height: 100%;
-  display: block;
-  transform: translateY(20%);
-}
-
-.main-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  background: linear-gradient(#2e0f00, #472c1e);
-
-  border: 1rem solid goldenrod;
-  border-style: ridge;
-  border-radius: 1rem;
+.reels-container {
+  border: 0.2rem solid #fff;
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
 }
 
 .reels {
   position: relative;
   display: flex;
   gap: 1rem;
-  border: 1rem solid goldenrod;
-  border-style: ridge;
+  background: #5c196f;
+  border: 1rem solid #f348ba;
+  border-style: outset;
   border-radius: 1rem;
+  place-self: center;
+  box-shadow: 0 0 3rem 0.5rem #f348ba;
 }
 .reel-arrow {
   position: absolute;
@@ -174,26 +140,17 @@ div {
 .display {
   background-color: #242527;
   border: 1rem solid #54544c;
-  border-style: ridge;
+  border-style: outset;
   border-radius: 1rem;
 }
 
 .label {
   color: #f7d67e;
-  font-size: 32px;
+  font-size: 2rem;
+  line-height: 2rem;
   font-weight: 900;
   -webkit-text-stroke: 1px #5d3b00;
-  text-shadow: 0 0 10px #0007;
-}
-
-.spin-button {
-  background-color: gold;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1.2rem;
+  text-shadow: 0 0 10px white;
 }
 
 .spin-button:hover {

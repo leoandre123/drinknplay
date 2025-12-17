@@ -6,8 +6,6 @@
       :text="text"
       @spin-finished="onSpinFinished"
     />
-    <button @click="spinWheel" :disabled="!context.isHost">Spin</button>
-    <button @click="advance" :disabled="!context.isHost">Advance</button>
   </div>
   <div v-if="!context.isHost">Look at the screen</div>
 </template>
@@ -20,8 +18,8 @@ import { context } from "../context";
 const availableGames = [
   { name: "Racing game", symbol: "🚗" },
   { name: "Questions game", symbol: "❓" },
+  { name: "Drink n' draw", symbol: "✍️" },
   { name: "Drink", symbol: "🍻" },
-  { name: "Draw and rate", symbol: "✍️" },
 ];
 
 export default {
@@ -66,5 +64,9 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

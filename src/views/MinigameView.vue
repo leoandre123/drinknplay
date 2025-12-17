@@ -11,12 +11,16 @@
       <div class="minigame-container">
         <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
         <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
+        <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+        <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
       </div>
     </div>
   </div>
   <div v-if="!context.isHost" class="client-container">
     <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
     <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
+    <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+    <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
   </div>
 </template>
 
@@ -26,6 +30,10 @@ import RacingControllerView from "./minigames/racing/RacingControllerView.vue";
 import { context } from "../context";
 import KahootView from "./minigames/kahoot/KahootView.vue";
 import KahootPlayerView from "./minigames/kahoot/KahootPlayerView.vue";
+import HostDrawingView from "./minigames/drawing/HostDrawingView.vue";
+import PlayerDrawingView from "./minigames/drawing/PlayerDrawingView.vue";
+import ReactionGame from "./minigames/reaction/ReactionGame.vue";
+import ReactionGamePlayerView from "./minigames/reaction/ReactionGamePlayerView.vue";
 
 export default {
   name: "MinigameView",
@@ -33,7 +41,16 @@ export default {
   data() {
     return { context };
   },
-  components: { RacingView, RacingControllerView, KahootView, KahootPlayerView },
+  components: {
+    RacingView,
+    RacingControllerView,
+    KahootView,
+    KahootPlayerView,
+    HostDrawingView,
+    PlayerDrawingView,
+    ReactionGame,
+    ReactionGamePlayerView,
+  },
   async created() {},
 
   methods: {},
@@ -51,7 +68,7 @@ h1 {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(90deg, #fdbb2d 0%, #3a1c71 100%);
+  background: linear-gradient(to right top, #782c64, #633260, #513558, #42364c, #37343e);
   display: flex;
   flex-direction: column;
   padding: 5rem;
@@ -60,8 +77,8 @@ h1 {
 
 .client-container {
   box-sizing: border-box;
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: flex;
 }
 
@@ -71,6 +88,7 @@ h1 {
   text-align: start;
   background: linear-gradient(90deg, #4b6bb744 0%, #1828485f 100%);
 }
+
 .title-bar h1 {
   margin: 0;
 }
@@ -87,10 +105,12 @@ h1 {
   background: linear-gradient(90deg, #4b6bb744 0%, #1828485f 100%);
   min-width: 10rem;
 }
+
 .minigame-container {
   background: linear-gradient(90deg, #4b6bb744 0%, #1828485f 100%);
   flex-grow: 1;
 }
+
 .minigame {
   width: 100%;
   height: 100%;

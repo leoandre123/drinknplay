@@ -6,5 +6,7 @@
     "player": {
         "players": "Players",
         "player": "Player"
-    }
+    },
+    "on": "On",
+    "off": "Off"
 }

@@ -6,5 +6,7 @@
     "player": {
         "players": "Spelare",
         "player": "Spelare"
-    }
+    },
+    "on": "På",
+    "off": "Av"
 }

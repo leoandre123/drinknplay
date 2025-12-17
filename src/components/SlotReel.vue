@@ -80,12 +80,11 @@ export default {
 
 <style scoped>
 .reel-container {
-  width: 100px;
-  height: 150px;
+  width: 16rem;
+  height: 20rem;
   perspective: 600px;
+  background: linear-gradient(0deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 100%);
   background: white;
-  border: 3px solid #222;
-  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -100,27 +99,27 @@ export default {
 .symbol {
   position: absolute;
   width: 100%;
-  height: 100px;
-  font-size: 3rem;
+  height: 12rem;
+  font-size: 6rem;
   text-align: center;
-  line-height: 100px;
+  line-height: 12rem;
   backface-visibility: hidden;
 }
 
 .symbol:nth-child(1) {
-  transform: translateY(-50%) rotateX(90deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(90deg) translateZ(10rem);
 }
 .symbol:nth-child(2) {
-  transform: translateY(-50%) rotateX(45deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(45deg) translateZ(10rem);
 }
 .symbol:nth-child(3) {
-  transform: translateY(-50%) rotateX(0deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(0deg) translateZ(10rem);
 }
 .symbol:nth-child(4) {
-  transform: translateY(-50%) rotateX(-45deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(-45deg) translateZ(10rem);
 }
 .symbol:nth-child(5) {
-  transform: translateY(-50%) rotateX(-90deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(-90deg) translateZ(10rem);
 }
 
 /* Top shadow */
@@ -130,9 +129,9 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 40px; /* adjust as needed */
+  height: 20%;
   background: linear-gradient(to bottom, rgb(0 0 0), rgb(6 0 0 / 0%) 80%);
-  pointer-events: none; /* clicks pass through */
+  pointer-events: none;
   z-index: 10;
 }
 
@@ -143,7 +142,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 40px;
+  height: 20%;
   background: linear-gradient(to top, rgb(0 0 0), rgb(6 0 0 / 0%) 80%);
   pointer-events: none;
   z-index: 10;
