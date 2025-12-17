@@ -22,5 +22,14 @@
             "If you draw better than the other players, that is good!",
             "The better you draw, the more points you get!"
         ]
+    },
+
+    {
+        "title": "Drink n' React",
+        "imageUri": "game_backgrounds/reaction.webp",
+        "tips": [
+            "React as fast as you can when the game starts",
+            "The faster you react, the more points you get!"
+        ]
     }
 ]

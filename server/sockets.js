@@ -52,6 +52,19 @@ function sockets(io, socket, lobbyManager) {
     lobby?.selectGame(gameIndex);
     lobby?.startLoadingScreen();
   });
+
+socket.on("reaction:submit", function (lobbyCode, amount, name) {
+  const lobby = lobbyManager.getLobby(lobbyCode);
+  if (!lobby) return;
+
+  // Skicka bara till host-rummet
+  io.to(lobbyCode + "_HOST").emit("reaction:hostUpdate", {
+    amount,
+    name, 
+    playerId: socket.id
+  });
+});
+
 }
 
 export { sockets };
