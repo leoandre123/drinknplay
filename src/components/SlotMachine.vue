@@ -12,9 +12,7 @@
         </svg>
       </div>
     </div>
-    <div class="display">
-      <span class="label">{{ text }}</span>
-    </div>
+    <h1 class="glow" style="font-size: 2rem">{{ text }}</h1>
   </div>
 </template>
 
@@ -27,7 +25,7 @@ export default {
   components: {
     SlotReel,
   },
-  props: { text: String, symbols: Array, reelCount: { type: Number, default: 5 } },
+  props: { text: String, symbols: Array, reelCount: { type: Number, default: 3 } },
   data() {
     return {};
   },
@@ -64,7 +62,6 @@ export default {
   font-size: 5rem;
   letter-spacing: 10px;
   color: #fff;
-  font-family: "LimeLight Display";
   -webkit-animation: glow 1s ease-in-out infinite alternate;
   -moz-animation: glow 1s ease-in-out infinite alternate;
   animation: glow 1s ease-in-out infinite alternate;
@@ -96,7 +93,7 @@ div {
 .slot-machine-container {
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgb(72, 32, 98) 0%, rgb(122, 37, 125) 100%);
+  /*background: radial-gradient(circle, rgb(72, 32, 98) 0%, rgb(122, 37, 125) 100%);*/
   justify-items: center;
   align-content: center;
 }

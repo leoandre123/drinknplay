@@ -1,19 +1,22 @@
 <template>
-  <div v-if="context.isHost" class="slot-container">
-    <SlotMachine
-      ref="slotRef"
-      :symbols="availableGames.map((x) => x.symbol)"
-      :text="text"
-      @spin-finished="onSpinFinished"
-    />
-  </div>
-  <div v-if="!context.isHost">Look at the screen</div>
+  <NewRetroContainer>
+    <div v-if="context.isHost" class="slot-container">
+      <SlotMachine
+        ref="slotRef"
+        :symbols="availableGames.map((x) => x.symbol)"
+        :text="text"
+        @spin-finished="onSpinFinished"
+      />
+    </div>
+    <div v-if="!context.isHost">Look at the screen</div>
+  </NewRetroContainer>
 </template>
 
 <script>
 import SlotMachine from "../components/SlotMachine.vue";
 import { socket } from "../socket";
 import { context } from "../context";
+import NewRetroContainer from "../components/NewRetroContainer.vue";
 
 const availableGames = [
   { name: "Racing game", symbol: "🚗" },
@@ -32,7 +35,7 @@ export default {
       text: "Spin",
     };
   },
-  components: { SlotMachine },
+  components: { SlotMachine, NewRetroContainer },
   mounted() {
     socket.on("startSpin", this.onStartSpin);
   },

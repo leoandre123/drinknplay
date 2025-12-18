@@ -171,7 +171,7 @@ export class Lobby {
   }
 
   finishGame(results) {
-    for (let res of results) {
+    for (let res of results ?? []) {
       this.context.players.find((x) => x.id == res.id).score += res.score;
     }
 
