@@ -1,5 +1,5 @@
 <template>
-    <div class="drawing-canvas" v-if="isDrawingModeActive">
+    <div class="drawing-canvas" v-if="gamePhase=='drawing'">
         <div class="drawing-title">Drink n' Draw</div>
         <DrawingCanvas :options="drawingOptions" ref="canvas">
         </DrawingCanvas>
@@ -7,7 +7,7 @@
         </DrawingTools>
     </div>
 
-    <div class="rating" v-if = "!isDrawingModeActive">
+    <div class="rating" v-if = "gamePhase=='voting'">
         <RatingTool>
         </RatingTool>
     </div>
@@ -33,14 +33,21 @@ export default {
                 isBucketSelected: false,
             },
             isDrawingModeActive: true,
+            gamePhase:"",
             canvasPNG: null
         };
+    },
+    mounted(){
+        socket.on("gamePhase", (phaseFromServer) => {this.gamePhase=phaseFromServer;
+            submitted
+        })
     },
     methods: {
         saveCanvas() {
             this.canvasPNG = this.$refs.canvas.getCanvas();
             socket.emit("updateCanvas", this.canvasPNG);
         }
+        
     }
 };
 </script>

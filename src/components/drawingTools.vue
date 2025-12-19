@@ -100,6 +100,7 @@ export default {
 }
 
 .save-button{
+color: green;
 margin-left: 2rem;
 }
 </style>
