@@ -6,7 +6,6 @@
       <DrinkingGlass :level="player.glassFillLevel" />
     </div>
     <div class="drunkometer">
-      <div class="drunkometer-title">Drunkometer</div>
       <Drunkometer :level="player.drunkness" />
     </div>
     <div class="place" :class="`place-${place}`">
@@ -44,8 +43,7 @@ p {
   border: 3px, groove, var(--Caribbean_Green);
   background-color: var(--French_Rose);
   border-radius: 10px;
-  height: auto;
-  width: 20rem;
+  aspect-ratio: 3/4;
   place-items: center;
   margin: 0;
   gap: 1rem;
@@ -55,7 +53,7 @@ p {
 }
 
 .player-name {
-  font-size: 3rem;
+  font-size: 1.8rem;
   font-family: "Science Gothic", sans-serif;
   color: var(--Metallic_Yellow);
   text-shadow: 3px 3px black;
@@ -64,23 +62,19 @@ p {
 }
 
 .player-score {
-  font-size: 3rem;
+  font-size: 1rem;
   font-family: "Honk";
   letter-spacing: 5px;
 }
 
 .drinking-glass {
-  place-items: center;
-  width: 10rem;
-  display: block;
+  aspect-ratio: 1;
+  flex-grow: 1;
 }
 
 .drunkometer {
-  width: 15rem;
-  margin: 0px;
-  padding: 0px;
-  display: block;
-  place-items: center;
+  aspect-ratio: 2/1;
+  flex-grow: 1;
 }
 
 .drunkometer-title {

@@ -50,13 +50,13 @@ export default {
   },
   methods: {
     tryJoinGame() {
-      socket.emit("lobby:checkCode", this.lobbyCode);
+      socket.emit("lobby:checkCode", this.lobbyCode.toUpperCase());
     },
     onLobbyResponse(resp) {
       console.log(resp);
       if (resp.available) {
         this.$router.push({
-          path: `/join/${this.lobbyCode}`,
+          path: `/join/${this.lobbyCode.toUpperCase()}`,
         });
       } else {
         this.errorMsg = resp.reason;

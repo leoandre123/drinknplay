@@ -38,7 +38,7 @@ export class Lobby {
     }
 
     socket.join(this.context.lobbyId + "_PLAYERS");
-    socket.on("results:fillGlassIndex", (id) => this.onGlassFilled(id));
+    socket.on("results:fillGlass", (id) => this.onGlassFilled(id));
     socket.on("ready", (isReady) => {
       this.onPlayerReady(playerId, isReady);
     });
@@ -185,6 +185,7 @@ export class Lobby {
   }
 
   onGlassFilled(id) {
+    console.log("FILL GLASS OF PLAYER: " + id);
     const player = this.context.players.find((x) => x.id == id);
     player.glassFillLevel += 0.2; //TODO: Based on setting
 
@@ -201,7 +202,7 @@ export class Lobby {
     const player = this.context.players.find((x) => x.id == id);
     player.isReady = isReady;
 
-    if (this.context.players.filter((p) => p.isReady).length > this.context.players.length / 2) {
+    if (this.context.players.filter((p) => p.isReady).length >= this.context.players.length / 2) {
       this.advancePhase();
     } else {
       this.broadcastLobbyState();

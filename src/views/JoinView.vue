@@ -23,16 +23,19 @@
           <button @click="avatarSettings.body = mod(avatarSettings.body + 1, 3)">&gt;</button>
         </div>
       </div>
-
+      <div class="randomize-avatar">
+        <button @click="randomizeAvatar">Randomize</button>
+      </div>
       <br />
       <button :disabled="name.length == 0" @click="joinGame">Join game</button>
     </div>
   </div>
-  <div v-if="lobbyAvailable === false">LOBBY STARTED</div>
+  <div v-if="lobbyAvailable === false">{{ unavailableReason }}</div>
 </template>
 
 <script>
-import { mod } from "../../shared/MathHelper";
+import { GetRandomAvatar } from "@shared/AvatarHelper";
+import { mod } from "@shared/MathHelper";
 import Avatar from "../components/Avatar.vue";
 import { socket } from "../socket";
 
@@ -42,6 +45,7 @@ export default {
   data: function () {
     return {
       lobbyAvailable: undefined,
+      unavailableReason: "unknown",
       lobbyId: undefined,
       name: "",
       mod,
@@ -76,6 +80,9 @@ export default {
           name: this.name,
         },
       });
+    },
+    randomizeAvatar() {
+      this.avatarSettings = GetRandomAvatar();
     },
   },
 };
@@ -157,5 +164,9 @@ export default {
   height: 3rem;
   width: 3rem;
   color: black;
+}
+
+.randomize-avatar {
+  margin-top: 1rem;
 }
 </style>

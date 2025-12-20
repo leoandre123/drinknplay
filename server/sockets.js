@@ -1,3 +1,6 @@
+import { PlayerBot } from "./models/PlayerBot.js";
+import { ServerInfo } from "./ServerInfo.js";
+
 /**
  * @param {import("socket.io").Server} io
  * @param {import("socket.io").Socket} socket
@@ -53,18 +56,37 @@ function sockets(io, socket, lobbyManager) {
     lobby?.startLoadingScreen();
   });
 
-socket.on("reaction:submit", function (lobbyCode, amount, name) {
-  const lobby = lobbyManager.getLobby(lobbyCode);
-  if (!lobby) return;
-
-  // Skicka bara till host-rummet
-  io.to(lobbyCode + "_HOST").emit("reaction:hostUpdate", {
-    amount,
-    name, 
-    playerId: socket.id
+  socket.on("debug:addBot", function (name) {
+    const lobby = lobbyManager.getLobby(socket.data.lobbyId);
+    lobby.context.players.push(new PlayerBot(name));
+    lobby.broadcastLobbyState();
   });
-});
 
+  socket.on("admin:requestUpdate", function () {
+    socket.emit(
+      "admin:allLobbies",
+      lobbyManager.lobbies.map((l) => {
+        return {
+          id: l.context.lobbyId,
+          phase: l.phase,
+          players: l.context.players.map(({ socket, ...rest }) => rest),
+        };
+      })
+    );
+    socket.emit("admin:serverInfo", ServerInfo);
+  });
+
+  socket.on("reaction:submit", function (lobbyCode, amount, name) {
+    const lobby = lobbyManager.getLobby(lobbyCode);
+    if (!lobby) return;
+
+    // Skicka bara till host-rummet
+    io.to(lobbyCode + "_HOST").emit("reaction:hostUpdate", {
+      amount,
+      name,
+      playerId: socket.id,
+    });
+  });
 }
 
 export { sockets };

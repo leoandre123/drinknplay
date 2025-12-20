@@ -24,13 +24,14 @@
         <button @click="advance" :disabled="!context.isHost">Advance</button>
         <input type="number" v-model="debug.gameIndex" />
         <button @click="startMinigame" :disabled="!context.isHost">Start Game</button>
+        <button @click="addBot" :disabled="!context.isHost">Add Bot</button>
       </div>
     </div>
   </div>
 
-  <div class="mascot-container">
+  <!--   <div class="mascot-container">
     <Mascot />
-  </div>
+  </div> -->
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
@@ -59,7 +60,7 @@
     <LoadingView v-if="context.state?.phase == 'loading'" />
     <MinigameView v-if="context.state?.phase == 'game'" />
     <template v-if="context.state?.phase == 'result'">
-      <ResultView v-if="context.isHost" />
+      <GameResultsView v-if="context.isHost" />
       <ResultPlayerView v-if="!context.isHost" />
     </template>
   </div>
@@ -77,7 +78,8 @@ import { Flag } from "vue-flag-icon/components";
 import Mascot from "../components/Mascot.vue";
 import { useDevice } from "../UseDevice.js";
 import ResultPlayerView from "./ResultPlayerView.vue";
-import { DefaultAvatar } from "../components/Avatar.vue";
+import { DefaultAvatar } from "../../shared/AvatarHelper.js";
+import GameResultsView from "./GameResultsView.vue";
 
 export default {
   name: "GameView",
@@ -102,6 +104,7 @@ export default {
   },
   setup() {
     const { isMobile } = useDevice();
+    return { isMobile };
   },
   components: {
     MinigameView,
@@ -112,6 +115,7 @@ export default {
     LobbyView,
     Flag,
     Mascot,
+    GameResultsView,
   },
   mounted() {
     socket.on("lobby:joinResponse", (response) => {
@@ -191,6 +195,9 @@ export default {
     },
     startMinigame() {
       socket.emit("debug:startMinigame", this.debug.gameIndex);
+    },
+    addBot() {
+      socket.emit("debug:addBot", "Jonas_" + Math.floor(Math.random() * 1000));
     },
   },
 };
