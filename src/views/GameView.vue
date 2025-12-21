@@ -78,7 +78,7 @@ import { Flag } from "vue-flag-icon/components";
 import Mascot from "../components/Mascot.vue";
 import { useDevice } from "../UseDevice.js";
 import ResultPlayerView from "./ResultPlayerView.vue";
-import { DefaultAvatar } from "../../shared/AvatarHelper.js";
+import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
 
 export default {
@@ -148,7 +148,7 @@ export default {
       } else {
         const avatar = sessionStorage.getItem("avatar");
         console.log(avatar);
-        const avatarSettings = avatar != null ? JSON.parse(avatar) : DefaultAvatar;
+        const avatarSettings = avatar != null ? JSON.parse(avatar) : GetRandomAvatar();
         console.log(avatarSettings);
 
         const playerId = localStorage.getItem("playerId");

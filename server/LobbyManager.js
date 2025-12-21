@@ -23,12 +23,24 @@ export class LobbyManager {
     reactionLobby.selectGame(3);
     reactionLobby.startMinigame();
 
+    const closestLobby = new Lobby(io, "closest");
+    closestLobby.selectGame(4);
+    closestLobby.startMinigame();
+
     const resultLobby = new Lobby(io, "result");
     resultLobby.startResultScreen();
 
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby, reactionLobby];
+    this.lobbies = [
+      lobby,
+      raceLobby,
+      kahootLobby,
+      resultLobby,
+      drawLobby,
+      reactionLobby,
+      closestLobby,
+    ];
   }
 
   createLobby(gameSettings) {

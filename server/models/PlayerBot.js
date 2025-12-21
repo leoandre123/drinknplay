@@ -8,6 +8,8 @@ export class PlayerBot extends Player {
         console.log("BOT EMIT: " + msg + " - " + ev);
       },
       on(msg, handler) {},
+      join(room) {},
+      data: {},
     };
 
     super(name, "bot_" + Math.floor(Math.random() * 100000), socket, GetRandomAvatar());

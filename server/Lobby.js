@@ -17,14 +17,62 @@ export class Lobby {
     return this.context.players.find((x) => x.id == id);
   }
 
-  onPlayerJoined(socket, playerId, name, avatarSettings) {
+  onNewPlayerConnection(socket, playerId, name, avatarSettings) {
+    console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
+    let player = this.getPlayer(playerId);
+    const isNewPlayer = player == undefined;
+
+    if (isNewPlayer) {
+      playerId = GenerateID(5);
+      player = new Player(name, playerId, socket, avatarSettings);
+    } else {
+      player.socket = socket;
+    }
+
+    this.onPlayerJoined(player, isNewPlayer);
+  }
+
+  onPlayerJoined(player, isNewPlayer) {
+    if (!isNewPlayer) {
+      console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
+      player.connected = false;
+      player.disconnectedAt = null;
+      clearTimeout(player.disconnectTimer);
+    } else {
+      console.log(`${player.name} joined lobby '${this.context.lobbyId}'`);
+      this.context.players.push(player);
+    }
+
+    player.socket.join(this.context.lobbyId + "_PLAYERS");
+    player.socket.on("results:fillGlass", (id) => this.onGlassFilled(id));
+    player.socket.on("ready", (isReady) => {
+      this.onPlayerReady(player.id, isReady);
+    });
+
+    player.socket.data.lobbyId = this.context.lobbyId;
+    player.socket.data.playerId = player.id;
+
+    player.socket.emit("lobby:joinResponse", {
+      lobbyId: this.context.lobbyId,
+      playerId: player.id,
+    });
+
+    this.broadcastLobbyState();
+    if (this.phase == "game") {
+      if (isNewPlayer) {
+        this.currentGame?.onPlayerJoined(player);
+      }
+      this.currentGame?.registerListeners(player.socket);
+    }
+  }
+
+  onPlayerJoined_old(socket, playerId, name, avatarSettings) {
     console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
     let player = this.getPlayer(playerId);
     const isNewPlayer = player == undefined;
 
     if (!isNewPlayer) {
       console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
-
       player.connected = false;
       player.disconnectedAt = null;
       player.socket = socket;
@@ -68,7 +116,11 @@ export class Lobby {
     socket.on("lobby:advancePhase", () => this.advancePhase());
 
     socket.emit("lobby:joinHostResponse", this.context.lobbyId);
+
     this.broadcastLobbyState();
+    if (this.phase == "game") {
+      this.currentGame?.onHostJoined(socket);
+    }
   }
 
   onPlayerDisconnected(playerId) {
