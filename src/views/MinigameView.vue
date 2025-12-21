@@ -31,12 +31,14 @@
         <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
         <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
         <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
+        <ClosestView v-if="context.state.gameIndex == 4" class="minigame" />
       </div>
       <div v-if="!context.isHost" class="client-container">
         <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
         <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
         <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
         <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
+        <ClosestPlayerView v-if="context.state.gameIndex == 4" class="minigame" />
       </div>
     </div>
   </div>
@@ -52,6 +54,8 @@ import HostDrawingView from "./minigames/drawing/HostDrawingView.vue";
 import PlayerDrawingView from "./minigames/drawing/PlayerDrawingView.vue";
 import ReactionGame from "./minigames/reaction/ReactionGame.vue";
 import ReactionGamePlayerView from "./minigames/reaction/ReactionGamePlayerView.vue";
+import ClosestView from "./minigames/closest/ClosestView.vue";
+import ClosestPlayerView from "./minigames/closest/ClosestPlayerView.vue";
 
 export default {
   name: "MinigameView",
@@ -68,6 +72,8 @@ export default {
     PlayerDrawingView,
     ReactionGame,
     ReactionGamePlayerView,
+    ClosestView,
+    ClosestPlayerView,
   },
   async created() {},
 

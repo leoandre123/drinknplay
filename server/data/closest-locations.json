@@ -1,0 +1,66 @@
+[
+    {
+        "title": "Kaaba",
+        "pos": [
+            21.4225,
+            39.826167
+        ],
+        "img_uri": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Ka%27ba%2C_Great_Mosque_of_Mecca%2C_Saudi_Arabia_%284%29.jpg/2560px-The_Ka%27ba%2C_Great_Mosque_of_Mecca%2C_Saudi_Arabia_%284%29.jpg"
+    },
+    {
+        "title": "Palermo",
+        "pos": [
+            59.85995772386056,
+            17.63054307939903
+        ],
+        "img_uri": "https://www.novacircle.com/_next/image?url=https%3A%2F%2Fmedia.novacircle.com%2Fspots%2F5804-1732727931682.webp&w=3840&q=75"
+    },
+    {
+        "title": "Auschwitz-Birkenau",
+        "pos": [
+            50.03454844392296,
+            19.181074953183433
+        ],
+        "img_uri": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Auschwitz_II-Birkenau_%28main_gate%29.JPG/2560px-Auschwitz_II-Birkenau_%28main_gate%29.JPG"
+    },
+    {
+        "title": "La Sagrada Familia",
+        "pos": [
+            41.403702498833766,
+            2.1743617202638914
+        ],
+        "img_uri": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/%CE%A3%CE%B1%CE%B3%CF%81%CE%AC%CE%B4%CE%B1_%CE%A6%CE%B1%CE%BC%CE%AF%CE%BB%CE%B9%CE%B1_2941.jpg/960px-%CE%A3%CE%B1%CE%B3%CF%81%CE%AC%CE%B4%CE%B1_%CE%A6%CE%B1%CE%BC%CE%AF%CE%BB%CE%B9%CE%B1_2941.jpg"
+    },
+    {
+        "title": "Charlie Kirk",
+        "pos": [
+            40.277528,
+            -111.714028
+        ],
+        "img_uri": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Charlie_Kirk_shooting_scene_aerial_view_close_up.png"
+    },
+    {
+        "title": "Säters Fasta Paviljong",
+        "pos": [
+            60.340954355961216,
+            15.711437940659648
+        ],
+        "img_uri": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Fasta_paviljongen_S%C3%A4ter_2019-04-14.jpg/2560px-Fasta_paviljongen_S%C3%A4ter_2019-04-14.jpg"
+    },
+    {
+        "title": "Loch Ness Monster",
+        "pos": [
+            57.270575440584494,
+            -4.492718235512989
+        ],
+        "img_uri": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Loch_Ness_Monster_Surgeon%27s_photograph.jpg"
+    },
+    {
+        "title": "Dagen H",
+        "pos": [
+            59.335934988816945,
+            18.06633306583936
+        ],
+        "img_uri": "https://hagerty-media-prod.imgix.net/2022/10/Stockholm-Right-Traffic-Sept-5-1967-GettyImages-107707244-scaled.jpg?auto=format%2Ccompress&ixlib=php-3.3.0"
+    }
+]

@@ -28,7 +28,7 @@ function sockets(io, socket, lobbyManager) {
   });
 
   socket.on("lobby:joinAsPlayer", function (lobbyCode, playerId, name, avatarSettings) {
-    lobbyManager.getLobby(lobbyCode)?.onPlayerJoined(socket, playerId, name, avatarSettings);
+    lobbyManager.getLobby(lobbyCode)?.onNewPlayerConnection(socket, playerId, name, avatarSettings);
   });
 
   socket.on("lobby:joinAsHost", function (lobbyCode) {
@@ -58,8 +58,7 @@ function sockets(io, socket, lobbyManager) {
 
   socket.on("debug:addBot", function (name) {
     const lobby = lobbyManager.getLobby(socket.data.lobbyId);
-    lobby.context.players.push(new PlayerBot(name));
-    lobby.broadcastLobbyState();
+    lobby.onPlayerJoined(new PlayerBot(name), true);
   });
 
   socket.on("admin:requestUpdate", function () {

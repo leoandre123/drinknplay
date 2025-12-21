@@ -19,10 +19,11 @@ import { context } from "../context";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
 
 const availableGames = [
-  { name: "Racing game", symbol: "🚗" },
-  { name: "Questions game", symbol: "❓" },
-  { name: "Drink n' draw", symbol: "✍️" },
-  { name: "Drink", symbol: "🍻" },
+  { name: "Drink n' Drive", symbol: "🚗" },
+  { name: "Drink n' Answer", symbol: "❓" },
+  { name: "Drink n' Draw", symbol: "✍️" },
+  { name: "Drink n' React", symbol: "🍻" },
+  { name: "Drink n' Find", symbol: "📍" },
 ];
 
 export default {
