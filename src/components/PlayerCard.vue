@@ -14,6 +14,8 @@
     </div>
   </div>
 </template>
+
+
 <script>
 import DrinkingGlass from "./DrinkingGlass.vue";
 import Drunkometer from "./Drunkometer.vue";

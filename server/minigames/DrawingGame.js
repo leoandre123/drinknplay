@@ -4,9 +4,9 @@ export class DrawingGame extends Minigame {
     constructor() {
         super();
         this.drawingPlayers = [];
-        this.phase = "drawing";
-        this.timeLeft = null;
+        this.phase = "voting";
         this.currentSubject="";
+        this.subjects=[];
         this.timer = null;
         this.timerID = null;
     }
@@ -27,7 +27,7 @@ export class DrawingGame extends Minigame {
             this.broadcastHosts("timerTick", this.timer)
             if (this.timer <= 0){
                 this.stopTimer();
-                this.changeGamePhase();
+                //this.changeGamePhase();
             }
             }, 1000);
     }
@@ -63,6 +63,10 @@ export class DrawingGame extends Minigame {
         this.setTimer(20);
     }
 
+    selectSubject(){
+    }
+
+    
 
     registerListeners(socket) {
         socket.on("updateCanvas", (canvasData) => {

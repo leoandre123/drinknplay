@@ -12,7 +12,7 @@
             </button>
         </div>
 
-            <button class="save-button" @click="saveRequest"> SAVE </button>
+            <button class="save-button" @click="saveRequest"> DONE </button>
 
     </div>
 </template>

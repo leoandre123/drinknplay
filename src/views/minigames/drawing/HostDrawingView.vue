@@ -14,6 +14,10 @@
         <h1>VOTING</h1>
         <div class="time">Time left: {{ timer }}</div>
     </div>
+    
+    <div v-if="phase === 'results'">
+        
+    </div>
 
 </template>
 
@@ -22,6 +26,7 @@
 
 //{{context.state.players.find(x => x.id == painting.playerId).name}}
 
+import DrawingResultScreen from "../../../components/DrawingResultScreen.vue";
 import { context } from "../../../context";
 import { socket } from "../../../socket";
 

@@ -7,8 +7,8 @@
         </DrawingTools>
     </div>
 
-    <div class="rating" v-if = "gamePhase=='voting'">
-        <RatingTool>
+    <div class="rating" v-if="gamePhase=='voting'">
+        <RatingTool @raiting="playerRated">
         </RatingTool>
     </div>
 
@@ -32,7 +32,6 @@ export default {
                 brushSize: 10,
                 isBucketSelected: false,
             },
-            isDrawingModeActive: true,
             gamePhase:"",
             canvasPNG: null
         };
@@ -46,6 +45,9 @@ export default {
         saveCanvas() {
             this.canvasPNG = this.$refs.canvas.getCanvas();
             socket.emit("updateCanvas", this.canvasPNG);
+        },
+        playerRated(score){
+            socket.emit("playerVote", score)
         }
         
     }
