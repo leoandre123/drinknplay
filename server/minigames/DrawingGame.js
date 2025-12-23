@@ -1,11 +1,11 @@
 import { Minigame } from "../Minigame.js";
-import crypto from 'node:crypto';
 
 export class DrawingGame extends Minigame {
     constructor() {
         super();
+        this.drawingPlayers = [];
         this.allDrawings = [];
-        this.phase = "drawing";
+        this.phase = "results";
         this.currentSubject = "";
         this.subjects = [];
         this.timer = null;
@@ -15,6 +15,11 @@ export class DrawingGame extends Minigame {
 
     onPlayerJoined(player) {
         this.broadcast("gamePhase", this.phase);
+        this.drawingPlayers.push({
+            id: player.id,
+            score: 0,
+            name: player.name
+        })
 
     }
 
@@ -24,16 +29,20 @@ export class DrawingGame extends Minigame {
     setTimer(seconds) {
         this.stopTimer();
         this.timer = seconds;
+        this.broadcastHosts("timerTick", this.timer)
         this.timerID = setInterval(() => {
-            this.timer--;
-            this.broadcastHosts("timerTick", this.timer)
-            if (this.timer <= 0 && this.phase==="drawing") {
-                this.changeGamePhase();
-                console.log("GAMEPHASE CHANGING")
-                console.log(this.phase)
-            }
-            else if (this.timer <= 0 && this.phase==="voting"){
-                this.nextDrawingToVote();
+            if (this.timer >= 0) {
+                this.broadcastHosts("timerTick", this.timer)
+            this.timer--;}
+            if (this.timer < 0) {
+                if (this.phase === "voting") {
+                        //this.nextDrawingToVote();
+                }
+                else {
+                    //this.changeGamePhase();
+                    console.log("GAMEPHASE CHANGING")
+                    console.log(this.phase)
+                }
             }
         }, 1000);
     }
@@ -47,17 +56,27 @@ export class DrawingGame extends Minigame {
     }
 
     changeGamePhase() {
-        switch (this.phase) {
-            case "drawing":
-                this.phase = "voting";
-                this.initiateVoteing();
-                break;
-            case "voting":
-                this.phase = "drawing";
-                this.initiateDrawing();
-                break;
-        }
-        this.broadcast("gamePhase", this.phase)
+        setTimeout(() => {
+            switch (this.phase) {
+                case "start":
+                    this.phase = "drawing"
+                    this.initiateDrawing();
+                    break;
+                case "drawing":
+                    this.phase = "voting";
+                    this.initiateVoteing();
+                    break;
+                case "voting":
+                    this.phase = "results";
+                    this.initiateResults();
+                    break;
+                case "results":
+                    this.phase = "drawing";
+                    this.initiateDrawing();
+                    break;
+            }
+            this.broadcast("gamePhase", this.phase)
+        }, 500);
     }
 
     initiateDrawing() {
@@ -67,32 +86,35 @@ export class DrawingGame extends Minigame {
     }
 
     initiateVoteing() {
-        if (this.allDrawings.length>0){
-        this.setTimer(20);
-        this.currentDrawingIndex = 0;
-        this.boradcastVoting();}
-        else {this.changeGamePhase()}
+        if (this.allDrawings.length > 0) {
+            this.setTimer(20);
+            this.currentDrawingIndex = 0;
+            this.boradcastVoting();
+        }
+        else { this.changeGamePhase() }
     }
 
-    boradcastVoting(){
+    boradcastVoting() {
         this.broadcast("drawingToVote", this.allDrawings[this.currentDrawingIndex])
     }
 
-    nextDrawingToVote(){
-        this.currentDrawingIndex ++;
-        if (this.currentDrawingIndex < this.allDrawings.length){
-        this.boradcastVoting();
-        this.setTimer(20);
-    }
+    nextDrawingToVote() {
+        this.currentDrawingIndex++;
+        if (this.currentDrawingIndex < this.allDrawings.length) {
+            this.boradcastVoting();
+            this.setTimer(20);
+        }
         else {
             this.changeGamePhase();
         }
     }
 
-    selectSubject() {
-    }
-
-
+    initiateResults(){
+        this.setTimer(20);
+        this.broadcastHosts("results", {
+            player: this.drawingPlayers,
+            drawings: this.allDrawings
+    })}
 
     registerListeners(socket) {
         socket.on("updateCanvas", (canvasData) => {
@@ -103,7 +125,6 @@ export class DrawingGame extends Minigame {
             }
             else {
                 drawing = {
-                    id: crypto.randomUUID(),
                     socketId: socket.id,
                     playerName: socket.data.username,
                     png: canvasData,
@@ -116,6 +137,20 @@ export class DrawingGame extends Minigame {
             this.broadcastHosts("updateCanvas", drawing);
         });
 
+        socket.on("playerVote", (scoreInfoFromPlayer) => {
+            const drawing = this.allDrawings.find(d => d.socketId === scoreInfoFromPlayer.socketId)
+            if (drawing) {
+                console.log(scoreInfoFromPlayer.score)
+                drawing.score += scoreInfoFromPlayer.score;
+                console.log(`Updated score for ${drawing.playerName}: ${drawing.score}`);
+            }
+
+            const player = this.drawingPlayers.find(p => p.id === drawing.socketId);
+            if (player) {
+                player.score += scoreInfoFromPlayer.score;
+            }
+            console.log(`Updated score for ${player.name}: ${player.score}`);
+        })
 
     }
     unregisterListeners(socket) {
@@ -123,11 +158,10 @@ export class DrawingGame extends Minigame {
     }
 
     start() {
-        this.currentSubject = "CAT";
-        this.broadcastHosts("currentSubject", this.currentSubject);
-        
-        this.stopTimer();
-        this.setTimer(20);
+        setTimeout(() => {
+            //this.setTimer(10)
+            this.broadcast("gamePhase", this.phase)
+        }, 5000);
     }
     stop() {
         this.stopTimer();

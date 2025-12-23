@@ -21,7 +21,7 @@ export default {
         return {
             scores: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             rating: null,
-            voted: false
+            voted: false,
         }
     },
     methods: {
@@ -32,8 +32,6 @@ export default {
             this.voted = true;
             this.$emit('raiting-submitted', this.rating);
         }
-
-
     }
 }
 </script>

@@ -1,6 +1,7 @@
 <template>
     <div class="host-view-container">
 
+
         <div v-if="phase === 'drawing'" class="drawing-board">
             <h1>Draw a {{ currentSubject }}</h1>
             <div class="displayPictures">
@@ -11,13 +12,20 @@
             </div>
         </div>
 
+
         <div v-if="phase === 'voting'" class="voting-container">
             <h1>Please rate the picture below</h1>
             <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
         </div>
         
+
         <div v-if="phase === 'results'">
             <h1>Results</h1>
+        </div>
+
+
+        <div v-if="phase==='start'">
+            <h1>Welcome!</h1>
         </div>
         <div class="time">Time left: {{ timer }}</div>
     </div>
@@ -28,7 +36,6 @@
 
 //{{context.state.players.find(x => x.id == painting.playerId).name}}
 
-import DrawingResultScreen from "../../../components/DrawingResultScreen.vue";
 import { context } from "../../../context";
 import { socket } from "../../../socket";
 
@@ -40,17 +47,23 @@ export default {
             submittedPaintings: [],
             currentSubject: "",
             timer: null,
-            phase: "drawing",
-            currentDrawingToVote: null
+            phase: "results",
+            currentDrawingToVote: null,
+            scores: {}
         }
     },
     methods: {
 
     },
     mounted() {
-        socket.on("currentSubject", (subjectFromServer) => { this.currentSubject = subjectFromServer });
+        socket.on("currentSubject", (subjectFromServer) => { this.currentSubject = subjectFromServer 
+            console.log(subjectFromServer)
+            console.log(currentSubject)
+        });
 
-        socket.on("gamePhase", (phaseFromServer) => { this.phase = phaseFromServer });
+        socket.on("gamePhase", (phaseFromServer) => { this.phase = phaseFromServer 
+            console.log ("game phase:" + this.phase)
+        });
 
         socket.on("timerTick", (timerFromServer) => { this.timer = timerFromServer });
 
@@ -67,6 +80,8 @@ export default {
         });
 
         socket.on("clearPaintings", () => { this.submittedPaintings = [] });
+
+        socket.on("results", (score) => {this.scores=score});
 
     },
     beforeUnmount() {

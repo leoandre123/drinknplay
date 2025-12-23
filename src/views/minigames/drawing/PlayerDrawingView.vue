@@ -9,7 +9,9 @@
         </div>
 
         <div class="rating" v-if="gamePhase == 'voting'">
-            <RatingTool @raiting="playerRated">
+            <RatingTool 
+            :key="currentDrawingToVote.socketId"
+            @raiting-submitted="playerRated">
             </RatingTool>
         </div>
     </div>
@@ -35,11 +37,14 @@ export default {
                 isBucketSelected: false,
             },
             gamePhase: "",
-            canvasPNG: null
+            canvasPNG: null,
+            currentDrawingToVote: null,
         };
     },
     mounted() {
-        socket.on("gamePhase", (phaseFromServer) => { this.gamePhase = phaseFromServer })
+        socket.on("gamePhase", (phaseFromServer) => { this.gamePhase = phaseFromServer });
+        socket.on("drawingToVote", (drawingFromServer) => {this.currentDrawingToVote = drawingFromServer
+        });
     },
     methods: {
         saveCanvas() {
@@ -47,7 +52,11 @@ export default {
             socket.emit("updateCanvas", this.canvasPNG);
         },
         playerRated(score) {
-            socket.emit("playerVote", score)
+            console.log("SCORES ADDED: " +score)
+            socket.emit("playerVote", score = {
+                score: score,
+                socketId: this.currentDrawingToVote.socketId
+            })
         }
 
     }
