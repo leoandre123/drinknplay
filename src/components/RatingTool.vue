@@ -1,15 +1,17 @@
 <template>
-    <div class="rating" v-if="!voted">
-        <header>Rate 1-10, select a number and press vote</header>
-        <div class="rating-buttons">
-            <button class="rating-button" v-for="score in scores" @click="setRating(score)"
-                :class="{ 'selected': score === rating }">{{ score }}</button>
+    <div class="raiting-view-container">
+        <div class="rating" v-if="!voted">
+            <header>Rate 1-10, select a number and press vote</header>
+            <div class="rating-buttons">
+                <button class="rating-button" v-for="score in scores" @click="setRating(score)"
+                    :class="{ 'selected': score === rating }">{{ score }}</button>
+            </div>
+            <button class="save-button" @click="sendRating" :disabled="rating == null">VOTE</button>
         </div>
-        <button class="save-button" @click="sendRating" :disabled="rating==null">VOTE</button>
-    </div>
 
-    <div v-else>
-    <h1 class="vote-confirmed">VOTE CONFIRMED! Rating: {{ rating }} </h1>
+        <div v-else>
+            <h1 class="vote-confirmed">VOTE CONFIRMED! Rating: {{ rating }} </h1>
+        </div>
     </div>
 </template>
 
@@ -26,8 +28,8 @@ export default {
         setRating(number) {
             this.rating = number;
         },
-        sendRating(){
-            this.voted=true;
+        sendRating() {
+            this.voted = true;
             this.$emit('raiting-submitted', this.rating);
         }
 
@@ -78,7 +80,7 @@ export default {
     background-color: green;
 }
 
-.save-button{
+.save-button {
     font-family: "Science Gothic", sans-serif;
     height: 10rem;
     width: auto;
@@ -86,12 +88,18 @@ export default {
     background-color: beige;
 }
 
-.vote-confirmed{
+.vote-confirmed {
     color: var(--Metallic_Yellow);
-    font-size: 10rem;
+    font-size: 8vw;
     font-family: "Science Gothic", sans-serif;
     background-color: var(--Caribbean_Green);
     height: 100%;
     width: 100%;
+}
+
+.raiting-view-container{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 </style>

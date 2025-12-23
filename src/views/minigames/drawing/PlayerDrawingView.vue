@@ -1,18 +1,20 @@
 <template>
-    <div class="drawing-canvas" v-if="gamePhase=='drawing'">
-        <div class="drawing-title">Drink n' Draw</div>
-        <DrawingCanvas :options="drawingOptions" ref="canvas">
-        </DrawingCanvas>
-        <DrawingTools :options="drawingOptions" @save-requested="saveCanvas">
-        </DrawingTools>
-    </div>
+    <div class="player-view-container">
+        <div class="drawing-canvas" v-if="gamePhase == 'drawing'">
+            <div class="drawing-title">Drink n' Draw</div>
+            <DrawingCanvas :options="drawingOptions" ref="canvas">
+            </DrawingCanvas>
+            <DrawingTools :options="drawingOptions" @save-requested="saveCanvas">
+            </DrawingTools>
+        </div>
 
-    <div class="rating" v-if="gamePhase=='voting'">
-        <RatingTool @raiting="playerRated">
-        </RatingTool>
+        <div class="rating" v-if="gamePhase == 'voting'">
+            <RatingTool @raiting="playerRated">
+            </RatingTool>
+        </div>
     </div>
-
 </template>
+
 <script>
 import DrawingCanvas from '../../../components/DrawingCanvas.vue';
 import DrawingTools from '../../../components/DrawingTools.vue';
@@ -32,30 +34,27 @@ export default {
                 brushSize: 10,
                 isBucketSelected: false,
             },
-            gamePhase:"",
+            gamePhase: "",
             canvasPNG: null
         };
     },
-    mounted(){
-        socket.on("gamePhase", (phaseFromServer) => {this.gamePhase=phaseFromServer;
-            submitted
-        })
+    mounted() {
+        socket.on("gamePhase", (phaseFromServer) => { this.gamePhase = phaseFromServer })
     },
     methods: {
         saveCanvas() {
             this.canvasPNG = this.$refs.canvas.getCanvas();
             socket.emit("updateCanvas", this.canvasPNG);
         },
-        playerRated(score){
+        playerRated(score) {
             socket.emit("playerVote", score)
         }
-        
+
     }
 };
 </script>
 
 <style scoped>
-
 .drawing-canvas {
     position: relative;
     background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 87%);

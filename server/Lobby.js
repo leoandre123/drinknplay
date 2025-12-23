@@ -15,6 +15,7 @@ export class Lobby {
     console.log(`${name} joined lobby '${this.context.lobbyId}'`);
     socket.join(this.context.lobbyId + "_PLAYERS");
     socket.data.lobbyId = this.context.lobbyId;
+    socket.data.username = name;
     socket.emit("joinLobbyResponse", this.context.lobbyId);
 
     const player = new Player(name, socket.id, socket);

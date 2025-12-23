@@ -4,6 +4,7 @@ import { instrument } from "@socket.io/admin-ui";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
+  maxHttpBufferSize: 1e7,
   cors: { origin: ['*', 'https://admin.socket.io'],
   credentials: true
 
