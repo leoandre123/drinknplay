@@ -21,7 +21,7 @@
 
         <div v-if="phase === 'results'">
             <h1>Results:</h1>
-            {{ scores }}
+            <DrawingResultScreen></DrawingResultScreen>
         </div>
 
 
@@ -39,6 +39,7 @@
 
 import { context } from "../../../context";
 import { socket } from "../../../socket";
+import DrawingResultScreen from "../../../components/DrawingResultScreen.vue";
 
 
 export default {
@@ -52,6 +53,9 @@ export default {
             currentDrawingToVote: null,
             scores: {}
         }
+    },
+    components: {
+        DrawingResultScreen,
     },
     methods: {
 
