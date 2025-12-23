@@ -5,7 +5,7 @@ export class DrawingGame extends Minigame {
         super();
         this.drawingPlayers = [];
         this.allDrawings = [];
-        this.phase = "results";
+        this.phase = "start";
         this.currentSubject = "";
         this.subjects = [];
         this.timer = null;
@@ -36,10 +36,10 @@ export class DrawingGame extends Minigame {
             this.timer--;}
             if (this.timer < 0) {
                 if (this.phase === "voting") {
-                        //this.nextDrawingToVote();
+                        this.nextDrawingToVote();
                 }
                 else {
-                    //this.changeGamePhase();
+                    this.changeGamePhase();
                     console.log("GAMEPHASE CHANGING")
                     console.log(this.phase)
                 }
@@ -87,7 +87,7 @@ export class DrawingGame extends Minigame {
 
     initiateVoteing() {
         if (this.allDrawings.length > 0) {
-            this.setTimer(20);
+            this.setTimer(10);
             this.currentDrawingIndex = 0;
             this.boradcastVoting();
         }
@@ -102,7 +102,7 @@ export class DrawingGame extends Minigame {
         this.currentDrawingIndex++;
         if (this.currentDrawingIndex < this.allDrawings.length) {
             this.boradcastVoting();
-            this.setTimer(20);
+            this.setTimer(10);
         }
         else {
             this.changeGamePhase();
@@ -159,8 +159,9 @@ export class DrawingGame extends Minigame {
 
     start() {
         setTimeout(() => {
-            //this.setTimer(10)
+            this.setTimer(5)
             this.broadcast("gamePhase", this.phase)
+            this.broadcast("currentSubject", "house")
         }, 5000);
     }
     stop() {

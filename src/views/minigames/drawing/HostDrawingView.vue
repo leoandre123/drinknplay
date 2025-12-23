@@ -17,14 +17,15 @@
             <h1>Please rate the picture below</h1>
             <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
         </div>
-        
+
 
         <div v-if="phase === 'results'">
-            <h1>Results</h1>
+            <h1>Results:</h1>
+            {{ scores }}
         </div>
 
 
-        <div v-if="phase==='start'">
+        <div v-if="phase === 'start'">
             <h1>Welcome!</h1>
         </div>
         <div class="time">Time left: {{ timer }}</div>
@@ -32,8 +33,8 @@
 </template>
 
 <script>
-//access via https://localhost:5173/game?id=draw&mode=host
 
+//access via https://localhost:5173/game?id=draw&mode=host
 //{{context.state.players.find(x => x.id == painting.playerId).name}}
 
 import { context } from "../../../context";
@@ -47,7 +48,7 @@ export default {
             submittedPaintings: [],
             currentSubject: "",
             timer: null,
-            phase: "results",
+            phase: "",
             currentDrawingToVote: null,
             scores: {}
         }
@@ -56,13 +57,15 @@ export default {
 
     },
     mounted() {
-        socket.on("currentSubject", (subjectFromServer) => { this.currentSubject = subjectFromServer 
+        socket.on("currentSubject", (subjectFromServer) => {
+            this.currentSubject = subjectFromServer
             console.log(subjectFromServer)
             console.log(currentSubject)
         });
 
-        socket.on("gamePhase", (phaseFromServer) => { this.phase = phaseFromServer 
-            console.log ("game phase:" + this.phase)
+        socket.on("gamePhase", (phaseFromServer) => {
+            this.phase = phaseFromServer
+            console.log("game phase:" + this.phase)
         });
 
         socket.on("timerTick", (timerFromServer) => { this.timer = timerFromServer });
@@ -74,14 +77,15 @@ export default {
             }
             else {
                 this.submittedPaintings.push(drawingFromServer)
-            }});
-            socket.on("drawingToVote", (drawingFromServer) => {
+            }
+        });
+        socket.on("drawingToVote", (drawingFromServer) => {
             this.currentDrawingToVote = drawingFromServer
         });
 
         socket.on("clearPaintings", () => { this.submittedPaintings = [] });
 
-        socket.on("results", (score) => {this.scores=score});
+        socket.on("results", (score) => { this.scores = score });
 
     },
     beforeUnmount() {
@@ -93,6 +97,12 @@ export default {
 </script>
 
 <style scoped>
+.host-view-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 .drawing-board {
     background-color: whitesmoke;
     color: black;
@@ -133,11 +143,6 @@ export default {
     text-align: center;
 }
 
-.host-view-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
 
 .username {
     margin: 0;
@@ -152,13 +157,12 @@ export default {
     overflow: auto;
 }
 
-.voting-container{
+.voting-container {
     background-color: gray;
     height: 100%;
-    
 }
 
-.drawing-to-vote{
+.drawing-to-vote {
     height: auto;
 }
 </style>
