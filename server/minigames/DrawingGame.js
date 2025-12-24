@@ -6,7 +6,7 @@ export class DrawingGame extends Minigame {
         this.drawingPlayers = [];
         this.allDrawings = [];
         this.phase = "start";
-        this.currentSubject = "";
+        this.currentSubject = "House";
         this.subjects = [];
         this.timer = null;
         this.timerID = null;
@@ -20,13 +20,13 @@ export class DrawingGame extends Minigame {
             score: 0,
             name: player.name
         })
-
     }
 
     onPlayerDisconnected(player) {
     }
 
-    setTimer(seconds) {
+    //runs the game phase switching with timer
+        setTimer(seconds) {
         this.stopTimer();
         this.timer = seconds;
         this.broadcastHosts("timerTick", this.timer)
@@ -52,9 +52,9 @@ export class DrawingGame extends Minigame {
             clearInterval(this.timerID)
             this.timerID = null;
         }
-
     }
 
+    //Handles switching game phase, gets called by setTimer and voting methods
     changeGamePhase() {
         setTimeout(() => {
             switch (this.phase) {
@@ -83,8 +83,10 @@ export class DrawingGame extends Minigame {
         this.setTimer(20);
         this.allDrawings = [];
         this.broadcastHosts("clearPaintings");
+        this.broadcast("currentSubject", this.currentSubject)
     }
 
+    //Handles voting 
     initiateVoteing() {
         if (this.allDrawings.length > 0) {
             this.setTimer(10);
@@ -109,14 +111,23 @@ export class DrawingGame extends Minigame {
         }
     }
 
+    //Sends score to Host to display in result vue, both player total score & drawing scores
     initiateResults(){
         this.setTimer(20);
+        this.sortResults();
         this.broadcastHosts("results", {
-            player: this.drawingPlayers,
+            players: this.drawingPlayers,
             drawings: this.allDrawings
     })}
 
+    sortResults(){
+        this.drawingPlayers.sort((a, b)=> b.score - a.score);
+        this.allDrawings.sort((a, b) => b.score - a.score);
+    }
+
+
     registerListeners(socket) {
+        //push drawings and update them to host
         socket.on("updateCanvas", (canvasData) => {
             let drawing = this.allDrawings.find(d => d.socketId === socket.id);
             if (drawing) {
@@ -136,7 +147,7 @@ export class DrawingGame extends Minigame {
             };
             this.broadcastHosts("updateCanvas", drawing);
         });
-
+        //add scores to players
         socket.on("playerVote", (scoreInfoFromPlayer) => {
             const drawing = this.allDrawings.find(d => d.socketId === scoreInfoFromPlayer.socketId)
             if (drawing) {
@@ -151,17 +162,18 @@ export class DrawingGame extends Minigame {
             }
             console.log(`Updated score for ${player.name}: ${player.score}`);
         })
-
     }
+
     unregisterListeners(socket) {
         socket?.removeAllListeners("updateCanvas");
+        socket?.removeAllListeners("playerVote");
     }
 
+    //timeout bc server starts before host joins
     start() {
         setTimeout(() => {
             this.setTimer(5)
             this.broadcast("gamePhase", this.phase)
-            this.broadcast("currentSubject", "house")
         }, 5000);
     }
     stop() {

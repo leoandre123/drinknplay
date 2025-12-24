@@ -79,7 +79,6 @@ export default {
 
 .glow {
   font-size: 10rem;
-
   letter-spacing: 10px;
   color: #fff;
   font-family: "LimeLight Display";

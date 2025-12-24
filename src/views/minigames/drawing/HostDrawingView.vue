@@ -1,7 +1,5 @@
 <template>
     <div class="host-view-container">
-
-
         <div v-if="phase === 'drawing'" class="drawing-board">
             <h1>Draw a {{ currentSubject }}</h1>
             <div class="displayPictures">
@@ -20,8 +18,7 @@
 
 
         <div v-if="phase === 'results'">
-            <h1>Results:</h1>
-            <DrawingResultScreen></DrawingResultScreen>
+            <DrawingResultScreen :score="scores"></DrawingResultScreen>
         </div>
 
 
@@ -64,7 +61,7 @@ export default {
         socket.on("currentSubject", (subjectFromServer) => {
             this.currentSubject = subjectFromServer
             console.log(subjectFromServer)
-            console.log(currentSubject)
+            console.log(this.currentSubject)
         });
 
         socket.on("gamePhase", (phaseFromServer) => {
