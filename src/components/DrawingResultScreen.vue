@@ -1,15 +1,12 @@
 <template>
-    
+
     <div class="results-container">
         
         <div class="best-drawing">
             <div class="best-drawing-title">BEST DRAWING</div>
             <img :src="score.drawings[0].png"></img>
-            <div>{{ score.drawings[0].score }} points</div>
-            <div>{{ score.drawings[0].playerName }}</div>
-            
+            <div>{{ score.drawings[0].playerName }}: {{ score.drawings[0].score }} points</div>
         </div>
-
         <div class="scoreboard">
             <div class="results-title">SCOREBOARD</div>
             <div v-for="player in score.players" :key="player.id" class="player-in-leaderboard">{{ player.name }}: {{ player.score}} points</div>
@@ -44,49 +41,51 @@ export default {
 </script>
 
 <style scoped>
+ 
 .results-container {
-    width: 100%;
-    background-color: var(--French_Rose);
+    overflow:hidden;
+    height: 100%;
+    min-height: 0;
+    background-color: var(--Caribbean_Green);
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-template-areas: 
     "leaderboard drawing" ;
     font-family: "Science Gothic", sans-serif;
     gap: 20px;
-    font-size: 2vw;
+    font-size: 2rem;
+    box-sizing: border-box;
+    
 }
 .results-title {
     color: #fff;
     margin: 2vw;
     font-size: 3vw;
-    -webkit-animation: glow 1s ease-in-out infinite alternate;
-    -moz-animation: glow 1s ease-in-out infinite alternate;
-    animation: glow 1s ease-in-out infinite alternate;
     font-family: "Science Gothic", sans-serif;
-    background-color: var(--French_Rose);    
+    background-color: gray;    
     border: 1px outset gray;
 }
     
 
 .best-drawing img {
-    border: 3px groove var(--Caribbean_Green);
-    box-shadow: 0 0 0.2vw #fff, 0 0 0.2vw #fff, 0 0 2vw var(--Caribbean_Green),
-    0 0 0.5vw var(--Caribbean_Green), 0 0 1.8vw var(--Caribbean_Green),
-    inset 0 0 1.3rem var(--Caribbean_Green);
-    color: aqua;
+    border: 3px outset black;
     height: 15vw;
     display: block;
-    margin:1vw;
+    margin:2%;
+    min-height: 0;
+    object-fit: contain;
+    background-color: gray;
+    padding: 2%
+
 }
 
 .best-drawing {
+    flex: 1;
     font-family: "Science Gothic", sans-serif;
     color: var(--Metallic_Yellow);
-     text-shadow: 1px 1px black;
+    text-shadow: 1px 1px black;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 1vw;
     grid-area: drawing;
 }
@@ -97,35 +96,24 @@ export default {
     text-shadow: 1px 1px black;
     display: flex;
     flex-direction: column;
-    border-right: 5px solid black;
+    border-right: 5px solid yellow;
     grid-area: leaderboard;
+    overflow: scroll;
 }
 
 .player-in-leaderboard{
-    border-bottom: 1px solid black;
-    width: 40vw;
+    border-bottom: 2px solid gray;
+    border-top: 2px solid gray;
+    margin: 5px;
 }
 
 .best-drawing-title{
     margin: 2vw;
     color: #fff;
     font-size: 3vw;
-    -webkit-animation: glow 1s ease-in-out infinite alternate;
-    -moz-animation: glow 1s ease-in-out infinite alternate;
+    background-color: gray;
     animation: glow 1s ease-in-out infinite alternate;
     border: 1px outset gray;
-}
-
-@keyframes glow{
-  from {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073,
-      0 0 60px #e60073, 0 0 70px #e60073;
-  }
-
-  to {
-    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6,
-      0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
-  }
 }
 
 

@@ -1,6 +1,10 @@
 <template>
     <div class="player-view-container">
-        <div class="drawing-canvas" v-if="gamePhase == 'drawing'">
+        <button v-if="gamePhase==='start'"
+        class="start-button"
+        @click = "startGame">START GAME</button>
+
+        <div class="drawing-canvas" v-if="gamePhase === 'drawing'">
             <div class="drawing-title">Drink n' Draw</div>
             <DrawingCanvas :options="drawingOptions" ref="canvas">
             </DrawingCanvas>
@@ -47,6 +51,10 @@ export default {
         });
     },
     methods: {
+        startGame(){
+        socket.emit("startDrawingGame")
+        console.log("Start request sent!")
+    },
         saveCanvas() {
             this.canvasPNG = this.$refs.canvas.getCanvas();
             socket.emit("updateCanvas", this.canvasPNG);
@@ -81,5 +89,11 @@ export default {
     border-bottom: 1px solid var(--Metallic_Yellow);
     width: 70%;
     margin-bottom: 1rem;
+}
+
+.start-button{
+font-size: 3vw;
+height: 20vw;
+width: 30vw;;
 }
 </style>

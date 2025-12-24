@@ -6,7 +6,7 @@ export class DrawingGame extends Minigame {
         this.drawingPlayers = [];
         this.allDrawings = [];
         this.phase = "start";
-        this.currentSubject = "House";
+        this.currentSubject = "house";
         this.subjects = [];
         this.timer = null;
         this.timerID = null;
@@ -14,7 +14,7 @@ export class DrawingGame extends Minigame {
     }
 
     onPlayerJoined(player) {
-        this.broadcast("gamePhase", this.phase);
+        this.broadcastPlayers("gamePhase", this.phase);
         this.drawingPlayers.push({
             id: player.id,
             score: 0,
@@ -36,9 +36,11 @@ export class DrawingGame extends Minigame {
             this.timer--;}
             if (this.timer < 0) {
                 if (this.phase === "voting") {
+                        this.stopTimer()
                         this.nextDrawingToVote();
                 }
                 else {
+                    this.stopTimer()
                     this.changeGamePhase();
                     console.log("GAMEPHASE CHANGING")
                     console.log(this.phase)
@@ -56,7 +58,7 @@ export class DrawingGame extends Minigame {
 
     //Handles switching game phase, gets called by setTimer and voting methods
     changeGamePhase() {
-        setTimeout(() => {
+        
             switch (this.phase) {
                 case "start":
                     this.phase = "drawing"
@@ -76,11 +78,10 @@ export class DrawingGame extends Minigame {
                     break;
             }
             this.broadcast("gamePhase", this.phase)
-        }, 500);
     }
 
     initiateDrawing() {
-        this.setTimer(20);
+        this.setTimer(120);
         this.allDrawings = [];
         this.broadcastHosts("clearPaintings");
         this.broadcast("currentSubject", this.currentSubject)
@@ -127,6 +128,13 @@ export class DrawingGame extends Minigame {
 
 
     registerListeners(socket) {
+        //Start game
+        socket.on("startDrawingGame", ()=>{
+            this.phase="drawing"
+            this.initiateDrawing()
+            this.broadcast("gamePhase", this.phase)
+            console.log("Game starting")})
+
         //push drawings and update them to host
         socket.on("updateCanvas", (canvasData) => {
             let drawing = this.allDrawings.find(d => d.socketId === socket.id);
@@ -169,12 +177,7 @@ export class DrawingGame extends Minigame {
         socket?.removeAllListeners("playerVote");
     }
 
-    //timeout bc server starts before host joins
     start() {
-        setTimeout(() => {
-            this.setTimer(5)
-            this.broadcast("gamePhase", this.phase)
-        }, 5000);
     }
     stop() {
         this.stopTimer();

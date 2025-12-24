@@ -1,7 +1,7 @@
 <template>
     <div class="host-view-container">
         <div v-if="phase === 'drawing'" class="drawing-board">
-            <h1>Draw a {{ currentSubject }}</h1>
+            <div class="subject">Draw a {{ currentSubject }}</div>
             <div class="displayPictures">
                 <div v-for="drawing in submittedPaintings" class="drawings">
                     <img :src="drawing.png"></img>
@@ -12,20 +12,16 @@
 
 
         <div v-if="phase === 'voting'" class="voting-container">
-            <h1>Please rate the picture below</h1>
+            <div class="vote-title">Rate picture on your device</div>
             <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
         </div>
 
+        <DrawingResultScreen v-if="phase === 'results'" :score="scores"/>
 
-        <div v-if="phase === 'results'">
-            <DrawingResultScreen :score="scores"></DrawingResultScreen>
+        <div v-if="phase === 'start'" class = "start">
+            Welcome! Please start game on your device by pressing start-button
         </div>
-
-
-        <div v-if="phase === 'start'">
-            <h1>Welcome!</h1>
-        </div>
-        <div class="time">Time left: {{ timer }}</div>
+        <div v-if="phase !== 'results'" class="time">Time left: {{ timer }}</div>
     </div>
 </template>
 
@@ -46,7 +42,7 @@ export default {
             submittedPaintings: [],
             currentSubject: "",
             timer: null,
-            phase: "",
+            phase: "start",
             currentDrawingToVote: null,
             scores: {}
         }
@@ -55,7 +51,7 @@ export default {
         DrawingResultScreen,
     },
     methods: {
-
+    
     },
     mounted() {
         socket.on("currentSubject", (subjectFromServer) => {
@@ -99,9 +95,13 @@ export default {
 
 <style scoped>
 .host-view-container {
+    font-family: "Science Gothic", sans-serif;
     display: flex;
     flex-direction: column;
     height: 100vh;
+    border: 5px ridge yellow;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .drawing-board {
@@ -113,35 +113,40 @@ export default {
     overflow: auto;
 }
 
-.drawing-board h1 {
+.subject {
     background-color: var(--Caribbean_Green);
     color: var(--Metallic_Yellow);
-    font-size: 3rem;
+    font-size: 5vw;
     margin: 0;
+    text-shadow: 1px 1px black;
 }
 
 .displayPictures {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(10vw, 1fr));
     grid-auto-rows: min-content;
     gap: 1rem;
     padding: 20px;
     min-height: 0;
+    border: 1px solid black;
+
 }
 
 .displayPictures img {
     width: 100%;
     object-fit: contain;
     display: block;
+    box-sizing: border-box;
 }
 
 .time {
     flex-shrink: 0;
-    background-color: black;
-    color: white;
+    background-color: var(--Caribbean_Green);
+    color: var(--Metallic_Yellow);
     font-size: 3rem;
     text-align: center;
+    margin-top: auto;
 }
 
 
@@ -156,14 +161,41 @@ export default {
     object-fit: contain;
     background-color: gray;
     overflow: auto;
+    box-sizing: border-box;
 }
 
 .voting-container {
-    background-color: gray;
-    height: 100%;
+    background-color: var(--Caribbean_Green);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.vote-title {
+    background-color: var(--Caribbean_Green);
+    color: var(--Metallic_Yellow);
+    font-size: 3rem;
 }
 
 .drawing-to-vote {
-    height: auto;
+    flex: 1;
+    object-fit: contain;
+    display: block;
+    min-height: 0;
+    padding: 10px;
+    border: 5px double black;
+    background-color: gray;
+    margin: 10px;
 }
+
+.start {
+    display: flex;
+    flex:1;
+    flex-wrap: wrap;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
 </style>
