@@ -7,7 +7,7 @@ export class DrawingGame extends Minigame {
         this.allDrawings = [];
         this.phase = "start";
         this.currentSubject = "house";
-        this.subjects = ["Christmas Tree", "Raindeer", "Jultomte", "Gift", "Misteltoe", "Semla", "Lussebulle"];
+        this.subjects = ["Christmas Tree", "Reindeer", "Jultomte", "Gift", "Mistletoe", "Semla", "Lussebulle"];
         this.timer = null;
         this.timerID = null;
         this.currentDrawingIndexToVote = 0;
@@ -26,18 +26,19 @@ export class DrawingGame extends Minigame {
     }
 
     //runs the game phase switching with timer
-        setTimer(seconds) {
+    setTimer(seconds) {
         this.stopTimer();
         this.timer = seconds;
         this.broadcastHosts("timerTick", this.timer)
         this.timerID = setInterval(() => {
             if (this.timer >= 0) {
                 this.broadcastHosts("timerTick", this.timer)
-            this.timer--;}
+                this.timer--;
+            }
             if (this.timer < 0) {
                 if (this.phase === "voting") {
-                        this.stopTimer()
-                        this.nextDrawingToVote();
+                    this.stopTimer()
+                    this.nextDrawingToVote();
                 }
                 else {
                     this.stopTimer()
@@ -58,26 +59,26 @@ export class DrawingGame extends Minigame {
 
     //Handles switching game phase, gets called by setTimer and voting methods
     changeGamePhase() {
-        
-            switch (this.phase) {
-                case "start":
-                    this.phase = "drawing"
-                    this.initiateDrawing();
-                    break;
-                case "drawing":
-                    this.phase = "voting";
-                    this.initiateVoteing();
-                    break;
-                case "voting":
-                    this.phase = "results";
-                    this.initiateResults();
-                    break;
-                case "results":
-                    this.phase = "drawing";
-                    this.initiateDrawing();
-                    break;
-            }
-            this.broadcast("gamePhase", this.phase)
+
+        switch (this.phase) {
+            case "start":
+                this.phase = "drawing"
+                this.initiateDrawing();
+                break;
+            case "drawing":
+                this.phase = "voting";
+                this.initiateVoteing();
+                break;
+            case "voting":
+                this.phase = "results";
+                this.initiateResults();
+                break;
+            case "results":
+                this.phase = "drawing";
+                this.initiateDrawing();
+                break;
+        }
+        this.broadcast("gamePhase", this.phase)
     }
 
     initiateDrawing() {
@@ -88,9 +89,9 @@ export class DrawingGame extends Minigame {
         this.broadcast("currentSubject", this.currentSubject)
     }
 
-    changeSubject(){
+    changeSubject() {
         const randomIndex = Math.floor(Math.random() * this.subjects.length);
-        this.currentSubject = this.subjects[randomIndex]?? "Out of subjects";
+        this.currentSubject = this.subjects[randomIndex] ?? "Out of subjects";
         this.subjects.splice(randomIndex, 1);
     }
 
@@ -120,27 +121,29 @@ export class DrawingGame extends Minigame {
     }
 
     //Sends score to Host to display in result vue, both player total score & drawing scores
-    initiateResults(){
+    initiateResults() {
         this.setTimer(20);
         this.sortResults();
         this.broadcastHosts("results", {
             players: this.drawingPlayers,
             drawings: this.allDrawings
-    })}
+        })
+    }
 
-    sortResults(){
-        this.drawingPlayers.sort((a, b)=> b.score - a.score);
+    sortResults() {
+        this.drawingPlayers.sort((a, b) => b.score - a.score);
         this.allDrawings.sort((a, b) => b.score - a.score);
     }
 
 
     registerListeners(socket) {
         //Start game
-        socket.on("startDrawingGame", ()=>{
-            this.phase="drawing"
+        socket.on("startDrawingGame", () => {
+            this.phase = "drawing"
             this.initiateDrawing()
             this.broadcast("gamePhase", this.phase)
-            console.log("Game starting")})
+            console.log("Game starting")
+        })
 
         //push drawings and update them to host
         socket.on("updateCanvas", (canvasData) => {
