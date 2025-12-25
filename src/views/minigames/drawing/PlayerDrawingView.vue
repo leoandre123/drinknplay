@@ -14,6 +14,7 @@
 
         <div class="rating" v-if="gamePhase == 'voting'">
             <RatingTool 
+            v-if="canVote"
             :key="currentDrawingToVote.socketId"
             @raiting-submitted="playerRated">
             </RatingTool>
@@ -43,7 +44,15 @@ export default {
             gamePhase: "",
             canvasPNG: null,
             currentDrawingToVote: null,
+            
         };
+    },
+    computed: {
+        canVote(){
+            if (!this.currentDrawingToVote) return false;
+            return this.currentDrawingToVote.socketId !== socket.id;
+        }
+
     },
     mounted() {
         socket.on("gamePhase", (phaseFromServer) => { this.gamePhase = phaseFromServer });

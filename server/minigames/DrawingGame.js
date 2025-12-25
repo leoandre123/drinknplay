@@ -7,7 +7,7 @@ export class DrawingGame extends Minigame {
         this.allDrawings = [];
         this.phase = "start";
         this.currentSubject = "house";
-        this.subjects = [];
+        this.subjects = ["Christmas Tree", "Raindeer", "Jultomte", "Gift", "Misteltoe", "Semla", "Lussebulle"];
         this.timer = null;
         this.timerID = null;
         this.currentDrawingIndexToVote = 0;
@@ -81,10 +81,17 @@ export class DrawingGame extends Minigame {
     }
 
     initiateDrawing() {
-        this.setTimer(120);
+        this.setTimer(10);
+        this.changeSubject();
         this.allDrawings = [];
         this.broadcastHosts("clearPaintings");
         this.broadcast("currentSubject", this.currentSubject)
+    }
+
+    changeSubject(){
+        const randomIndex = Math.floor(Math.random() * this.subjects.length);
+        this.currentSubject = this.subjects[randomIndex]?? "Out of subjects";
+        this.subjects.splice(randomIndex, 1);
     }
 
     //Handles voting 
@@ -147,7 +154,7 @@ export class DrawingGame extends Minigame {
                     socketId: socket.id,
                     playerName: socket.data.username,
                     png: canvasData,
-                    score: 0
+                    score: 0,
                 };
                 this.allDrawings.push(drawing);
                 console.log("new pic");

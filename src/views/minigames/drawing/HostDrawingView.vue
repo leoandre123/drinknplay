@@ -5,7 +5,6 @@
             <div class="displayPictures">
                 <div v-for="drawing in submittedPaintings" class="drawings">
                     <img :src="drawing.png"></img>
-                    <p class="username">{{ drawing.playerName }}</p>
                 </div>
             </div>
         </div>
@@ -130,11 +129,14 @@ export default {
     padding: 20px;
     min-height: 0;
     border: 1px solid black;
+    overflow: hidden;
 
 }
 
 .displayPictures img {
     width: 100%;
+    height: 100%;
+    object-fit: contain;
     object-fit: contain;
     display: block;
     box-sizing: border-box;
@@ -147,13 +149,6 @@ export default {
     font-size: 3rem;
     text-align: center;
     margin-top: auto;
-}
-
-
-.username {
-    margin: 0;
-    font-size: 2rem;
-
 }
 
 .drawings {

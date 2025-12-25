@@ -22,7 +22,7 @@
 Drawing = {
     playerName: socket.data.username,
     socketId: socket.id,
-    score: 0
+    score: 0,
     png: canvasData,
         };*/
 

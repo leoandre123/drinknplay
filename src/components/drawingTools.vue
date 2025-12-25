@@ -25,7 +25,7 @@ export default {
     emits: ['save-requested'],
     data() {
         return {
-            brushSize: [10, 25, 50],
+            brushSize: [5, 10, 25, 50],
             colors: [
                 "red",
                 "green",
@@ -33,12 +33,13 @@ export default {
                 "yellow",
                 "orange",
                 "purple",
-                "pink",
+                "lightgreen",
                 "brown",
                 "black",
                 "white",
                 "gray",
-                "cyan",]
+                "cyan",
+                ]
         };
     },
     methods:{
