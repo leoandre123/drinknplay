@@ -37,7 +37,7 @@ const router = createRouter({
      {
       path: "/result",
       name: "Result",
-      component: ResultView,
+      component: ResultView,},
     {
       path: "/MazeGame",
       name: "MazeGame",
