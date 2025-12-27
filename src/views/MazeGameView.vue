@@ -120,67 +120,38 @@ export default {
     },
     checkCollisionWithMazeX() {
       const b = this.ball;
-
-      const leftSide = b.x - b.r;
-      const rightSide = b.x + b.r;
-
+      const topRow = this.row(b.y - b.r + 2);
+      const bottomRow = this.row(b.y + b.r - 2);
       const col = this.col(b.x);
-      const leftCol = this.col(leftSide);
-      const rightCol = this.col(rightSide);
-      const row = this.row(b.y);
 
-      const maxRows = this.maze.length / this.columns;
+      const leftCol = this.col(b.x - b.r);
+      const rightCol = this.col(b.x + b.r);
 
-      if (
-        row < 0 || row >= maxRows ||
-        col < 0 || col >= this.columns
-      ) return;
-
-      if (
-        leftCol >= 0 &&
-        this.maze[row * this.columns + leftCol]
-      ) {
-        b.vx *= -1;
+      if (leftCol >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + leftCol])) {
+        b.vx *= -0.5; 
         b.x = (leftCol + 1) * this.tileSize + b.r;
       }
-      else if (
-        rightCol < this.columns &&
-        this.maze[row * this.columns + rightCol]
-      ) {
-        b.vx *= -1;
+      else if (rightCol < this.columns && (this.maze[topRow * this.columns + rightCol] || this.maze[bottomRow * this.columns + rightCol])) {
+        b.vx *= -0.5;
         b.x = rightCol * this.tileSize - b.r;
       }
     },
+
     checkCollisionWithMazeY() {
       const b = this.ball;
+      const leftCol = this.col(b.x - b.r + 2);
+      const rightCol = this.col(b.x + b.r - 2);
 
-      const topSide = b.y - b.r;
-      const bottomSide = b.y + b.r;
-
-      const col = this.col(b.x);
-      const row = this.row(b.y);
-      const topRow = this.row(topSide);
-      const bottomRow = this.row(bottomSide);
-
+      const topRow = this.row(b.y - b.r);
+      const bottomRow = this.row(b.y + b.r);
       const maxRows = this.maze.length / this.columns;
 
-      if (
-        row < 0 || row >= maxRows ||
-        col < 0 || col >= this.columns
-      ) return;
-
-      if (
-        topRow >= 0 &&
-        this.maze[topRow * this.columns + col]
-      ) {
-        b.vy *= -1;
+      if (topRow >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[topRow * this.columns + rightCol])) {
+        b.vy *= -0.5;
         b.y = (topRow + 1) * this.tileSize + b.r;
       }
-      else if (
-        bottomRow < maxRows &&
-        this.maze[bottomRow * this.columns + col]
-      ) {
-        b.vy *= -1;
+      else if (bottomRow < maxRows && (this.maze[bottomRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + rightCol])) {
+        b.vy *= -0.5;
         b.y = bottomRow * this.tileSize - b.r;
       }
     },
