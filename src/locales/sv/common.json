@@ -9,5 +9,7 @@
     },
     "on": "På",
     "off": "Av",
-    "finish": "Slut"
+    "finish": "Slut",
+    "switchMode": "Byt spelläge",
+    "modeDescription": "Nuvarande spelläge: "
 }

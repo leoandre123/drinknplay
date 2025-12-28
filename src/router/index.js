@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
-import MazeGameView from "../views/MazeGameView.vue";
+import PlayerMazeGameView from "../views/minigames/mazegame/PlayerMazeGameView.vue";
 import ResultView from "../views/ResultView.vue";
 import drawingCanvas from "../components/drawingCanvas.vue";
 import DrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
@@ -41,7 +41,7 @@ const router = createRouter({
     {
       path: "/MazeGame",
       name: "MazeGame",
-      component: MazeGameView,
+      component: PlayerMazeGameView,
     },
     {
       path: "/test",

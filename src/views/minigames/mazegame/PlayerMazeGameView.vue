@@ -1,18 +1,29 @@
 <template>
-  <div class="canvasWrapper">
-  <button>
-    Switch to phone mode
-  </button>
+  <div class="canvasWrapper" :class="{ 'column-layout': !isLandscape }">
+
+    <div v-if="isLandscape" class="sidebar landscape">
+      <button @click="toggleMode">{{ $t("common.switchMode") }}</button>
+      <p class="modeText">{{ $t("common.modeDescription") }}<br>{{ mode }}</p>
+    </div>
+
+    <div v-else class="sidebar portrait">
+      <button @click="toggleMode">{{ $t("common.switchMode") }}</button>
+    </div>
+
     <canvas id="mazeCanvas"></canvas>
+
+    <p v-if="!isLandscape" class="modeText">{{ mode }}</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: "MazeGameView",
+  name: "PlayerMazeGameView",
 
   data() {
     return {
+      mode: this.isMobile ? "mobileMode" : "computerMode",
+      isLandscape: window.innerWidth > window.innerHeight,
       tileSize: 0,
       maze: [],
       columns: 0,
@@ -38,7 +49,7 @@ export default {
   mounted() {
     this.c = document.getElementById("mazeCanvas");
 
-    if (window.innerWidth > window.innerHeight) {
+    if (this.isLandscape) {
       this.c.width = window.innerHeight;
       this.c.height = window.innerHeight;
     } else {
@@ -62,10 +73,10 @@ export default {
     this.maze = [
       true, false, true, true, false, false, false, false,
       true, false, false, false, true, true, false, true,
-      true, true, true, false, true, false, false, false, 
+      true, true, true, false, true, false, false, false,
       true, false, false, false, true, true, true, false,
       true, false, true, false, true, false, true, false,
-      false, false, true, false, false, false, true, false, 
+      false, false, true, false, false, false, true, false,
       true, false, true, true, true, true, true, false,
       true, false, false, false, false, false, false, false
     ]
@@ -84,15 +95,26 @@ export default {
     this.lastTime = performance.now();
     this.rafId = requestAnimationFrame(this.loop);
 
+    window.addEventListener("deviceorientation", this.handleRotation);
+
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
+
+    window.addEventListener("resize", () => {
+      this.isLandscape = window.innerWidth > window.innerHeight;
+    });
   },
   beforeUnmount() {
+    window.removeEventListener("deviceorientation", this.handleRotation);
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
   },
 
   methods: {
+    toggleMode() {
+      this.mode = this.mode === 'computerMode' ? 'mobileMode' : 'computerMode';
+      this.requestSensorPermission();
+    },
     loop(now) {
       const dt = (now - this.lastTime) / 1000; // sekunder
       this.lastTime = now;
@@ -134,6 +156,21 @@ export default {
         this.ball.vy *= -1;
       }
     },
+    async requestSensorPermission() {
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        try {
+          const response = await DeviceOrientationEvent.requestPermission();
+          if (response === "granted") {
+            window.addEventListener("deviceorientation", this.handleRotation, true);
+            console.log("iOS motion enabled");
+          } else {
+            alert("Motion permission denied");
+          }
+        } catch (err) {
+          console.error("Error requesting permission", err);
+        }
+      }
+    },
     checkCollisionWithMazeX() {
       const b = this.ball;
       const topRow = this.row(b.y - b.r + 2);
@@ -144,7 +181,7 @@ export default {
       const rightCol = this.col(b.x + b.r);
 
       if (leftCol >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + leftCol])) {
-        b.vx *= -0.5; 
+        b.vx *= -0.5;
         b.x = (leftCol + 1) * this.tileSize + b.r;
       }
       else if (rightCol < this.columns && (this.maze[topRow * this.columns + rightCol] || this.maze[bottomRow * this.columns + rightCol])) {
@@ -179,6 +216,7 @@ export default {
     },
 
     onKeyDown(e) {
+      if (this.mode !== 'computerMode') return;
       e.preventDefault();
       const speed = this.tileSize * 10;
 
@@ -221,6 +259,13 @@ export default {
           this.ball.acx = 0;
           break;
       }
+    },
+    handleRotation(e) {
+      if (this.mode !== 'mobileMode') return;
+
+      const sensitivity = 5;
+      this.ball.acx = e.gamma * sensitivity;
+      this.ball.acy = e.beta * sensitivity;
     },
 
     render() {
@@ -281,13 +326,50 @@ export default {
 </script>
 
 <style scoped>
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .canvasWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100vw;
   height: 100vh;
+  gap: 20px;
   background-image: radial-gradient(circle farthest-corner at 10% 20%,
       rgb(102, 0, 32) 0%,
       rgb(116, 18, 92) 49.5%,
       rgb(164, 34, 144) 90%);
+  gap: 20px;
+}
+
+.column-layout {
+  flex-direction: column;
+}
+
+.modeText {
+  color: white;
+  text-align: center;
+}
+
+button {
+  width: 120px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 10px;
+  font-weight: bold;
+  font-size: 16;
+  background-color: pink;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+  transform: translateY(2px);
 }
 
 #mazeCanvas {
