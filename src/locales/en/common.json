@@ -8,5 +8,6 @@
         "player": "Player"
     },
     "on": "On",
-    "off": "Off"
+    "off": "Off",
+    "finish": "Finish"
 }

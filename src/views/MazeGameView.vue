@@ -1,5 +1,8 @@
 <template>
   <div class="canvasWrapper">
+  <button>
+    Switch to phone mode
+  </button>
     <canvas id="mazeCanvas"></canvas>
   </div>
 </template>
@@ -43,16 +46,29 @@ export default {
       this.c.height = window.innerWidth;
     }
 
-    this.columns = 5;
+    this.columns = 8;
     this.tileSize = this.c.width / this.columns;
 
+    /*
+    //Min lätta testbana
     this.maze = [
       true, false, true, true, false,
       false, false, true, true, false,
       false, true, false, false, false,
       false, true, false, true, true,
       false, false, false, true, true
-    ];
+    ];*/
+
+    this.maze = [
+      true, false, true, true, false, false, false, false,
+      true, false, false, false, true, true, false, true,
+      true, true, true, false, true, false, false, false, 
+      true, false, false, false, true, true, true, false,
+      true, false, true, false, true, false, true, false,
+      false, false, true, false, false, false, true, false, 
+      true, false, true, true, true, true, true, false,
+      true, false, false, false, false, false, false, false
+    ]
     this.finishIndex = 4;
 
     this.ctx = this.c.getContext("2d");
@@ -229,7 +245,7 @@ export default {
           ctx.font = `${this.tileSize / 4}px Arial`;
           ctx.textBaseline = "middle";
           ctx.fillText(
-            "FINISH",
+            this.$t("common.finish"),
             x + this.tileSize / 2,
             y + this.tileSize / 2
           );
