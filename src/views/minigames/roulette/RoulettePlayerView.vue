@@ -3,19 +3,68 @@
 <RetroContainer>
 <div class="whole-page">
     <h1 class="title">Roulette</h1>
+    <div class="board-wrap">
+        <div class="betting-board">
+            <div class="square zero">0</div>
 
-    <div class="betting-board">
-        <div class="square zero">0</div>
-
-        <div v-for="n in numbers" 
-        :key="n" class="square"
-        :style="{backgroundColor:color(n)}">
-        {{ n }}
-    </div>
+            <div v-for="n in numbers" 
+            :key="n" class="square"
+            :style="{backgroundColor:color(n)}">
+            {{ n }}
+            </div>
+            
         
-    
-        <div class="square bet-red">RED</div>
-        <div class="square bet-black">BLACK</div> 
+            <div class="square bet-red"
+            :class="{selected:selectedColor ==='red'}"
+            @click="placeColorBet('red')"
+            >RED</div>
+
+            <div class="square bet-black"
+            :class="{selected:selectedColor ==='black'}"
+            @click="placeColorBet('black')"
+            >BLACK</div> 
+        </div>
+    </div>
+
+    <div class="bet-info">
+        <div class="row column">
+            <span><b> Add the amount of sips you want to bet:</b></span>
+            
+            <div class="bet-amount-control">
+                <button @click="decreaseStake" :disabled="stake <=1">-</button>
+                <span class="stake">{{ stake }}</span>
+                <button @click="increaseStake">+</button>
+            </div>
+            <span v-if="selectedColor"> {{ selectedColor.toUpperCase() }}</span>
+            <span v-else>Choose color/number!</span>
+            <button class="place-bet"
+            @click="placeBet"
+            :disabled="!selectedColor"
+            >
+            Place bet
+            </button>
+        </div>
+
+        <div class="place-bet-section">
+            <span><b>Your bet:</b></span>
+
+            <span v-if="placedBet">
+                {{ placedBet.value.toUpperCase() }}: {{ placedBet.amount }}
+            </span>
+            <span v-else>
+                No bet placed!
+            </span>
+
+        </div>
+
+        <div class="clear-section">
+            
+            <button class="clear"
+            @click="clearBet"
+            :disabled="!selectedColor">
+            Clear bet
+        </button>
+        </div>
     </div>
 </div>
 
@@ -27,7 +76,7 @@
 <script>
 import RetroContainer from '../../../components/RetroContainer.vue';
 
- const redNumbers = new Set( [
+ const RED_NUMBERS = new Set( [
         1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36
     ]);
 
@@ -42,16 +91,46 @@ data(){
         3,6,9,12,15,18,21,24,27,30,33,36,
         2,5,8,11,14,17,20,23,26,29,32,35,
         1,4,7,10,13,16,19,22,25,28,31,34
-       ]
+       ],
+       selectedColor: null,
+       stake: 3,
+       placedBet: null,
     };
     },
     methods:{
         color(number){
             if (number===0)
                 return "rgb(2,112,2)";
-            return redNumbers.has(number)
+            return RED_NUMBERS.has(number)
                 ? "rgb(172,8,8)"
                 : "rgb(0,0,0)";
+        },
+        placeColorBet(color){
+            if(this.selectedColor === color){
+                this.selectedColor = null;
+                return;
+            }
+            this.selectedColor = color;
+        },
+        increaseStake(){
+            this.stake += 1;
+        },
+        decreaseStake(){
+            if(this.stake >1)
+                this.stake -= 1;
+        },
+        placeBet(){
+            if(!this.selectedColor)
+                return;
+            this.placedBet ={
+                type: "color",
+                value: this.selectedColor,
+                amount: this.stake,
+            };
+        },
+        clearBet(){
+            this.selectedColor = null;
+            this.placedBet = null;
         }
     }
 }
@@ -60,17 +139,30 @@ data(){
 </script>
 
 <style scoped>
+
 .whole-page{
     padding: 16px;
     display: grid;
     place-items: center;
-    gap:12px;
+    gap:5px;
+    width: 100%;
+    max-width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
 }
 .title{
     color: rgb(219, 52, 202);
     margin:0;
     font-size: 50px;
-    font-family: Arial, Helvetica, sans-serif;
+    
+}
+.board-wrap{
+    width: 100%;
+    max-width: 100%;
+    overflow-x:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    justify-content: center;
 }
 .betting-board{
     display: grid;
@@ -81,7 +173,25 @@ data(){
     padding:10px;
     background: rgb(2, 112, 2) ;
     border-radius: 12px;
+    flex: 0 0 auto;
+    transform-origin:top center;
 }
+@media (max-width: 900px){
+  .betting-board{ transform: scale(0.9); }
+  .bet-info{transform: scale(0.9);}
+}
+
+@media (max-width: 700px){
+  .betting-board{ transform: scale(0.8); }
+  
+}
+
+@media (max-width: 600px){
+  .betting-board{ transform: scale(0.7); }
+  
+}
+
+
 
 .square{
     border:1px solid rgba(255, 255, 255, 0.65);
@@ -89,7 +199,6 @@ data(){
     display: grid;
     place-items: center;
     color:white;
-    font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     user-select: none;
 
@@ -101,13 +210,6 @@ data(){
     background: rgb(2, 112, 2);
     font-weight: bold;
     font-size: 20px;
-}
-
-.red{
-    background: rgb(172, 8, 8);
-}
-.black{
-    background: black;
 }
 
 .bet-red{
@@ -127,5 +229,104 @@ data(){
     letter-spacing: 1px;
     border:3px solid rgba(250, 250, 250,0.75);
 }
+
+.bet-info{
+    width: min(900px,100%);
+    max-width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid rgba(250,250,250,0.5);
+    color:white;
+    box-sizing: border-box;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    position: relative;
+    font-size: 20px;
+
+}
+
+.bet-info .row{
+    display: flex;
+    align-items: center;
+    gap:10px;
+    margin: 15px;
+}
+
+.column {
+    flex-direction: column;
+    gap:6px;
+}
+.bet-amount-control{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bet-amount-control button{
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid rgba(250,250,250,0.5);
+    background: rgba(0,0,0,0.3);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.bet-amount-control button:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.place-bet-section{
+    grid-column: 2;
+    grid-row:1;
+
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}
+.place-bet{
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(250,250,250,0.6);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.place-bet:disabled{
+    opacity: 0.4;
+    cursor:not-allowed;
+}
+.stake{
+    min-width: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+.clear{
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(250,250,250,0.6);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.clear-section{
+    grid-column:2;
+    grid-row:2;
+
+    display: flex;
+    align-items: center;
+}
+
+
+.selected{
+    outline: 3px solid rgba(234, 200, 8, 0.8);
+    transform: translateY(-1px);
+}
+
+
 
 </style>
