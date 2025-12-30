@@ -1,8 +1,9 @@
 import { Minigame } from "../Minigame.js";
 
-export class KahootGame extends Minigame {
+export class RouletteGame extends Minigame {
     constructor() {
         super();
+        console.log("Roulette constructor running")
         //lägg tll spin och resultat sen
         this.phase = "betting";
 
@@ -24,28 +25,39 @@ export class KahootGame extends Minigame {
     }
 
     registerListeners(socket) {
+        console.log("roulette.registerlistener")
+
+        socket.on("roulette:placeBet", (bet) =>
+            this.onPlaceBet(socket.data.playerId, bet));
+
         socket.on("roulette:clearBets", () =>
-            this.onClearBets(socket.data.playerID));
+            this.onClearBets(socket.data.playerId));
+
+        socket.on("roulette:requestState", () => {
+            socket.emit("roulette:update", this.getPublicState());
+        });
     }
     unregisterListeners(socket) {
         socket.off("roulette:placeBet");
         socket.off("roulette:clearBets");
+        socket.off("roulette:requestState");
     }
 
     start() {
+        console.log("roulettegame.start()")
         this.phase = "betting"
         this.betsByPlayer = {};
-        this.broadcastHosts("roulette:update", this.getPublicState());
+        this.broadcastRouletteState();
     }
     stop() {
         this.clearTimeouts();
     }
 
-    onPlaceBet(playerID, bet) {
+    onPlaceBet(playerId, bet) {
         //säkerhetåtgärder
         if (this.phase !== "betting")
             return;
-        if (!playerID)
+        if (!playerId)
             return;
         if (!bet || typeof bet.amount !== "number" || bet.amount <= 0)
             return;
@@ -56,14 +68,14 @@ export class KahootGame extends Minigame {
             bet = { type: "color", value: "green", amount: bet.amount };
         }
 
-        if (!this.betsByPlayer[playerID]) {
-            const player = this.context.player.find((p) => p.id == playerId);
-            this.betsByPlayer[playerID] = {
-                name: player?.name == "Player",
+        if (!this.betsByPlayer[playerId]) {
+            const player = this.context.players.find((p) => p.id == playerId);
+            this.betsByPlayer[playerId] = {
+                name: player?.name ?? "Player",
                 bets: [],
             };
         }
-        const bets = this.betsByPlayer[playerID].bets;
+        const bets = this.betsByPlayer[playerId].bets;
         //slå ihop bets om man lägger samma igen
         const index = bets.findIndex(
             (b) => b.type === bet.type && b.value === bet.value
@@ -77,10 +89,10 @@ export class KahootGame extends Minigame {
         this.broadcastRouletteState();
     }
 
-    onClearBets(playerID) {
-        if (!this.betsByPlayer[playerID])
+    onClearBets(playerId) {
+        if (!this.betsByPlayer[playerId])
             return;
-        this.betsByPlayer[playerID].bets = [];
+        this.betsByPlayer[playerId].bets = [];
         this.broadcastRouletteState();
     }
     getPublicState() {
@@ -91,7 +103,7 @@ export class KahootGame extends Minigame {
     }
     broadcastRouletteState() {
         const state = this.getPublicState();
-        this.broadcastHosts("roulette:update", state);
+        this.broadcast("roulette:update", state);
 
     }
 }

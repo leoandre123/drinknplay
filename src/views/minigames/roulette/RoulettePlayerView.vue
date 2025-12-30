@@ -87,6 +87,8 @@
 </template>
 
 <script>
+import { socket } from "@/socket";
+import { context } from "@/context";
 import RetroContainer from '../../../components/RetroContainer.vue';
 
  const RED_NUMBERS = new Set( [
@@ -111,6 +113,19 @@ data(){
        placedBets: [],
 
     };
+    },
+    mounted(){
+        socket.emit("roulette:requestState");
+
+        this.onRouletteUpdate = (state) =>{
+            const mine = state?.betsByPlayer?.[context.playerId];
+            this.placedBets = mine?.bets ?? [];
+        };
+
+        socket.on("roulette:update", this.onRouletteUpdate);
+    },
+    beforeUnmount(){
+        socket.off("roulette:update", this.onRouletteUpdate);
     },
 
     methods:{
@@ -140,7 +155,8 @@ data(){
             if(!this.selectedColor && this.selectedNumber === null)
                 return;
 
-                let bet;
+            let bet;
+
             if(this.selectedNumber === 0){
                 bet = {type:"color",value:"green",amount:this.stake};
             }
@@ -150,27 +166,21 @@ data(){
             else {
                 bet = {type:"color", value:this.selectedColor, amount:this.stake};
             }
-            //Lägg till amount ifall man vill lägga fler bets på samma
-            //hitta samma typ av bet
-            const index = this.placedBets.findIndex(
-                (b) => b.type === bet.type && b.value === bet.value //returnerar index -1 om bettet inte matchar något
-            );
-            if (index !== -1){
-                this.placedBets[index].amount += bet.amount;
-            }
-            else {
-                this.placedBets.push(bet);
-            }
+
+            socket.emit("roulette:placeBet", bet)
+            
+
 
         },
         clearBets(){
-            this.placedBets = [];
+            socket.emit("roulette:clearBets");
             this.selectedColor = null;
-            this.placedBet = null;
+            this.selectedNumber = null;
+            this.placedBets = [];
         },
-        removeBet(index){
+        /*removeBet(index){
             this.placedBets.splice(index,1);
-        },
+        },*/
         selectNumber(n){
             if(this.selectedNumber === n){
                 this.selectedNumber = null;
