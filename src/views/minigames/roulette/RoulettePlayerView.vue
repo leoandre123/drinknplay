@@ -5,11 +5,17 @@
     <h1 class="title">Roulette</h1>
     <div class="board-wrap">
         <div class="betting-board">
-            <div class="square zero">0</div>
+            <div class="square zero"
+            :class="{selected: selectedNumber === 0}"
+            @click="selectNumber(0)"
+            >0</div>
 
             <div v-for="n in numbers" 
-            :key="n" class="square"
-            :style="{backgroundColor:color(n)}">
+            :key="n" 
+            class="square"
+            :style="{backgroundColor:color(n)}"
+            :class="{selected: selectedNumber === n}"
+            @click="selectNumber(n)">
             {{ n }}
             </div>
             
@@ -35,11 +41,12 @@
                 <span class="stake">{{ stake }}</span>
                 <button @click="increaseStake">+</button>
             </div>
-            <span v-if="selectedColor"> {{ selectedColor.toUpperCase() }}</span>
+            <span v-if="selectedNumber!== null">Number: {{ selectedNumber }}</span>
+            <span v-else-if="selectedColor"> Color: {{ selectedColor.toUpperCase() }}</span>
             <span v-else>Choose color/number!</span>
             <button class="place-bet"
             @click="placeBet"
-            :disabled="!selectedColor"
+            :disabled="!selectedColor && selectedNumber === null"
             >
             Place bet
             </button>
@@ -47,21 +54,15 @@
 
         <div class="place-bet-section">
             <span><b>Your bet:</b></span>
-
-            <span v-if="placedBet">
-                {{ placedBet.value.toUpperCase() }}: {{ placedBet.amount }}
-            </span>
-            <span v-else>
-                No bet placed!
-            </span>
-
+            <span class="bet-value">{{ betText }}</span>
+    
         </div>
 
         <div class="clear-section">
             
             <button class="clear"
             @click="clearBet"
-            :disabled="!selectedColor">
+            :disabled="!selectedColor && selectedNumber === null && !placedBet">
             Clear bet
         </button>
         </div>
@@ -93,9 +94,21 @@ data(){
         1,4,7,10,13,16,19,22,25,28,31,34
        ],
        selectedColor: null,
+       selectedNumber: null,
        stake: 3,
        placedBet: null,
+
     };
+    },
+    computed:{
+        betText(){
+            if(!this.placedBet)
+                return "No bet placed";
+            if(this.placedBet.type === "color"){
+                return `Color: ${this.placedBet.value} (${this.placedBet.amount} sips)`;
+            }
+            return `Number: ${this.placedBet.value}: ${this.placedBet.amount} sips`;
+        }
     },
     methods:{
         color(number){
@@ -111,6 +124,7 @@ data(){
                 return;
             }
             this.selectedColor = color;
+            this.selectedNumber = null;
         },
         increaseStake(){
             this.stake += 1;
@@ -120,8 +134,24 @@ data(){
                 this.stake -= 1;
         },
         placeBet(){
-            if(!this.selectedColor)
+            if(!this.selectedColor && this.selectedNumber === null)
                 return;
+            if(this.selectedNumber === 0){
+                this.placedBet ={
+                    type: "color",
+                    value: "Green",
+                    amount: this.stake,
+                };
+                return;
+            }
+            if(this.selectedNumber !== null){
+                this.placedBet = {
+                    type: "number",
+                    value: this.selectedNumber,
+                    amount: this.stake,
+                };
+                return;
+            }
             this.placedBet ={
                 type: "color",
                 value: this.selectedColor,
@@ -131,7 +161,15 @@ data(){
         clearBet(){
             this.selectedColor = null;
             this.placedBet = null;
-        }
+        },
+        selectNumber(n){
+            if(this.selectedNumber === n){
+                this.selectedNumber = null;
+                return;
+            }
+            this.selectedNumber = n;
+            this.selectedColor = null;
+        },
     }
 }
 
@@ -153,13 +191,14 @@ data(){
     color: rgb(219, 52, 202);
     margin:0;
     font-size: 50px;
+    font-family: "Science Gothic", sans-serif;
     
 }
 .board-wrap{
     width: 100%;
     max-width: 100%;
     overflow-x:auto;
-    overflow-x:hidden;
+
     -webkit-overflow-scrolling: touch;
     display: flex;
     justify-content: center;
@@ -171,7 +210,7 @@ data(){
 
     gap:3px;
     padding:10px;
-    background: rgb(2, 112, 2) ;
+    background: rgb(5, 66, 5) ;
     border-radius: 12px;
     flex: 0 0 auto;
     transform-origin:top center;
