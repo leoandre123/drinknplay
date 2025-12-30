@@ -59,13 +59,14 @@
 
 <script>
 import { socket } from "../../../socket";
+import { useDevice } from "../../../UseDevice";
 
 export default {
   name: "RacingController",
 
   data() {
     return {
-      mode: "keyboard",
+      mode: this.isMobile ? "joystick" : "keyboard",
       keys: [],
       joystick: {
         active: false,
@@ -89,7 +90,11 @@ export default {
     };
   },
 
-  created: function () {},
+  setup() {
+    const { isMobile } = useDevice();
+
+    return { isMobile };
+  },
 
   async mounted() {
     window.addEventListener("deviceorientation", this.handleRotation);
@@ -224,6 +229,7 @@ export default {
     },
 
     onKeyStateChanged() {
+      if (this.mode != "keyboard") return;
       let steer = 0;
 
       if (this.keys["a"]) steer -= 1;
@@ -253,7 +259,7 @@ export default {
 .controller {
   width: 100vw;
   height: 100vh;
-  background: rgb(156, 76, 76);
+  background: linear-gradient(to right top, #782c64, #633260, #513558, #42364c, #37343e);
   user-select: none;
   touch-action: none;
 }
@@ -294,12 +300,15 @@ export default {
   justify-items: center;
   border-radius: 50%;
   background-color: #484041;
+  border: 10px outset black;
+  box-shadow: 0 0 1rem 0.25rem black;
 }
 .joystick {
-  width: 7rem;
-  height: 7rem;
+  width: 6rem;
+  height: 6rem;
   border-radius: 50%;
   background-color: #e63946;
+  border: 10px inset #791820;
 }
 
 .keyboard-keys {
@@ -340,22 +349,29 @@ export default {
 }
 
 .pedal {
+  box-sizing: border-box;
+  border: 10px outset;
   flex: 1;
   font-size: 3rem;
   font-weight: bold;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.pedal:active {
+  border-style: inset;
+}
+
 .brake {
   background: #e63946;
+  border-color: #aa2c36;
   color: white;
 }
 
 .gas {
   background: #06d6a0;
+  border-color: #0c9a74;
   color: white;
 }
 

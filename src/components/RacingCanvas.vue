@@ -47,7 +47,7 @@ export default {
       canvasHeight: 768,
       scaleConst: 1,
       baseFontSize: 1,
-      resmul: 1,
+      resmul: 0.5,
       aspectRatio: 1,
       canvas: null,
       ctx: null,

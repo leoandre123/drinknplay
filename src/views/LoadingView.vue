@@ -1,11 +1,25 @@
 <template>
   <div class="background-container" :style="backgroundStyle">
     <div class="game-label">
-      <p>{{ gameinfo[context.state.gameIndex].title }}</p>
+      <p>{{ title }}</p>
     </div>
     <div class="info-box">
       <h1>TIPS!</h1>
-      <p>{{ gameinfo[context.state.gameIndex].tips }}</p>
+      <p>{{ tip }}</p>
+
+      <div class="ready-container">
+        <p v-if="context.isHost">
+          {{ context.state.players.filter((x) => x.isReady).length }} of
+          {{ context.state.players.length / 2 }} required players ready
+        </p>
+        <button
+          v-if="!context.isHost"
+          :class="[context.getCurrentPlayer().isReady ? 'cancel' : 'ready']"
+          @click="toggleReady"
+        >
+          READY
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -13,6 +27,7 @@
 <script>
 import { context } from "../context";
 import gameinfo from "@/assets/gameinfo.json";
+import { socket } from "../socket";
 
 export default {
   name: "LoadingView",
@@ -25,8 +40,19 @@ export default {
   },
   components: {},
   async created() {},
-  methods: {},
+  methods: {
+    toggleReady() {
+      socket.emit("ready", !context.getCurrentPlayer().isReady);
+    },
+  },
   computed: {
+    title() {
+      return gameinfo[context.state.gameIndex].title;
+    },
+    tip() {
+      const allTips = gameinfo[context.state.gameIndex].tips;
+      return allTips[Math.floor(Math.random() * allTips.length)];
+    },
     backgroundStyle() {
       return {
         backgroundImage: `url(/${this.gameinfo[this.context.state.gameIndex].imageUri})`,
@@ -63,6 +89,8 @@ export default {
 }
 .info-box {
   position: absolute;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 35%;
   bottom: 0;
@@ -72,5 +100,31 @@ export default {
   font-family: "Audiowide", sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.ready-container {
+  flex-grow: 1;
+  align-content: center;
+}
+
+.ready-container button {
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 2.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 1rem black;
+  cursor: pointer;
+}
+.ready-container button:hover {
+  transform: scale(1.05);
+  background: rgb(47, 192, 47);
+}
+
+.ready {
+  background: rgb(34, 155, 34);
+}
+.cancel {
+  background: rgb(155, 34, 48);
 }
 </style>

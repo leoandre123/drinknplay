@@ -1,51 +1,66 @@
 <template>
-  <RetroContainer>
+  <NewRetroContainer>
     <div v-if="!isConnected">Not connected to server</div>
     <div v-if="isConnected" class="home-container">
-      <RetroText>DRINK N' DRAW</RetroText>
+      <RetroText>DRINK N' PLAY</RetroText>
       <div class="menu">
-        <p>Lobby Code</p>
+        <h2>{{ $t("lobby.lobbyCode") }}</h2>
         <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
+        <p v-if="errorMsg" class="error-msg">{{ $t(`lobby.lobbyUnavailable.${errorMsg}`) }}</p>
         <br />
         <br />
-        <button @click="joinGame" :disabled="lobbyCode.length == 0">Join game</button>
+        <button @click="tryJoinGame" :disabled="lobbyCode.length == 0">
+          {{ $t("game.joinGame") }}
+        </button>
         <div>
-          <p>
+          <h3>
             If you want to host a game press <span class="create" @click="createGame">here</span>
-          </p>
+          </h3>
         </div>
       </div>
     </div>
-  </RetroContainer>
+  </NewRetroContainer>
 </template>
 
 <script>
 import RetroContainer from "../components/RetroContainer.vue";
+import NewRetroContainer from "../components/NewRetroContainer.vue";
 import RetroText from "../components/RetroText.vue";
 import { socket } from "../socket";
 export default {
   name: "HomeView",
-  components: { RetroContainer, RetroText },
+  components: { RetroContainer, RetroText, NewRetroContainer },
   data: function () {
     return {
       isConnected: false,
       lobbyCode: "",
+      errorMsg: "",
     };
   },
   mounted() {
     this.isConnected = socket.connected;
     socket.on("connect", () => (this.isConnected = true));
     socket.on("disconnect", () => (this.isConnected = false));
+    socket.on("lobby:checkCodeResponse", (resp) => this.onLobbyResponse(resp));
   },
   beforeUnmount() {
     socket.off("connect");
     socket.off("disconnect");
+    socket.off("lobby:checkCodeResponse");
   },
   methods: {
-    joinGame() {
-      this.$router.push({
-        path: `/join/${this.lobbyCode}`,
-      });
+    tryJoinGame() {
+      socket.emit("lobby:checkCode", this.lobbyCode.toUpperCase());
+    },
+    onLobbyResponse(resp) {
+      console.log(resp);
+      if (resp.available) {
+        this.$router.push({
+          path: `/join/${this.lobbyCode.toUpperCase()}`,
+        });
+      } else {
+        this.errorMsg = resp.reason;
+      }
     },
     createGame() {
       this.$router.push({
@@ -58,6 +73,7 @@ export default {
 
 <style scoped>
 .home-container {
+  display: grid;
   width: 100vw;
   height: 100vh;
   justify-items: center;
@@ -75,6 +91,11 @@ export default {
   max-width: 25rem;
 }
 
+.error-msg {
+  color: rgb(255, 0, 0);
+  text-shadow: 0 0 2px black;
+}
+
 .menu p {
   text-align: start;
 }
@@ -87,6 +108,7 @@ export default {
   padding: 1rem;
   font: inherit;
   border: 0.15rem solid #2c3b5f;
+  text-transform: uppercase;
 }
 .menu input:focus {
   border-color: #596a95;

@@ -4,8 +4,12 @@ import CreateView from "../views/CreateView.vue";
 import ResultView from "../views/ResultView.vue";
 import drawingCanvas from "../components/drawingCanvas.vue";
 import DrawingView from "../views/DrawingView.vue";
+
+import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
+import AdminView from "../views/AdminView.vue";
 import RouletteView from "../views/minigames/roulette/RouletteView.vue";
 import RoulettePlayerView from "@/views/minigames/roulette/RoulettePlayerView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -20,7 +24,7 @@ const router = createRouter({
     },
     {
       path: "/canvas",
-      name: "canvas",
+      name: "Canvas",
       component: DrawingView,
     },
     {
@@ -29,19 +33,14 @@ const router = createRouter({
       component: CreateView,
     },
     {
-      path: "/roulette",
-      name: "Roulette",
-      component: RouletteView,
-    },
-    {
-      path: "/roulette/player",
-      name: "RoulettePlayer",
-      component: RoulettePlayerView,
-    },
-    {
       path: "/result",
       name: "Result",
       component: ResultView,
+    },
+    {
+      path: "/admin",
+      name: "Admin",
+      component: AdminView,
     },
     {
       path: "/test",

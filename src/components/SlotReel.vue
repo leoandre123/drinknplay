@@ -80,10 +80,11 @@ export default {
 
 <style scoped>
 .reel-container {
-  width: 6rem;
-  height: 10rem;
+  width: 16rem;
+  height: 20rem;
   perspective: 600px;
   background: linear-gradient(0deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 100%);
+  background: white;
   overflow: hidden;
 }
 
@@ -98,27 +99,27 @@ export default {
 .symbol {
   position: absolute;
   width: 100%;
-  height: 6rem;
-  font-size: 3rem;
+  height: 12rem;
+  font-size: 6rem;
   text-align: center;
-  line-height: 6rem;
+  line-height: 12rem;
   backface-visibility: hidden;
 }
 
 .symbol:nth-child(1) {
-  transform: translateY(-50%) rotateX(90deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(90deg) translateZ(10rem);
 }
 .symbol:nth-child(2) {
-  transform: translateY(-50%) rotateX(45deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(45deg) translateZ(10rem);
 }
 .symbol:nth-child(3) {
-  transform: translateY(-50%) rotateX(0deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(0deg) translateZ(10rem);
 }
 .symbol:nth-child(4) {
-  transform: translateY(-50%) rotateX(-45deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(-45deg) translateZ(10rem);
 }
 .symbol:nth-child(5) {
-  transform: translateY(-50%) rotateX(-90deg) translateZ(75px);
+  transform: translateY(-50%) rotateX(-90deg) translateZ(10rem);
 }
 
 /* Top shadow */
