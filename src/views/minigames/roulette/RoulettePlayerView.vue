@@ -54,15 +54,27 @@
 
         <div class="place-bet-section">
             <span><b>Your bet:</b></span>
-            <span class="bet-value">{{ betText }}</span>
-    
+            <div v-if="placedBets.length === 0">No bets placed!</div> 
+            
+            <ul v-else class="bet-list">
+                <li v-for="(b,i) in placedBets" :key="`${b.type}- ${b.value}`">
+                    <span>
+                        {{ b.type === 'color' 
+                            ? (b.value.toUpperCase())
+                            : ('Number: '+ b.value)
+                        }}
+                       - {{ b.amount }} sips
+                    </span>
+                    <button class="remove-bet" @click="removeBet(i)">x</button>
+                </li>
+            </ul>
         </div>
 
         <div class="clear-section">
             
             <button class="clear"
-            @click="clearBet"
-            :disabled="!selectedColor && selectedNumber === null && !placedBet">
+            @click="clearBets"
+            :disabled="placedBets.length === 0">
             Clear bet
         </button>
         </div>
@@ -96,20 +108,11 @@ data(){
        selectedColor: null,
        selectedNumber: null,
        stake: 3,
-       placedBet: null,
+       placedBets: [],
 
     };
     },
-    computed:{
-        betText(){
-            if(!this.placedBet)
-                return "No bet placed";
-            if(this.placedBet.type === "color"){
-                return `Color: ${this.placedBet.value} (${this.placedBet.amount} sips)`;
-            }
-            return `Number: ${this.placedBet.value}: ${this.placedBet.amount} sips`;
-        }
-    },
+
     methods:{
         color(number){
             if (number===0)
@@ -136,31 +139,37 @@ data(){
         placeBet(){
             if(!this.selectedColor && this.selectedNumber === null)
                 return;
+
+                let bet;
             if(this.selectedNumber === 0){
-                this.placedBet ={
-                    type: "color",
-                    value: "Green",
-                    amount: this.stake,
-                };
-                return;
+                bet = {type:"color",value:"green",amount:this.stake};
             }
-            if(this.selectedNumber !== null){
-                this.placedBet = {
-                    type: "number",
-                    value: this.selectedNumber,
-                    amount: this.stake,
-                };
-                return;
+            else if (this.selectedNumber !== null){
+            bet = {type:"number",value: this.selectedNumber, amount:this.stake};    
             }
-            this.placedBet ={
-                type: "color",
-                value: this.selectedColor,
-                amount: this.stake,
-            };
+            else {
+                bet = {type:"color", value:this.selectedColor, amount:this.stake};
+            }
+            //Lägg till amount ifall man vill lägga fler bets på samma
+            //hitta samma typ av bet
+            const index = this.placedBets.findIndex(
+                (b) => b.type === bet.type && b.value === bet.value //returnerar index -1 om bettet inte matchar något
+            );
+            if (index !== -1){
+                this.placedBets[index].amount += bet.amount;
+            }
+            else {
+                this.placedBets.push(bet);
+            }
+
         },
-        clearBet(){
+        clearBets(){
+            this.placedBets = [];
             this.selectedColor = null;
             this.placedBet = null;
+        },
+        removeBet(index){
+            this.placedBets.splice(index,1);
         },
         selectNumber(n){
             if(this.selectedNumber === n){
@@ -360,10 +369,35 @@ data(){
     align-items: center;
 }
 
-
 .selected{
     outline: 3px solid rgba(234, 200, 8, 0.8);
     transform: translateY(-1px);
+}
+.bet-list{
+    list-style: none;
+    padding:0;
+    margin: 8px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap:5px;
+}
+.bet-list li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.remove-bet{
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    border-radius: 7px;
+    border: 1px solid rgba(250, 250, 250,0.75);
+    background: rgba(0,0,0,0.3);
+    color: white;
+    cursor: pointer;
+   
+    
 }
 
 
