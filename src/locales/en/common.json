@@ -11,5 +11,7 @@
     "off": "Off",
     "finish": "Finish",
     "switchMode": "Switch mode",
-    "modeDescription": "Current mode: "
+    "modeDescription": "Current mode: ",
+    "slopeFinished": "Slope finished",
+    "finishDescription": "Great job!"
 }

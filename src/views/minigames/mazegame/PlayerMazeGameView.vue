@@ -12,7 +12,14 @@
 
     <canvas id="mazeCanvas"></canvas>
 
-    <p v-if="!isLandscape" class="modeText">{{ mode }}</p>
+    <div v-if="slopeFinished" class="win-modal">
+      <div class="modal-content">
+        <h2>{{ $t("common.slopeFinished") }}!</h2>
+        <p>{{$t("common.finishDescription")  }}</p>
+      </div>
+    </div>
+
+    <p v-if="!isLandscape" class="modeText">{{ $t("common.modeDescription") }}<br>{{ mode }}</p>
   </div>
 </template>
 
@@ -42,7 +49,8 @@ export default {
         friction: 0.99
       },
       lastTime: 0,
-      rafId: null
+      rafId: null,
+      slopeFinished: false,
     };
   },
 
@@ -136,6 +144,8 @@ export default {
       this.ball.y += this.ball.vy * dt;
       this.checkCollisionWithMazeY();
 
+      this.checkSlopeFinished();
+
       this.ball.vx *= this.ball.friction;
       this.ball.vy *= this.ball.friction;
 
@@ -183,10 +193,12 @@ export default {
       if (leftCol >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + leftCol])) {
         b.vx *= -0.5;
         b.x = (leftCol + 1) * this.tileSize + b.r;
+        this.playBounceSound();
       }
       else if (rightCol < this.columns && (this.maze[topRow * this.columns + rightCol] || this.maze[bottomRow * this.columns + rightCol])) {
         b.vx *= -0.5;
         b.x = rightCol * this.tileSize - b.r;
+        this.playBounceSound();
       }
     },
 
@@ -202,10 +214,26 @@ export default {
       if (topRow >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[topRow * this.columns + rightCol])) {
         b.vy *= -0.5;
         b.y = (topRow + 1) * this.tileSize + b.r;
+        this.playBounceSound();
       }
       else if (bottomRow < maxRows && (this.maze[bottomRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + rightCol])) {
         b.vy *= -0.5;
         b.y = bottomRow * this.tileSize - b.r;
+        this.playBounceSound();
+      }
+    },
+    checkSlopeFinished() {
+      const b = this.ball;
+      if (!this.slopeFinished &&
+        this.tileSize * 4 < b.x + b.r &&
+        b.x + b.r < this.tileSize * 5 &&
+        b.y - b.r < this.tileSize
+      ) {
+        this.slopeFinished = true;
+        console.log("Slope finished!");
+        window.removeEventListener("deviceorientation", this.handleRotation);
+        window.removeEventListener("keydown", this.onKeyDown);
+        window.removeEventListener("keyup", this.onKeyUp);
       }
     },
     col(x) {
@@ -320,6 +348,10 @@ export default {
       ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
+    },
+    playBounceSound() {
+      const audio = new Audio('/sounds/rubberballbouncing.mp3');
+      audio.play();
     }
   }
 };
@@ -374,5 +406,25 @@ button:active {
 
 #mazeCanvas {
   background-color: rgb(89, 3, 30);
+}
+.win-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Mörkar ner bakgrunden lite */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: popIn 0.3s ease-out;
 }
 </style>

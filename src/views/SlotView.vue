@@ -1,11 +1,7 @@
 <template>
   <div v-if="context.isHost" class="slot-container">
-    <SlotMachine
-      ref="slotRef"
-      :symbols="availableGames.map((x) => x.symbol)"
-      :text="text"
-      @spin-finished="onSpinFinished"
-    />
+    <SlotMachine ref="slotRef" :symbols="availableGames.map((x) => x.symbol)" :text="text"
+      @spin-finished="onSpinFinished" />
   </div>
   <div v-if="!context.isHost">Look at the screen</div>
 </template>
@@ -20,6 +16,7 @@ const availableGames = [
   { name: "Questions game", symbol: "❓" },
   { name: "Drink n' draw", symbol: "✍️" },
   { name: "Drink", symbol: "🍻" },
+  { name: "Maze game", symbol: "🗺️" },
 ];
 
 export default {
