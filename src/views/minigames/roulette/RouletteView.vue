@@ -4,10 +4,20 @@
     <RetroContainer>
         <div class="layout">
             <div class="wheel-area">
-                <RouletteWheel/>
+                <RouletteWheel
+                ref="wheel"
+                :phase="phase"
+                @spinFinished="onSpinFinished"
+                />
+                <button
+                class="spin-button"
+                @click="startSpin"
+                :disabled="phase !== 'betting'">
+                Spin
+            </button>
             </div>
             <div class="bets-area">
-                <h2> Bets ({{ phase }})</h2>
+                <h2 class="bets-title"> Bets</h2>
 
                 <div v-if="betsList.length === 0">No bets placed yet!</div>
 
@@ -20,15 +30,42 @@
                         <ul v-if="p.bets && p.bets.length" class="bet-list">
                             <li v-for="b in p.bets" :key="`${b.type} - ${b.value}`">
                                 <span v-if="b.type === 'color'">
-                                    Color: {{ String(b.value).toUpperCase() }} - {{ b.amount }}
+                                    Color: {{ String(b.value).toUpperCase() }} - {{ b.amount }} sips
                                 </span>
                                 <span v-else>
-                                    Number: {{ b.value }} - {{ b.amount }}
+                                    Number: {{ b.value }} - {{ b.amount }} sips
                                 </span>
                             </li>
                         </ul>
                         <div v-else>No bets</div>
                     </div>
+                </div>
+            
+            </div>
+             <div class="result-area">
+                <h2 class="result-title">Result</h2>
+                <div v-if="phase === 'betting'">
+                    Waiting for spin...
+                </div>
+                <div v-else-if="phase === 'spinning'">
+                    Spinning...
+                </div>
+                <div v-else>
+                    <div v-if="spinResult">
+                        <div>Number: {{ spinResult.number }}</div>
+                        <div>Color: {{ String(spinResult.color).toUpperCase() }}</div>
+
+                        <div>
+                            Winners: 
+                            <div v-if="spinResult.winners.length === 0">No winners</div>
+                            <ul v-else>
+                                <li v-for="w in spinResult.winners" :key="playerId">
+                                    {{ w.name }} - {{ w.winningAmount }} sips
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button @click="nextRound">Next round</button>
                 </div>
             </div>
 
@@ -41,8 +78,8 @@
 </template>
 <script>
 
-import { socket } from "@/socket";
-import { context } from "@/context";
+import { context } from "../../../context";
+import { socket } from "../../../socket";
 
 import RetroContainer from '@/components/RetroContainer.vue';
 import RouletteWheel from '@/components/RouletteWheel.vue';
@@ -55,12 +92,14 @@ export default {
         return {
             phase: "betting",
             betsByPlayer: {},
+            spinResult: null,
         };
     },
     mounted(){
         this.onRouletteUpdate = (state) =>{
             this.phase = state?.phase ?? "betting";
             this.betsByPlayer = state?.betsByPlayer ?? {};
+            this.spinResult = state?.spinResult ?? null;
         };
         socket.on("roulette:update", this.onRouletteUpdate);
         socket.emit("roulette:requestState");
@@ -73,28 +112,30 @@ export default {
         betsList(){
             return Object.entries(this.betsByPlayer);
         }
+    },
+    methods:{
+        startSpin(){
+            socket.emit("roulette:startSpin");
+            this.$refs.wheel.spin(); //spin() från RouletteWheelviewen
+        },
+        onSpinFinished(number){
+            socket.emit("roulette:spinResult", { number });
+        }
     }
 }
 </script>
 <style>
 .layout{
     display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 16px;
+    grid-template-columns: 1fr 250px 250px;
+    gap: 10px;
     align-items: start;
     color:white;
+    height: 100%;
+    min-width: 0;
 }
 
-.bets-area{
-    padding:12px;
-    border: 1px solid rgba(250,250,250,0.3);
-    border-radius: 10px;
-
-    grid-column: 2;
-    grid-row: 1;
-}
 .player-bets{
-    margin-top:10px;
     padding-top:10px;
     border-top:10px;
 
@@ -113,7 +154,67 @@ export default {
 
 .wheel-area{
     grid-column: 1;
-    grid-row:1;
+  
+}
+.bets-area{
+    padding:5px;
+    border: 1px solid rgba(238, 14, 227, 0.9);
+    border-radius: 10px;
+
+    position: sticky;
+    top: 150px;
+    right: 500px;
+    overflow: auto;
+    grid-column: 2;
+}
+.bets-title{
+    font-size: 40px;
+    margin: 0;
+    text-align: center;
+}
+.result-area{
+    padding:5px;
+    border: 1px solid rgba(238, 14, 227, 0.9);
+    border-radius: 10px;
+
+    position: sticky;
+    top: 150px;
+    right: 50px;
+    overflow: auto;
+    grid-column: 3;
+}
+.result-title{
+    font-size: 40px;
+    margin: 0;
+    text-align: center;
+}
+
+.spin-button{
+        font-family: "Science Gothic", sans-serif;
+        padding: 12px;
+        margin: 15px;
+        height: 60px;
+        width: 200px;
+        border-radius: 10px;
+        background-color: var(--French_Rose);
+        border: 3px, groove, var(--Caribbean_Green);
+        box-shadow: 0 0 .2rem #fff,
+        0 0 .2rem #fff,
+        0 0 2rem var(--Caribbean_Green),
+        0 0 0.8rem var(--Caribbean_Green),
+        0 0 2.8rem var(--Caribbean_Green),
+        inset 0 0 1.3rem var(--Caribbean_Green);
+    }
+@media (max-width: 1050px){
+  .layout{
+    grid-template-columns: 1fr 150px 150px;
+    
+  }
+
+  .bets-area,
+  .result-area{
+    position: static;
+  }
 }
 
 </style>

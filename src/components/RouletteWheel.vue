@@ -27,9 +27,6 @@
             </div>
            <div class="wheel-middle-button"></div>
         </div >
-        
-        <button class="spin-button" @click="spin">Spin</button>
-        
     </div>
 
 </template>
@@ -50,8 +47,8 @@ export default{
             ],
             radius: 0,
             rotation: 0,
-            ballRotation: 0
-
+            ballRotation: 0,
+            isSpinning: false,
         };
     },
     
@@ -85,6 +82,9 @@ export default{
             this.radius = (outerR + innerR) / 2;
         },
         spin(){
+            if(this.isSpinning) //motverka dubbelklick, blir fler "vinnare isf"
+            return;
+            this.isSpinning = true;
             const randomSpin = Math.floor(Math.random()*360);
 
             const minExtraSpins = 5 * 360;
@@ -95,6 +95,21 @@ export default{
             this.rotation = endRotation;
             this.ballRotation = ballEndRotation;
 
+            setTimeout(()=>{ 
+                const finalNumber = this.calculateFinalNumber();
+                this.isSpinning = false;
+                this.$emit("spinFinished", finalNumber);//säg till RouletteVIew
+            },2500); //delayar funkt 2,5s
+        },
+        calculateFinalNumber(){
+            const TOTAL_POCKETS = this.numbers.length;
+            const DEGREES_PER_POCKET = 360 / TOTAL_POCKETS;
+            const endAngle = (this.rotation - this.ballRotation) % 360;
+            //normalisra vinkeln så den inte blir negativ
+            const normalizedAngle = (endAngle + 360) % 360;
+            const pocketIndex = Math.floor(normalizedAngle / DEGREES_PER_POCKET);
+           
+            return numbers[pocketIndex];
         }
 
     }
@@ -162,22 +177,7 @@ export default{
         z-index:3;
     }
     
-    .spin-button{
-        font-family: "Science Gothic", sans-serif;
-        padding: 12px;
-        margin: 15px;
-        height: 60px;
-        width: 200px;
-        border-radius: 10px;
-        background-color: var(--French_Rose);
-        border: 3px, groove, var(--Caribbean_Green);
-        box-shadow: 0 0 .2rem #fff,
-        0 0 .2rem #fff,
-        0 0 2rem var(--Caribbean_Green),
-        0 0 0.8rem var(--Caribbean_Green),
-        0 0 2.8rem var(--Caribbean_Green),
-        inset 0 0 1.3rem var(--Caribbean_Green);
-    }
+    
 
     button:hover{
         background-color: orange;

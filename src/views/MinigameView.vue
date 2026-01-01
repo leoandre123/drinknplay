@@ -32,6 +32,8 @@
         <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
         <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
         <ClosestView v-if="context.state.gameIndex == 4" class="minigame" />
+        <RouletteView v-if="context.state.gameIndex == 5" class="minigame" />
+
       </div>
       <div v-if="!context.isHost" class="client-container">
         <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
@@ -39,6 +41,8 @@
         <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
         <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
         <ClosestPlayerView v-if="context.state.gameIndex == 4" class="minigame" />
+        <RoulettePlayerView v-if="context.state.gameIndex == 5" class="minigame" />
+
       </div>
     </div>
   </div>
@@ -56,6 +60,9 @@ import ReactionGame from "./minigames/reaction/ReactionGame.vue";
 import ReactionGamePlayerView from "./minigames/reaction/ReactionGamePlayerView.vue";
 import ClosestView from "./minigames/closest/ClosestView.vue";
 import ClosestPlayerView from "./minigames/closest/ClosestPlayerView.vue";
+import RouletteView from "./minigames/roulette/RouletteView.vue";
+import RoulettePlayerView from "./minigames/roulette/RoulettePlayerView.vue";
+
 
 export default {
   name: "MinigameView",
@@ -74,6 +81,8 @@ export default {
     ReactionGamePlayerView,
     ClosestView,
     ClosestPlayerView,
+    RouletteView,
+    RoulettePlayerView,
   },
   async created() {},
 

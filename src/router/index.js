@@ -3,7 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
 import ResultView from "../views/ResultView.vue";
 import drawingCanvas from "../components/drawingCanvas.vue";
-import DrawingView from "../views/DrawingView.vue";
+import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
 
 import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
 import AdminView from "../views/AdminView.vue";
@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: "/canvas",
       name: "Canvas",
-      component: DrawingView,
+      component: PlayerDrawingView,
     },
     {
       path: "/create",
@@ -41,6 +41,18 @@ const router = createRouter({
       path: "/admin",
       name: "Admin",
       component: AdminView,
+    },
+    {
+      path: "/roulette",
+      name: "Roulette",
+      component: RouletteView,
+
+    },
+
+    {
+      path: "/roulette/player",
+      name: "RoulettePlayer",
+      component: RoulettePlayerView,
     },
     {
       path: "/test",

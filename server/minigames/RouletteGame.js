@@ -8,6 +8,7 @@ export class RouletteGame extends Minigame {
         this.phase = "betting";
 
         this.betsByPlayer = {};
+        this.spinResult = null;
     }
 
     onPlayerJoined(player) {
@@ -25,18 +26,30 @@ export class RouletteGame extends Minigame {
     }
 
     registerListeners(socket) {
-        console.log("roulette.registerlistener")
 
-        socket.on("roulette:placeBet", (bet) =>
-            this.onPlaceBet(socket.data.playerId, bet));
-
-        socket.on("roulette:clearBets", () =>
-            this.onClearBets(socket.data.playerId));
-
+        socket.on("roulette:placeBet", (bet) => {
+            this.onPlaceBet(socket.data.playerId, bet);
+        });
+        socket.on("roulette:clearBets", () => {
+            this.onClearBets(socket.data.playerId);
+        });
         socket.on("roulette:requestState", () => {
             socket.emit("roulette:update", this.getPublicState());
         });
+
+        socket.on("roulette:startSpin", () => {
+            this.onStartSpin();
+        });
+
+        socket.on("roulette:spinResult", ({ number }) => {
+            this.onSpinResult(number);
+        });
+        socket.on("roulette:nextRound", () => {
+            this.onNextRound();
+        })
+
     }
+
     unregisterListeners(socket) {
         socket.off("roulette:placeBet");
         socket.off("roulette:clearBets");
@@ -44,9 +57,10 @@ export class RouletteGame extends Minigame {
     }
 
     start() {
-        console.log("roulettegame.start()")
+
         this.phase = "betting"
         this.betsByPlayer = {};
+        this.spinResult = null;
         this.broadcastRouletteState();
     }
     stop() {
@@ -95,10 +109,62 @@ export class RouletteGame extends Minigame {
         this.betsByPlayer[playerId].bets = [];
         this.broadcastRouletteState();
     }
+    onStartSpin(number) {
+        if (this.phase !== "betting")
+            return;
+        this.phase = "spinning";
+        this.spinResult = null;
+
+        this.broadcastRouletteState();
+    }
+    onSpinResult(number) {
+        if (this.phase !== "spinning")
+            return;
+
+        const color = this.getColor(number);
+        const winners = [];
+
+        for (const [playerId, playerData] of Object.entries(this.betsByPlayer)) {
+            const bets = playerData?.bets ?? [];
+            const winningAmount = bets.reduce((sum, b) => { //reducera listan till ett värde
+                if (b.type === "number" && b.value === number)
+                    return sum + b.amount * 36;
+                if (b.type === "color" && b.value === color)
+                    return sum + b.amount;
+                return sum;
+            }, 0); //börja summan på 0
+            if (winningAmount > 0) {
+                winners.push({ playerId, name: playerData.name, winningAmount });
+            }
+        }
+        this.spinResult = { number, color, winners };
+        this.phase = "result";
+        this.broadcastRouletteState();
+    }
+
+    getColor(number) {
+        if (number === 0)
+            return "green";
+        const red = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+        return red.has(number) ? "red" : "black";
+    }
+    onNextRound() {
+        if (this.phase !== "result")
+            return;
+        for (const playerData of Object.values(this.betsByPlayer)) {
+            playerData.bets = [];
+        }
+        this.spinResult = null;
+        this.phase = "betting";
+        this.broadcastRouletteState();
+    }
+
+
     getPublicState() {
         return {
             phase: this.phase,
             betsByPlayer: this.betsByPlayer,
+            spinResult: this.spinResult,
         };
     }
     broadcastRouletteState() {
@@ -106,4 +172,5 @@ export class RouletteGame extends Minigame {
         this.broadcast("roulette:update", state);
 
     }
+
 }
