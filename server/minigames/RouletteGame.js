@@ -12,6 +12,7 @@ export class RouletteGame extends Minigame {
     }
 
     onPlayerJoined(player) {
+        console.log("player joined")
         if (!this.betsByPlayer[player.id]) {
             this.betsByPlayer[player.id] = { name: player.name, bets: [] };
         }
@@ -24,24 +25,42 @@ export class RouletteGame extends Minigame {
     onPlayerDisconnected(player) {
         this.broadcastRouletteState();
     }
+    onHostJoined(socket) {
+        this.registerListeners(socket);
+        console.log("[SERVER] roulette onHostJoined", socket.id);
 
+        socket.emit("roulette:update", this.getPublicState());
+    }
     registerListeners(socket) {
+        console.log("[SERVER] roulette registerListeners for", socket.id, "playerId=", socket.data.playerId);
 
         socket.on("roulette:placeBet", (bet) => {
+
+            console.log("[SERVER] roulette:placeBet", socket.data.playerId, bet);
+
             this.onPlaceBet(socket.data.playerId, bet);
         });
         socket.on("roulette:clearBets", () => {
+
+            console.log("[SERVER] roulette:clearBets", socket.data.playerId);
+
+
             this.onClearBets(socket.data.playerId);
         });
         socket.on("roulette:requestState", () => {
+            console.log("[SERVER] roulette:requestState from", socket.id);
+
             socket.emit("roulette:update", this.getPublicState());
         });
 
         socket.on("roulette:startSpin", () => {
+            console.log("[SERVER] roulette:startSpin from", socket.id, "phase=", this.phase);
             this.onStartSpin();
         });
 
         socket.on("roulette:spinResult", ({ number }) => {
+            console.log("[SERVER] roulette:spinResult payload=", number, "phase=", this.phase);
+
             this.onSpinResult(number);
         });
         socket.on("roulette:nextRound", () => {
@@ -54,6 +73,9 @@ export class RouletteGame extends Minigame {
         socket.off("roulette:placeBet");
         socket.off("roulette:clearBets");
         socket.off("roulette:requestState");
+        socket.off("roulette:startSpin");
+        socket.off("roulette:spinResult");
+        socket.off("roulette:nextRound");
     }
 
     start() {
@@ -109,7 +131,7 @@ export class RouletteGame extends Minigame {
         this.betsByPlayer[playerId].bets = [];
         this.broadcastRouletteState();
     }
-    onStartSpin(number) {
+    onStartSpin() {
         if (this.phase !== "betting")
             return;
         this.phase = "spinning";
@@ -118,9 +140,17 @@ export class RouletteGame extends Minigame {
         this.broadcastRouletteState();
     }
     onSpinResult(number) {
-        if (this.phase !== "spinning")
-            return;
+        console.log("[SERVER] onSpinResult called", {
+            number,
+            phase: this.phase,
+        });
 
+        if (this.phase !== "spinning") {
+
+            console.warn("[SERVER] spinResult ignored – wrong phase:", this.phase);
+
+            return;
+        }
         const color = this.getColor(number);
         const winners = [];
 
@@ -169,7 +199,11 @@ export class RouletteGame extends Minigame {
     }
     broadcastRouletteState() {
         const state = this.getPublicState();
+
+
+
         this.broadcast("roulette:update", state);
+        console.log("roulette update", state);
 
     }
 

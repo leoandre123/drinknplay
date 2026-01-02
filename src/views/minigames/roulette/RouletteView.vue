@@ -7,8 +7,7 @@
                 <RouletteWheel
                 ref="wheel"
                 :phase="phase"
-                @spinFinished="onSpinFinished"
-                />
+                @spinFinished="onSpinFinished"/>
                 <button
                 class="spin-button"
                 @click="startSpin"
@@ -59,7 +58,7 @@
                             Winners: 
                             <div v-if="spinResult.winners.length === 0">No winners</div>
                             <ul v-else>
-                                <li v-for="w in spinResult.winners" :key="playerId">
+                                <li v-for="w in spinResult.winners" :key="w.playerId">
                                     {{ w.name }} - {{ w.winningAmount }} sips
                                 </li>
                             </ul>
@@ -78,8 +77,9 @@
 </template>
 <script>
 
-import { context } from "../../../context";
+
 import { socket } from "../../../socket";
+import { context } from "@/context";
 
 import RetroContainer from '@/components/RetroContainer.vue';
 import RouletteWheel from '@/components/RouletteWheel.vue';
@@ -96,13 +96,18 @@ export default {
         };
     },
     mounted(){
+        
         this.onRouletteUpdate = (state) =>{
+            console.log("frontend roulette:update recieved", state);
             this.phase = state?.phase ?? "betting";
             this.betsByPlayer = state?.betsByPlayer ?? {};
             this.spinResult = state?.spinResult ?? null;
         };
         socket.on("roulette:update", this.onRouletteUpdate);
         socket.emit("roulette:requestState");
+
+     
+
     },
     beforeUnmount(){
         socket.off("roulette:update", this.onRouletteUpdate);
@@ -116,10 +121,15 @@ export default {
     methods:{
         startSpin(){
             socket.emit("roulette:startSpin");
+            console.log("startSpin clicked  phase =",this.phase);
             this.$refs.wheel.spin(); //spin() från RouletteWheelviewen
         },
         onSpinFinished(number){
+            console.log("spin finished listened number=", number, "phase=", this.phase);
             socket.emit("roulette:spinResult", { number });
+        },
+        nextRound(){
+            socket.emit("roulette:nextRound");
         }
     }
 }

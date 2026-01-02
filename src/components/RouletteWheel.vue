@@ -42,8 +42,8 @@ export default{
     data(){
         return {
             numbers: 
-            [0, 32, 15, 19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26
-
+            [0, 32, 15, 19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,
+            10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26
             ],
             radius: 0,
             rotation: 0,
@@ -82,10 +82,11 @@ export default{
             this.radius = (outerR + innerR) / 2;
         },
         spin(){
-            if(this.isSpinning) //motverka dubbelklick, blir fler "vinnare isf"
+            if(this.isSpinning) //motverka dubbelklick, blir fler "vinnare" isf
             return;
             this.isSpinning = true;
-            const randomSpin = Math.floor(Math.random()*360);
+            const randomSpin =
+             Math.floor(Math.random()*360);
 
             const minExtraSpins = 5 * 360;
             const endRotation = this.rotation + minExtraSpins+randomSpin;
@@ -99,7 +100,7 @@ export default{
                 const finalNumber = this.calculateFinalNumber();
                 this.isSpinning = false;
                 this.$emit("spinFinished", finalNumber);//säg till RouletteVIew
-            },2500); //delayar funkt 2,5s
+            },5000); //delayar funkt 3,5s
         },
         calculateFinalNumber(){
             const TOTAL_POCKETS = this.numbers.length;
@@ -109,11 +110,9 @@ export default{
             const normalizedAngle = (endAngle + 360) % 360;
             const pocketIndex = Math.floor(normalizedAngle / DEGREES_PER_POCKET);
            
-            return numbers[pocketIndex];
+            return this.numbers[pocketIndex];
         }
-
     }
-
 }
 </script>
 
