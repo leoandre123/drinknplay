@@ -12,10 +12,19 @@
 
     <canvas id="mazeCanvas"></canvas>
 
-    <div v-if="slopeFinished" class="win-modal">
+    <div v-if="showResultModal" class="win-modal">
       <div class="modal-content">
-        <h2>{{ $t("common.slopeFinished") }}!</h2>
-        <p>{{$t("common.finishDescription")  }}</p>
+        <h2 v-if="winnerId === myId">🏆 DU VANN! 🏆</h2>
+        <h2 v-else>{{ winnerName }} vann!</h2>
+        <p v-if="winnerId === myId">Snyggt jobbat!</p>
+        <p v-else>Bättre lycka nästa gång.</p>
+      </div>
+    </div>
+
+    <div v-else-if="slopeFinished" class="win-modal">
+      <div class="modal-content">
+        <h2>Mål!</h2>
+        <p>Väntar på resultat...</p>
       </div>
     </div>
 
@@ -24,6 +33,7 @@
 </template>
 
 <script>
+import { socket } from '../../../socket';
 export default {
   name: "PlayerMazeGameView",
 
@@ -51,7 +61,32 @@ export default {
       lastTime: 0,
       rafId: null,
       slopeFinished: false,
+      gameActive: true,
+      winnerId: null,
+      winnerName: null,
+      showResultModal: false
     };
+  },
+
+  computed: {
+    myID() {
+      return socket.id;
+    }
+  },
+
+  created() {
+    socket.on("maze:roundResult", ({ winnerID, winnerName }) => {
+      this.gameActive = false;
+      this.winnerID = winnerID;
+      this.winnerName = winnerName;
+      this.showResultModal = true;
+
+      if (this.winnerId === this.myId) {
+        new Audio("/sounds/winner.mp3").play();
+      } else {
+        new Audio("/sounds/nowinner.mp3").play();
+      }
+    });
   },
 
   mounted() {
@@ -96,7 +131,6 @@ export default {
     this.ball.r = this.tileSize / 3;
     this.ball.x = this.tileSize * 1.5;
     this.ball.y = this.tileSize / 2;
-    const speed = this.tileSize * 1; //här är hastigheten
     this.drawBall(this.ball.x, this.ball.y, this.ball.r);
 
     this.loop = this.loop.bind(this);
@@ -104,10 +138,8 @@ export default {
     this.rafId = requestAnimationFrame(this.loop);
 
     window.addEventListener("deviceorientation", this.handleRotation);
-
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
-
     window.addEventListener("resize", () => {
       this.isLandscape = window.innerWidth > window.innerHeight;
     });
@@ -116,6 +148,7 @@ export default {
     window.removeEventListener("deviceorientation", this.handleRotation);
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
+    socket.off("maze:roundResult");
   },
 
   methods: {
@@ -124,6 +157,7 @@ export default {
       this.requestSensorPermission();
     },
     loop(now) {
+      if (!this.gameActive && !this.showResultModal) return;
       const dt = (now - this.lastTime) / 1000; // sekunder
       this.lastTime = now;
 
@@ -224,13 +258,15 @@ export default {
     },
     checkSlopeFinished() {
       const b = this.ball;
-      if (!this.slopeFinished &&
+      if (this.gameActive &&
+        !this.slopeFinished &&
         this.tileSize * 4 < b.x + b.r &&
         b.x + b.r < this.tileSize * 5 &&
         b.y - b.r < this.tileSize
       ) {
         this.slopeFinished = true;
         console.log("Slope finished!");
+        socket.emit("maze:finished");
         window.removeEventListener("deviceorientation", this.handleRotation);
         window.removeEventListener("keydown", this.onKeyDown);
         window.removeEventListener("keyup", this.onKeyUp);
@@ -407,18 +443,20 @@ button:active {
 #mazeCanvas {
   background-color: rgb(89, 3, 30);
 }
+
 .win-modal {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6); /* Mörkar ner bakgrunden lite */
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
 }
+
 .modal-content {
   background: white;
   padding: 40px;

@@ -23,6 +23,10 @@ export class LobbyManager {
     reactionLobby.selectGame(3);
     reactionLobby.startMinigame();
 
+    const mazeGameLobby = new Lobby(io, "maze");
+    mazeGameLobby.selectGame(4);
+    mazeGameLobby.startMinigame();
+
     const resultLobby = new Lobby(io, "result");
     resultLobby.startResultScreen();
 
@@ -34,7 +38,7 @@ export class LobbyManager {
   createLobby(gameSettings) {
     let id;
     do {
-      id = GenerateID(3);
+      id = GenerateID(4);
     } while (this.lobbies.some((x) => x.context.lobbyId == id));
     const lobby = new Lobby(this.io, id, gameSettings);
     this.lobbies.push(lobby);
