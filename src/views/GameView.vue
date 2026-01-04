@@ -102,6 +102,7 @@ export default {
   },
   setup() {
     const { isMobile } = useDevice();
+    return { isMobile };
   },
   components: {
     MinigameView,

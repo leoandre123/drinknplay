@@ -32,7 +32,7 @@ export class LobbyManager {
 
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby, reactionLobby];
+    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby, reactionLobby, mazeGameLobby];
   }
 
   createLobby(gameSettings) {
