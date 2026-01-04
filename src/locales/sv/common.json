@@ -9,5 +9,10 @@
         "player": "Spelare"
     },
     "on": "På",
-    "off": "Av"
+    "off": "Av",
+    "finish": "Slut",
+    "switchMode": "Byt spelläge",
+    "modeDescription": "Nuvarande spelläge: ",
+    "slopeFinished": "Bana avslutad",
+    "finishDescription": "Bra jobbat!"
 }

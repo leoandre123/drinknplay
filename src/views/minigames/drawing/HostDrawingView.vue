@@ -1,23 +1,37 @@
 <template>
-    <div class="drawings">
-
-        <h1>All drawings</h1>
-        <div>What do you like?</div>
-        <div v-for="painting in submittedPaintings">
-            <img :src="painting.data"></img>
-            <h1>{{context.state.players.find(x => x.id == painting.playerId).name}}</h1>
+    <div class="host-view-container">
+        <div v-if="phase === 'drawing'" class="drawing-board">
+            <div class="subject">Draw a {{ currentSubject }}</div>
+            <div class="displayPictures">
+                <div v-for="drawing in submittedPaintings" class="drawings">
+                    <img :src="drawing.png"></img>
+                </div>
+            </div>
         </div>
-        <div class="showcase"></div>
-        <div class="tools">Rate on you pgone</div>
-        <p>{{ context.state.players }}</p>
+
+
+        <div v-if="phase === 'voting'" class="voting-container">
+            <div class="vote-title">Rate picture on your device</div>
+            <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
+        </div>
+
+        <DrawingResultScreen v-if="phase === 'results'" :score="scores"/>
+
+        <div v-if="phase === 'start'" class = "start">
+            Welcome! Please start game on your device by pressing start-button
+        </div>
+        <div v-if="phase !== 'results'" class="time">Time left: {{ timer }}</div>
     </div>
 </template>
 
 <script>
+
 //access via https://localhost:5173/game?id=draw&mode=host
+//{{context.state.players.find(x => x.id == painting.playerId).name}}
 
 import { context } from "../../../context";
 import { socket } from "../../../socket";
+import DrawingResultScreen from "../../../components/DrawingResultScreen.vue";
 
 
 export default {
@@ -25,35 +39,158 @@ export default {
         return {
             context,
             submittedPaintings: [],
+            currentSubject: "",
+            timer: null,
+            phase: "start",
+            currentDrawingToVote: null,
+            scores: {}
         }
     },
+    components: {
+        DrawingResultScreen,
+    },
+    methods: {
+    
+    },
     mounted() {
-        socket.on("updateCanvas", (canvasData, playerId) => this.submittedPaintings.push({
-            playerId: playerId,
-            data: canvasData
-        }));
+        socket.on("currentSubject", (subjectFromServer) => {
+            this.currentSubject = subjectFromServer
+            console.log(subjectFromServer)
+            console.log(this.currentSubject)
+        });
+
+        socket.on("gamePhase", (phaseFromServer) => {
+            this.phase = phaseFromServer
+            console.log("game phase:" + this.phase)
+        });
+
+        socket.on("timerTick", (timerFromServer) => { this.timer = timerFromServer });
+
+        socket.on("updateCanvas", (drawingFromServer) => {
+            let drawing = this.submittedPaintings.find(p => p.socketId === drawingFromServer.socketId);
+            if (drawing) {
+                drawing.png = drawingFromServer.png;
+            }
+            else {
+                this.submittedPaintings.push(drawingFromServer)
+            }
+        });
+        socket.on("drawingToVote", (drawingFromServer) => {
+            this.currentDrawingToVote = drawingFromServer
+        });
+
+        socket.on("clearPaintings", () => { this.submittedPaintings = [] });
+
+        socket.on("results", (score) => { this.scores = score });
+
     },
     beforeUnmount() {
-        socket.off("updateCanvas");
+
     }
 
 }
 
 </script>
 
-<style>
-.drawings {
-    background-color: black;
-    color: red;
+<style scoped>
+.host-view-container {
+    font-family: "Science Gothic", sans-serif;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    border: 5px ridge yellow;
+    box-sizing: border-box;
+    overflow: hidden;
+}
 
+.drawing-board {
+    background-color: whitesmoke;
+    color: black;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    width: 100%;
+    overflow: auto;
 }
 
-.showcase {
-    background: yellow;
-    flex-grow: 1;
+.subject {
+    background-color: var(--Caribbean_Green);
+    color: var(--Metallic_Yellow);
+    font-size: 5vw;
+    margin: 0;
+    text-shadow: 1px 1px black;
 }
+
+.displayPictures {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10vw, 1fr));
+    grid-auto-rows: min-content;
+    gap: 1rem;
+    padding: 20px;
+    min-height: 0;
+    border: 1px solid black;
+    overflow: hidden;
+
+}
+
+.displayPictures img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-fit: contain;
+    display: block;
+    box-sizing: border-box;
+}
+
+.time {
+    flex-shrink: 0;
+    background-color: var(--Caribbean_Green);
+    color: var(--Metallic_Yellow);
+    font-size: 3rem;
+    text-align: center;
+    margin-top: auto;
+}
+
+.drawings {
+    border: 5px outset gray;
+    object-fit: contain;
+    background-color: gray;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.voting-container {
+    background-color: var(--Caribbean_Green);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.vote-title {
+    background-color: var(--Caribbean_Green);
+    color: var(--Metallic_Yellow);
+    font-size: 3rem;
+}
+
+.drawing-to-vote {
+    flex: 1;
+    object-fit: contain;
+    display: block;
+    min-height: 0;
+    padding: 10px;
+    border: 5px double black;
+    background-color: gray;
+    margin: 10px;
+}
+
+.start {
+    display: flex;
+    flex:1;
+    flex-wrap: wrap;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
 </style>
