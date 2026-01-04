@@ -37,8 +37,10 @@
         "tips": [
             "Try to win"
         ]
+    },
+    {
         "title": "Drink n' Maze Game",
-        "imageUri": "game_backgrounds/MazeGame.jpg", 
+        "imageUri": "game_backgrounds/MazeGame.jpg",
         "tips": [
             "Be the first to reach the goal!",
             "Avoid walls and obstacles.",

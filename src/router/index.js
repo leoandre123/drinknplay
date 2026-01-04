@@ -38,7 +38,8 @@ const router = createRouter({
     {
       path: "/result",
       name: "Result",
-      component: ResultView,},
+      component: ResultView,
+    },
     {
       path: "/MazeGame",
       name: "MazeGame",
@@ -48,9 +49,11 @@ const router = createRouter({
       path: "/admin",
       name: "Admin",
       component: AdminView,
+    },
+    {
       path: "/MazeHost",
       name: "MazeHost",
-      component: HostMazeGameView
+      component: HostMazeGameView,
     },
     {
       path: "/test",
