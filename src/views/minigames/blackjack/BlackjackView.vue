@@ -4,8 +4,20 @@
       <div class="dealer">
         <PlayingCard v-for="rank in 2" :rank="rank" suit="hearts" />
       </div>
-      <div v-for="rank in 8" class="playing-card" :style="playerStyle(rank)">
-        <PlayingCard :rank="rank" suit="hearts" />
+      <div v-for="(rank, i) in 8" class="white-box" :style="playerStyle(i, 8)">
+        <div class="card-stack">
+          <div>
+            <PlayingCard :rank="rank" suit="hearts" />
+          </div>
+          <div>
+            <PlayingCard :rank="rank" suit="hearts" />
+          </div>
+        </div>
+        <div class="bet-stack">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -36,29 +48,72 @@ export default {
   },
   beforeUnmount() {},
   methods: {
-    playerStyle(i) {
-      const count = 8;
-      const angle = Math.PI / 2 + ((i - 1) * Math.PI) / (count - 1);
+    playerStyle(i, count) {
+      const rx = this.tableWidth / 2;
+      const ry = this.tableHeight / 2;
 
-      const rx = this.tableHeight / 2;
-      const ry = this.tableWidth / 2;
+      const t0 = 0.5; // angle offset in radians
+      const t1 = Math.PI - 0.5;
 
-      const radius = ellipseRadius(rx, ry, angle) * 1;
+      // arc-length at the endpoints (these are in "distance" units)
+      const s0 = arclen(rx, ry, t0);
+      const s1 = arclen(rx, ry, t1);
 
-      const tangent = Math.atan2(ry * Math.cos(angle), -rx * Math.sin(angle));
+      function findTForArc(targetS) {
+        let lo = t0,
+          hi = t1;
+        for (let iter = 0; iter < 35; iter++) {
+          const mid = (lo + hi) * 0.5;
+          if (arclen(rx, ry, mid) < targetS) lo = mid;
+          else hi = mid;
+        }
+        return (lo + hi) * 0.5;
+      }
+
+      // distribute evenly in ARC LENGTH between t0..t1
+      const u = i / (count - 1); // 0..1 (ensure i is 0..count-1)
+      const targetS = s0 + u * (s1 - s0);
+
+      const t = findTForArc(targetS);
+
+      const x = rx * Math.cos(t);
+      const y = ry * Math.sin(t);
+
+      const tangent = Math.atan2(ry * Math.cos(t), -rx * Math.sin(t));
+
       return {
         transform: `
-          translate(-50%, -50%)
-          rotate(${angle}rad)
-          translateY(-${radius}px)
-          rotate(${-angle}rad)
-          rotate(${tangent + Math.PI / 2}rad)
-        `,
+      translate(-50%, -50%)
+      translate(${x}px, ${y}px)
+      rotate(${tangent + Math.PI}rad)
+    `,
       };
     },
   },
   computed: {},
 };
+
+function arclen(a, b, theta) {
+  const f = (t) => Math.sqrt(a * a * Math.sin(t) ** 2 + b * b * Math.cos(t) ** 2);
+
+  function simpson(f, a, b) {
+    const c = (a + b) / 2;
+    return ((b - a) / 6) * (f(a) + 4 * f(c) + f(b));
+  }
+
+  function adaptiveSimpson(f, a, b, eps, whole) {
+    const c = (a + b) / 2;
+    const left = simpson(f, a, c);
+    const right = simpson(f, c, b);
+    if (Math.abs(left + right - whole) < 15 * eps) {
+      return left + right + (left + right - whole) / 15;
+    }
+    return adaptiveSimpson(f, a, c, eps / 2, left) + adaptiveSimpson(f, c, b, eps / 2, right);
+  }
+
+  const initial = simpson(f, 0, theta);
+  return adaptiveSimpson(f, 0, theta, 1e-8, initial);
+}
 
 function ellipseRadius(rx, ry, angleRad) {
   return (rx * ry) / Math.sqrt((ry * Math.cos(angleRad)) ** 2 + (rx * Math.sin(angleRad)) ** 2);
@@ -84,7 +139,7 @@ function ellipseRadius(rx, ry, angleRad) {
   bottom: 1rem;
   border: 1rem ridge brown;
   box-sizing: border-box;
-  padding: 5rem;
+  padding: 8rem;
   justify-items: center;
 
   display: flex;
@@ -103,6 +158,7 @@ function ellipseRadius(rx, ry, angleRad) {
 
 .dealer {
   display: flex;
+  transform: translateY(-1rem);
 }
 
 .players {
@@ -113,12 +169,47 @@ function ellipseRadius(rx, ry, angleRad) {
   flex-grow: 1;
 }
 
+.white-box {
+  position: absolute;
+  width: 5rem;
+  height: 8rem;
+  left: 50%;
+  top: 50%;
+  border: 0.2rem solid white;
+  justify-items: center;
+  align-content: center;
+}
+
+.card-stack {
+  position: absolute;
+  top: -6rem;
+  width: 4rem;
+  height: 6rem;
+}
+.card-stack > *:nth-child(1) {
+  transform: translateX(-0.5rem) rotate(-10deg);
+}
+.card-stack > *:nth-child(2) {
+  transform: translateX(2rem) rotate(20deg);
+}
+
+.bet-stack > div {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-image: url("https://png.pngtree.com/png-vector/20220729/ourmid/pngtree-poker-chip-png-image_6091092.png");
+  background-size: contain;
+}
+
 .playing-card {
   position: absolute;
   width: 4rem;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  border: 1px solid white;
+  transform: translate(-50%, 0%);
 }
 
 .playing-card:hover {

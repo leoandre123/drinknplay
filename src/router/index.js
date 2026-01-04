@@ -44,6 +44,8 @@ const router = createRouter({
       path: "/admin",
       name: "Admin",
       component: AdminView,
+    },
+    {
       path: "/blackjack",
       name: "Black",
       component: BlackjackView,
