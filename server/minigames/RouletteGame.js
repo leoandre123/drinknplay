@@ -9,10 +9,17 @@ export class RouletteGame extends Minigame {
 
         this.betsByPlayer = {};
         this.spinResult = null;
+
+        this.totalPerPlayer = {};
+        this.round = 1;
+        this.maxRounds = 3;
     }
 
     onPlayerJoined(player) {
         console.log("player joined")
+        if (this.totalPerPlayer[player.id] == null) {
+            this.totalPerPlayer[player.id] = 0;
+        }
         if (!this.betsByPlayer[player.id]) {
             this.betsByPlayer[player.id] = { name: player.name, bets: [] };
         }
@@ -146,22 +153,18 @@ export class RouletteGame extends Minigame {
         });
 
         if (this.phase !== "spinning") {
-
-            console.warn("[SERVER] spinResult ignored – wrong phase:", this.phase);
-
             return;
         }
         const color = this.getColor(number);
+
+        this.addRoundResult(number); //ställning
         const winners = [];
 
         for (const [playerId, playerData] of Object.entries(this.betsByPlayer)) {
             const bets = playerData?.bets ?? [];
             const winningAmount = bets.reduce((sum, b) => { //reducera listan till ett värde
-                if (b.type === "number" && b.value === number)
-                    return sum + b.amount * 36;
-                if (b.type === "color" && b.value === color)
-                    return sum + b.amount;
-                return sum;
+                const net = this.getBetNet(b, number);
+                return sum + (net > 0 ? net : 0);
             }, 0); //börja summan på 0
             if (winningAmount > 0) {
                 winners.push({ playerId, name: playerData.name, winningAmount });
@@ -181,6 +184,14 @@ export class RouletteGame extends Minigame {
     onNextRound() {
         if (this.phase !== "result")
             return;
+
+        if (this.round >= this.maxRounds) {
+            this.phase = "final";
+            this.broadcastRouletteState();
+            return;
+        }
+        this.round += 1;
+
         for (const playerData of Object.values(this.betsByPlayer)) {
             playerData.bets = [];
         }
@@ -188,13 +199,55 @@ export class RouletteGame extends Minigame {
         this.phase = "betting";
         this.broadcastRouletteState();
     }
+    addRoundResult(winningNumber) {
+        const roundResultPerPlayer = {};
 
+        for (const [playerId, entry] of Object.entries(this.betsByPlayer)) {
+            const bets = entry.bets || [];
+            let roundResult = 0;
+
+            for (const bet of bets) {
+                roundResult += this.getBetNet(bet, winningNumber);
+            }
+            roundResultPerPlayer[playerId] = roundResult;
+            this.totalPerPlayer[playerId] = (this.totalPerPlayer[playerId] ?? 0) + roundResult;
+        }
+    }
+    betWins(bet, winningNumber) {
+        if (!bet)
+            return false;
+        if (bet.type === "number") {
+            return bet.value === winningNumber;
+        }
+        if (bet.type === "color") {
+            const winningColor = this.getColor(winningNumber);
+            return bet.value === winningColor;
+        }
+        return false;
+    }
+
+    getBetNet(bet, winningNumber) {
+        const amount = bet.amount ?? 0;
+        if (amount <= 0)
+            return 0;
+        if (!this.betWins(bet, winningNumber)) {
+            return -amount;
+        }
+        if (bet.type === "number")
+            return amount * 36;
+        if (bet.type === "color")
+            return amount;
+        return 0;
+    }
 
     getPublicState() {
         return {
             phase: this.phase,
             betsByPlayer: this.betsByPlayer,
             spinResult: this.spinResult,
+            round: this.round,
+            maxRounds: this.maxRounds,
+            totalPerPlayer: this.totalPerPlayer,
         };
     }
     broadcastRouletteState() {

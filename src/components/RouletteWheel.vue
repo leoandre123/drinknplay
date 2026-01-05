@@ -18,7 +18,7 @@
            /> 
             <div class="wheel-inner-rim"></div>
             <div class="pocket-rim"></div>
-            <div class="ball" v-bind:style="{transform: 'translate(-50%,-50%) rotate(' + (-ballRotation)+'deg) translateY(-' + ballRadius +'px)'}"></div>
+            <div class="ball" v-bind:style="{transform: 'translate(-50%,-50%) rotate(' + (ballRotation)+'deg) translateY(-' + ballRadius +'px)'}"></div>
            <div class="wheel-inner"></div>
            <div class="wheel-middle"></div>
            <div class="wheel-inner-middle"></div>
@@ -82,16 +82,17 @@ export default{
             this.radius = (outerR + innerR) / 2;
         },
         spin(){
+            
             if(this.isSpinning) //motverka dubbelklick, blir fler "vinnare" isf
             return;
             this.isSpinning = true;
-            const randomSpin =
-             Math.floor(Math.random()*360);
+            const randomSpin = Math.floor(Math.random()*360);
 
             const minExtraSpins = 5 * 360;
+
             const endRotation = this.rotation + minExtraSpins+randomSpin;
 
-            const ballEndRotation = this.ballRotation - (minExtraSpins+ randomSpin)
+            const ballEndRotation = this.ballRotation - minExtraSpins + randomSpin;
 
             this.rotation = endRotation;
             this.ballRotation = ballEndRotation;
@@ -100,17 +101,17 @@ export default{
                 const finalNumber = this.calculateFinalNumber();
                 this.isSpinning = false;
                 this.$emit("spinFinished", finalNumber);//säg till RouletteVIew
-            },5000); //delayar funkt 3,5s
+            },5000); //delayar med 5s
         },
         calculateFinalNumber(){
-            const TOTAL_POCKETS = this.numbers.length;
-            const DEGREES_PER_POCKET = 360 / TOTAL_POCKETS;
-            const endAngle = (this.rotation - this.ballRotation) % 360;
-            //normalisra vinkeln så den inte blir negativ
-            const normalizedAngle = (endAngle + 360) % 360;
-            const pocketIndex = Math.floor(normalizedAngle / DEGREES_PER_POCKET);
-           
-            return this.numbers[pocketIndex];
+        const TOTAL = this.numbers.length;
+        const DEG = 360 / TOTAL;
+
+         let a = ((this.ballRotation) % 360 + 360) % 360;
+         a = (a + DEG / 2 + 360) % 360; //tillbaka halvt fack
+        const idx = Math.floor(a / DEG);
+
+        return this.numbers[idx];
         }
     }
 }
