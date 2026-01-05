@@ -46,5 +46,12 @@
             "Avoid walls and obstacles.",
             "Use your phone to navigate."
         ]
+    },
+    {
+        "title": "Drink n' Bet",
+        "imageUri": "game_backgrounds/roulette.jpeg",
+        "tips": [
+            "Fortune favors the gambler"
+        ]
     }
 ]

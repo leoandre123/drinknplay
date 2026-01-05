@@ -31,7 +31,7 @@ export class LobbyManager {
     mazeGameLobby.startMinigame();
 
     const rouletteLobby = new Lobby(io, "roulette");
-    rouletteLobby.selectGame(5);
+    rouletteLobby.selectGame(6);
     rouletteLobby.startMinigame();
 
     const resultLobby = new Lobby(io, "result");

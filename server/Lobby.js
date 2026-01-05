@@ -213,10 +213,31 @@ export class Lobby {
     this.broadcastLobbyState();
 
     this.currentGame.context = this.context;
+
+    /*//host joinar vid lobbyfasen, dvs innan gamefasen, o joinar inte vid minigamebyte
+    //Host aktiv i roulette,så host socketen behöver listeners från onHostJoined()
+    //inte bara i lobbyfasen
+    const hostRoom = this.context.lobbyId + "_HOST";
+    //fetchSockets returnerar en Promise, await gör att man får listan när den är klar
+    //används när det tar tid att samla alla sockets
+    const hostSockets = await this.context.io.in(hostRoom).fetchSockets();
+    for (const s of hostSockets) {
+      this.currentGame?.onHostJoined(s);
+    }*/
+
     for (let player of this.context.players) {
       this.currentGame?.onPlayerJoined(player);
       this.currentGame.registerListeners(player.socket);
     }
+
+    this.context.io
+      .in(this.context.lobbyId + "_HOST")
+      .fetchSockets()
+      .then((hostSockets) => {
+        for (const s of hostSockets) {
+          this.currentGame?.onHostJoined(s);
+        }
+      });
 
     this.currentGame.onFinished = (results) => this.finishGame(results);
     this.currentGame.start();

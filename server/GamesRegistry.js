@@ -7,4 +7,4 @@ import { Mazegame } from "./minigames/MazeGame.js";
 import { RouletteGame } from "./minigames/RouletteGame.js";
 
 
-export const ALL_GAMES = [RacingGame, KahootGame, DrawingGame, ReactionGame, ClosestWin, MazeGame, RouletteGame];
+export const ALL_GAMES = [RacingGame, KahootGame, DrawingGame, ReactionGame, ClosestWin, Mazegame, RouletteGame];

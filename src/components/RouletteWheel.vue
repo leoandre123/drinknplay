@@ -83,8 +83,8 @@ export default{
         },
         spin(){
             
-            if(this.isSpinning) //motverka dubbelklick, blir fler "vinnare" isf
-            return;
+           /* if(this.isSpinning) //motverka dubbelklick, blir fler "vinnare" isf
+            return;*/
             this.isSpinning = true;
             const randomSpin = Math.floor(Math.random()*360);
 

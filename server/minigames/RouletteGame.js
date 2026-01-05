@@ -252,9 +252,6 @@ export class RouletteGame extends Minigame {
     }
     broadcastRouletteState() {
         const state = this.getPublicState();
-
-
-
         this.broadcast("roulette:update", state);
         console.log("roulette update", state);
 
