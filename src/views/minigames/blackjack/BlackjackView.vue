@@ -2,15 +2,20 @@
   <div class="blackjack-container">
     <div class="table" ref="table">
       <div class="dealer">
-        <PlayingCard v-for="rank in 2" :rank="rank" suit="hearts" />
+        <PlayingCard :rank="9" suit="hearts" :facedown="true" class="card" />
+        <PlayingCard :rank="11" suit="hearts" :facedown="false" class="card" />
       </div>
+      <div><PlayingCard :facedown="true" /></div>
       <div v-for="(rank, i) in 8" class="white-box" :style="playerStyle(i, 8)">
         <div class="card-stack">
           <div>
-            <PlayingCard :rank="rank" suit="hearts" />
+            <PlayingCard :rank="rank" suit="hearts" class="card" />
           </div>
           <div>
-            <PlayingCard :rank="rank" suit="hearts" />
+            <PlayingCard :rank="rank" suit="hearts" class="card" />
+          </div>
+          <div>
+            <PlayingCard :rank="rank" suit="hearts" class="card" />
           </div>
         </div>
         <div class="bet-stack">
@@ -35,6 +40,11 @@ export default {
     return {
       tableWidth: 0,
       tableHeight: 0,
+
+      deckPos: {
+        x: 200,
+        y: 200,
+      },
     };
   },
   components: { PlayingCard },
@@ -161,6 +171,13 @@ function ellipseRadius(rx, ry, angleRad) {
   transform: translateY(-1rem);
 }
 
+.dealer > .card:nth-child(1) {
+  transform: translate(-50%, 0%);
+}
+.dealer > .card:nth-child(2) {
+  transform: translate(-50%, 0%) translateX(2rem);
+}
+
 .players {
   width: 100%;
   height: 10rem;
@@ -192,6 +209,9 @@ function ellipseRadius(rx, ry, angleRad) {
 .card-stack > *:nth-child(2) {
   transform: translateX(2rem) rotate(20deg);
 }
+.card-stack > *:nth-child(3) {
+  transform: translateX(0rem) rotate();
+}
 
 .bet-stack > div {
   transform: translate(-50%, -50%);
@@ -203,16 +223,11 @@ function ellipseRadius(rx, ry, angleRad) {
   background-size: contain;
 }
 
-.playing-card {
+.card {
   position: absolute;
   width: 4rem;
   left: 50%;
   top: 50%;
-  border: 1px solid white;
   transform: translate(-50%, 0%);
-}
-
-.playing-card:hover {
-  transform: scale(1.1);
 }
 </style>

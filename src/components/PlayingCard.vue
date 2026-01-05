@@ -1,6 +1,6 @@
 <template>
-  <div class="playing-card">
-    <svg viewBox="0 0 150 200">
+  <div class="playing-card" :class="[{ 'face-down': facedown }]">
+    <svg v-if="!facedown" viewBox="0 0 150 200">
       <!--<rect x="0" y="0" width="150" height="200" rx="8" fill="white" />-->
       <text
         x="10"
@@ -46,6 +46,18 @@
         d="M 75 100 m 3 5 c 0.6 2 3 7 7.2 7 c 5.4 0 7.8 -4 7.8 -9 c 0 -3.5 -1.5474 -5.8061 -3 -8.5 c -1.5467 -2.8684 -3.8276 -5.4287 -6 -8 c -2.7871 -3.299 -9 -9.5 -9 -9.5 c 0 0 -6.2128 6.2011 -9 9.5 c -2.1724 2.5713 -4.4533 5.1316 -6 8 c -1.4526 2.6939 -3 5 -3 8.5 c 0 5 2.4 9 7.8 9 c 4.2 0 6.6 -5 7.2 -7 c 0.6 -0.5 0.6 0 0.6 0.5 c -0.6 4 -0.6 5 -1.2 8 c -0.6 3 -2.4 8.5 -2.4 8.5 c 3 -1 9 -1 12 0 c 0 0 -1.8 -5.5 -2.4 -8.5 c -0.6 -3 -0.6 -4 -1.2 -8 c 0 -0.5 0 -1 0.6 -0.5 z"
       />
     </svg>
+    <svg v-if="facedown" viewBox="0 0 150 200" stroke="white" stroke-width="3">
+      <path
+        v-for="x in 20"
+        :d="`M ${(x - 10) * 15} 0 L ${100 + (x - 10) * 15} 205`"
+        stroke="white"
+      />
+      <path
+        v-for="x in 100"
+        :d="`M ${(x - 10) * 15} 0 L ${-100 + (x - 10) * 15} 205`"
+        stroke="white"
+      />
+    </svg>
   </div>
 </template>
 
@@ -55,6 +67,7 @@ export default {
   props: {
     rank: Number,
     suit: String,
+    facedown: Boolean,
   },
   computed: {
     color() {
@@ -84,5 +97,18 @@ export default {
   width: 6em;
   border-radius: 0.25rem;
   box-shadow: 0px 0px 10px 0px black;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.playing-card svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.face-down {
+  background-color: red;
+  border: 0.15rem solid white;
 }
 </style>
