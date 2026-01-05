@@ -22,8 +22,9 @@ const availableGames = [
   { name: "Drink n' Drive", symbol: "🚗" },
   { name: "Drink n' Answer", symbol: "❓" },
   { name: "Drink n' Draw", symbol: "✍️" },
-  { name: "Drink n' React", symbol: "🍻" },
+  { name: "Drink n' React", symbol: "⏰" },
   { name: "Drink n' Find", symbol: "📍" },
+  { name: "Drink n' Maze", symbol: "🗺️" },
 ];
 
 export default {

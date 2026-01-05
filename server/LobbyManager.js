@@ -26,6 +26,9 @@ export class LobbyManager {
     const closestLobby = new Lobby(io, "closest");
     closestLobby.selectGame(4);
     closestLobby.startMinigame();
+    const mazeGameLobby = new Lobby(io, "maze");
+    mazeGameLobby.selectGame(4);
+    mazeGameLobby.startMinigame();
 
     const rouletteLobby = new Lobby(io, "roulette");
     rouletteLobby.selectGame(5);
