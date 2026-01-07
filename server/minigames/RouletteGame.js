@@ -34,40 +34,29 @@ export class RouletteGame extends Minigame {
     }
     onHostJoined(socket) {
         this.registerListeners(socket);
-        console.log("[SERVER] roulette onHostJoined", socket.id);
-
         socket.emit("roulette:update", this.getPublicState());
     }
     registerListeners(socket) {
-        console.log("[SERVER] roulette registerListeners for", socket.id, "playerId=", socket.data.playerId);
 
         socket.on("roulette:placeBet", (bet) => {
-
-            console.log("[SERVER] roulette:placeBet", socket.data.playerId, bet);
 
             this.onPlaceBet(socket.data.playerId, bet);
         });
         socket.on("roulette:clearBets", () => {
 
-            console.log("[SERVER] roulette:clearBets", socket.data.playerId);
-
 
             this.onClearBets(socket.data.playerId);
         });
         socket.on("roulette:requestState", () => {
-            console.log("[SERVER] roulette:requestState from", socket.id);
 
             socket.emit("roulette:update", this.getPublicState());
         });
 
         socket.on("roulette:startSpin", () => {
-            console.log("[SERVER] roulette:startSpin from", socket.id, "phase=", this.phase);
             this.onStartSpin();
         });
 
         socket.on("roulette:spinResult", ({ number }) => {
-            console.log("[SERVER] roulette:spinResult payload=", number, "phase=", this.phase);
-
             this.onSpinResult(number);
         });
         socket.on("roulette:nextRound", () => {
@@ -186,7 +175,7 @@ export class RouletteGame extends Minigame {
             return;
 
         if (this.round >= this.maxRounds) {
-            this.phase = "final";
+            this.phase = "distribute";
             this.broadcastRouletteState();
             return;
         }

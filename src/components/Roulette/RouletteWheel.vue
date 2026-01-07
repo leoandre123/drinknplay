@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import Roulette from './Roulette.vue';
-import RoulettePocket from './RoulettePocket.vue';
+import Roulette from "@/components/Roulette/Roulette.vue";
+import RoulettePocket from "@/components/Roulette/RoulettePocket.vue";
+
  
 
 export default{
@@ -133,10 +134,11 @@ export default{
         height: 400px;
         border-radius: 50%;
         border: 10px solid rgb(51, 30, 13);
-        box-shadow: 0 0 50px rgba(0,0,0,0.7);
+        box-shadow: 0 0 50px rgb(105, 46, 206);
         background-color: rgb(84, 44, 14);
         box-sizing: border-box;
         z-index: 1;
+        
 
         transition: transform 3s cubic-bezier(0.1,0.3,0.1,1);
 

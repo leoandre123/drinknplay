@@ -23,38 +23,38 @@
             <div class="square bet-red"
             :class="{selected:selectedColor ==='red'}"
             @click="placeColorBet('red')"
-            >RED</div>
+            >{{$t("roulette.red")}}</div>
 
             <div class="square bet-black"
             :class="{selected:selectedColor ==='black'}"
             @click="placeColorBet('black')"
-            >BLACK</div> 
+            >{{$t("roulette.black")}}</div> 
         </div>
     </div>
 
     <div class="bet-info">
         <div class="row column">
-            <span><b> Add the amount of sips you want to bet:</b></span>
+            <span><b> {{$t("roulette.addAmountBet")}}:</b></span>
             
             <div class="bet-amount-control">
                 <button @click="decreaseStake" :disabled="stake <=1">-</button>
                 <span class="stake">{{ stake }}</span>
                 <button @click="increaseStake">+</button>
             </div>
-            <span v-if="selectedNumber!== null">Number: {{ selectedNumber }}</span>
-            <span v-else-if="selectedColor"> Color: {{ selectedColor.toUpperCase() }}</span>
-            <span v-else>Choose color/number!</span>
+            <span v-if="selectedNumber!== null">{{$t("roulette.number")}}: {{ selectedNumber }}</span>
+            <span v-else-if="selectedColor"> {{$t("roulette.color")}}: {{ selectedColor.toUpperCase() }}</span>
+            <span v-else>{{$t("roulette.choose")}} {{$t("roulette.color")}}/{{$t("roulette.number")}}!</span>
             <button class="place-bet"
             @click="placeBet"
             :disabled="!selectedColor && selectedNumber === null"
             >
-            Place bet
+            {{$t("roulette.placeBet")}}
             </button>
         </div>
 
         <div class="place-bet-section">
-            <span><b>Your bet:</b></span>
-            <div v-if="placedBets.length === 0">No bets placed!</div> 
+            <span><b>{{$t("roulette.yourBet")}}:</b></span>
+            <div v-if="placedBets.length === 0">{{$t("roulette.noBetsPlaced")}}</div> 
             
             <ul v-else class="bet-list">
                 <li v-for="(b,i) in placedBets" :key="`${b.type}- ${b.value}`">
@@ -63,7 +63,7 @@
                             ? (b.value.toUpperCase())
                             : ('Number: '+ b.value)
                         }}
-                       - {{ b.amount }} sips
+                       - {{ b.amount }} {{$t("roulette.sips")}}
                     </span>
                     <button class="remove-bet" @click="removeBet(i)">x</button>
                 </li>
@@ -75,7 +75,7 @@
             <button class="clear"
             @click="clearBets"
             :disabled="placedBets.length === 0">
-            Clear bet
+            {{$t("roulette.clearBet")}}
         </button>
         </div>
     </div>
@@ -405,11 +405,7 @@ data(){
     border: 1px solid rgba(250, 250, 250,0.75);
     background: rgba(0,0,0,0.3);
     color: white;
-    cursor: pointer;
-   
-    
+    cursor: pointer;   
 }
-
-
 
 </style>

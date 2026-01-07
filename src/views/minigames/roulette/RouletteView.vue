@@ -1,11 +1,19 @@
-
-
 <template>
     <RetroContainer>
-        <div class="layout">
-            <div class="left">
-                <div class="wheel-area">
+        <RouletteDistributeView 
+        v-if="phase === 'distribute'"
+        :totals="totalPerPlayer"
+        :players="betsByPlayer"/>
 
+    
+        <div v-else class="layout">
+            <div class="left">
+               <button class="rules-button" @click="showRules = true">
+                How to play
+               </button> 
+               <RouletteRules v-if="showRules" @close="showRules = false"/>
+
+                <div class="wheel-area">
                     <RouletteWheel
                     ref="wheel"
                     :phase="phase"
@@ -14,23 +22,28 @@
                     class="spin-button"
                     @click="startSpin"
                     :disabled="phase !== 'betting'">
-                    Spin
+                    {{ $t("roulette.spin") }}
                 </button>
-                <button class="next-round-button" @click="nextRound"
-                :disabled="round >= maxRounds && phase === 'result'">
-                Next round
+                <button v-if="phase === 'result' && round < maxRounds"
+                 class="next-round-button" @click="nextRound"
+                >
+                {{$t("roulette.nextRound")}}
+                </button>
+                <button v-else-if="phase === 'result' && round >= maxRounds"
+                    class="continue-button" @click="nextRound">
+                    {{$t("roulette.continue")}}
                 </button>
                 </div>
             </div>
             <div class="right">
                 <h2 class="round-info">
-                    Round {{ round }}/{{ maxRounds }}
+                    {{ $t("roulette.round") }} {{ round }}/{{ maxRounds }}
                 </h2>
                 <div class="top-panels">
                     <div class="bets-area">
-                        <h2 class="bets-title"> Bets</h2>
+                        <h2 class="bets-title"> {{ $t("roulette.bets") }}</h2>
 
-                        <div v-if="betsList.length === 0">No bets placed yet!</div>
+                        <div v-if="betsList.length === 0">{{$t("roulette.noBetsPlaced")}}</div>
 
                         <div v-else>
                             <div v-for="[playerId, p] in betsList"
@@ -41,36 +54,36 @@
                                 <ul v-if="p.bets && p.bets.length" class="bet-list">
                                     <li v-for="b in p.bets" :key="`${b.type} - ${b.value}`">
                                         <span v-if="b.type === 'color'">
-                                            Color: {{ String(b.value).toUpperCase() }} - {{ b.amount }} sips
+                                            {{$t("roulette.color")}}: {{ String(b.value).toUpperCase() }} - {{ b.amount }} {{$t("roulette.sips")}}
                                         </span>
                                         <span v-else>
-                                            Number: {{ b.value }} - {{ b.amount }} sips
+                                            {{$t("roulette.number")}}: {{ b.value }} - {{ b.amount }} {{$t("roulette.sips")}}
                                         </span>
                                     </li>
                                 </ul>
-                                <div v-else>No bets</div>
+                                <div v-else>{{$t("roulette.noBets")}}</div>
                             </div>
                         </div>
                     </div>
                     <div class="result-area">
-                        <h2 class="result-title">Result</h2>
+                        <h2 class="result-title">{{$t("roulette.result")}}</h2>
                         <div v-if="phase === 'betting'">
-                            Waiting for spin...
+                            {{$t("roulette.waitSpin")}}
                         </div>
                         <div v-else-if="phase === 'spinning'">
-                            Spinning...
+                            {{$t("roulette.spinning")}}
                         </div>
                         <div v-else>
                             <div v-if="spinResult">
-                                <div>Number: {{ spinResult.number }}</div>
-                                <div>Color: {{ String(spinResult.color).toUpperCase() }}</div>
+                                <div>{{$t("roulette.number")}}: {{ spinResult.number }}</div>
+                                <div>{{$t("roulette.color")}}: {{ String(spinResult.color).toUpperCase() }}</div>
 
                                 <div>
-                                    Winners: 
-                                    <div v-if="spinResult.winners.length === 0">No winners</div>
+                                    {{$t("roulette.winners")}}: 
+                                    <div v-if="spinResult.winners.length === 0">{{$t("roulette.noWinners")}}</div>
                                     <ul v-else>
                                         <li v-for="w in spinResult.winners" :key="w.playerId">
-                                            {{ w.name }} - {{ w.winningAmount }} sips
+                                            {{ w.name }} - {{ w.winningAmount }} {{$t("roulette.sips")}}
                                         </li>
                                     </ul>
                                 </div>
@@ -81,12 +94,12 @@
             
 
                 <div class="standings">
-                    <h2>Standings</h2>
+                    <h2>{{$t("roulette.standings")}}</h2>
                     <table>
                         <thead>
                             <tr>
-                                <th>Player</th>
-                                <th>Amount</th>
+                                <th>{{ $t("roulette.player") }}</th>
+                                <th>{{ $t("roulette.amount") }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,11 +126,14 @@ import { socket } from "../../../socket";
 import { context } from "@/context";
 
 import RetroContainer from '@/components/RetroContainer.vue';
-import RouletteWheel from '@/components/RouletteWheel.vue';
+import RouletteWheel from "@/components/Roulette/RouletteWheel.vue";
+import RouletteDistributeView from "./RouletteDistributeView.vue";
+import RouletteRules from "@/components/Roulette/RouletteRules.vue";
+
 
 export default {
     name: "RouletteView",
-    components: {RouletteWheel, RetroContainer},
+    components: {RouletteWheel, RetroContainer, RouletteDistributeView, RouletteRules},
 
     data(){
         return {
@@ -127,6 +143,7 @@ export default {
             betsByPlayer: {},
             spinResult: null,
             totalPerPlayer: {},
+            showRules: false,
         };
     },
     mounted(){
@@ -250,7 +267,7 @@ export default {
 .spin-button{
         font-family: "Science Gothic", sans-serif;
         padding: 12px;
-        margin: 15px;
+        margin: 10px;
         height: 60px;
         width: 200px;
         border-radius: 10px;
@@ -275,7 +292,18 @@ export default {
     color: rgb(5, 155, 30);
     font-weight: 700; }
 .neg { 
-    color: rgb(221, 6, 6);
+    color: #dd0606;
     font-weight: 700;
      }
+.rules-button{
+    cursor: pointer;
+    border-radius: 12px;
+    border: 1px solid rgba(250,250,250,0.2);
+    background: rgb(12, 144, 231);
+    font-weight: bold;
+    color:white;
+    width: 100px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
 </style>
