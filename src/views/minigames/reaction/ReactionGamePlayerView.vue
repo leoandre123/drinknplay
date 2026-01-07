@@ -1,6 +1,6 @@
 <template>
     <div class="reaction-game-player-container">
-        <h1>REACTION GAME - PLAYER VIEW</h1>
+        <h1>REACTION GAME</h1>
         <div v-if="winner === myId && showRoundResult">
             <h2>YOU WIN THIS ROUND!</h2>
         </div>
@@ -36,7 +36,7 @@ export default {
             winner: null,
             winnerName: null,
             showRoundResult: false,
-            submitDisabled: true,   
+            submitDisabled: true,
 
         };
     },
@@ -53,7 +53,7 @@ export default {
             this.submitDisabled = true;
         });
         socket.on("reaction:startRound", () => {
-             setTimeout(() => {
+            setTimeout(() => {
                 this.submitDisabled = false;
             }, 5000);
         });
@@ -68,7 +68,7 @@ export default {
 
     beforeUnmount() {
         socket.off("reaction:roundResult");
-        socket.off("connect");
+        socket.off("reaction:startRound");
     },
 
     methods: {
@@ -118,11 +118,13 @@ export default {
 </script>
 
 <style>
+    
 .reaction-game-player-container {
     display: grid;
-    min-height: 100vh;
+    min-height: 100dvh;
+    /* bättre än 100vh på mobil */
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     justify-items: center;
     align-content: center;
     background-image: radial-gradient(circle farthest-corner at 10% 20%,
@@ -130,36 +132,48 @@ export default {
             rgb(116, 18, 92) 49.5%,
             rgb(164, 34, 144) 90%);
     color: white;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* stoppar “glid” */
+    padding: 16px;
+    box-sizing: border-box;
+        padding-bottom: 90px;     /* plats för DONE-knappen */
+
 
 }
 
 .amount-display {
-    margin-top: 50px;
-    font-size: 100px;
+    margin-top: 24px;
+    font-size: clamp(48px, 12vw, 100px);
+    line-height: 1;
 }
 
 .button-container {
-    margin-top: 50px;
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .remove-button,
 .add-button {
-    justify-items: center;
-    grid-template-rows: 100px;
-    width: 200px;
-    height: 200px;
-    font-size: 50px;
+    width: clamp(150px, 26vw, 200px);
+    height: clamp(200px, 26vw, 200px);
+    font-size: clamp(28px, 7vw, 50px);
     font-weight: bold;
-    margin: 20px;
+    margin: 0;
     touch-action: manipulation;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    color: black;
 }
 
 .add-button {
     background-color: #40bf44;
-    color: black;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+
 }
 
 .submit-button:disabled {
@@ -170,30 +184,28 @@ export default {
 
 .remove-button {
     background-color: #d54339;
-    /* Red */
-    color: black;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 
 }
 
 .done-button-container {
     position: fixed;
-    right: 100px;
-    top: 200px;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    width: min(92vw, 320px);
+    z-index: 10;
 }
 
 .submit-button {
-    display: grid;
-    justify-content: center;
-    width: 200px;
-    padding-top: 200px;
-    padding-bottom: 10px;
-    margin: 10px;
+    width: 100%;
+    padding: 14px 16px;
+    margin: 0;
     font-weight: bold;
-    font-size: 30;
+    font-size: clamp(16px, 4.5vw, 22px);
     background-color: rgb(239, 215, 244);
+    border: none;
+    border-radius: 16px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
+
 </style>

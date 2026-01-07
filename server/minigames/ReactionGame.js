@@ -46,13 +46,11 @@ export class ReactionGame extends Minigame {
     }
 
     generatePositions(count) {
-        const containerW = 100; // vh
-        const containerH = 55;  // vh
-
-        const figureW = 7;      // vh (matchar CSS width: 7vh)
+        const containerW = 100; 
+        const containerH = 55;  
+        const figureW = 7;     
         const half = figureW / 2;
-        const pad = 1;          // extra marginal i vh
-
+        const pad = 1;      
         const rand = (min, max) => Math.random() * (max - min) + min;
 
         return Array.from({ length: count }, () => ({
@@ -66,7 +64,7 @@ export class ReactionGame extends Minigame {
         this.winner = null;
         this.winnerName = null;
         this.roundStartTime = Date.now();
-        this.figureCount = Math.floor(Math.random() * 5 + 1);
+        this.figureCount = Math.floor(Math.random() * 14 + 1);
         this.figurePositions = this.generatePositions(this.figureCount);
 
         this.broadcast("reaction:startRound", {
@@ -81,14 +79,13 @@ export class ReactionGame extends Minigame {
     }
 
     onSubmit(playerId, amount, submitTime) {
-        console.log("onSubmit called", { amount, playerId });
         if (this.winner) return;
 
         const existing = this.submissions.find((x) => x.id === playerId);
-        console.log("existing submission:", existing);
         if (existing) return;
 
         const responseTime = submitTime - this.roundStartTime;
+
         amount = Number(amount);
 
         this.submissions.push({ id: playerId, amount, time: responseTime });
@@ -102,7 +99,6 @@ export class ReactionGame extends Minigame {
             const currentScore = this.scores.get(playerId) || 0;
 
             this.scores.set(playerId, currentScore + responseTime);
-            console.log("Player", playerId, "is the winner of this round! Score:", this.scores.get(playerId));
 
             this.broadcast("reaction:roundResult", {
                 winner: this.winner,
@@ -124,15 +120,15 @@ export class ReactionGame extends Minigame {
         }
     }
     finishRound() {
-        console.log("ROUND FINISHED");
+    
         this.currentRound++;
 
         if (this.currentRound < this.maxRounds) {
             this.submissions = [];
             setTimeout(() => this.startRound(), 1500);
-            console.log("STARTING NEW ROUND");
             return;
-        } else {
+        }
+        else {
             console.log("GAME FINISHED");
             this.onFinished?.([]);
         }

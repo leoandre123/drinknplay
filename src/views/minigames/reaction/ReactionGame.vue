@@ -41,7 +41,6 @@ export default {
     },
     data() {
         return {
-            gameStarted: false,
             figureCount: 0,
             mascot,
             playerScores: new Map(),
@@ -77,7 +76,7 @@ export default {
 
         socket.on("reaction:resetAmounts", () => {
             context.state.players.forEach(p => {
-                p.amount = null;   // eller 0
+                p.amount = null;
             });
         });
 
@@ -87,9 +86,9 @@ export default {
             this.winnerName = winnerName;
             this.showRoundResult = true;
             this.roundActive = false;
-
             this.playerScores = new Map(Object.entries(scores));
 
+            this.playWinnerSound();
         });
     },
 
@@ -130,8 +129,8 @@ export default {
 
         startCountdown() {
             const tickSound = new Audio("/sounds/tick.mp3");
-            tickSound.play();
 
+            tickSound.play();
 
             if (this.countdownInterval) clearInterval(this.countdownInterval);
 
@@ -147,11 +146,9 @@ export default {
                     this.countdownActive = false;
                     this.roundActive = true;
 
-
                     this.playGoSound();
 
                 }
-
             }, 1000);
         },
 
@@ -162,7 +159,6 @@ export default {
         playGoSound() {
             const goSound = new Audio("/sounds/go.mp3");
             goSound.play();
-            this.gameStarted = true;
         },
         getRandomPositions() {
             const x = Math.random() * 90;
@@ -174,18 +170,16 @@ export default {
             };
         },
 
-        noWinnerSound() {
-            if (this.winner === null && showRoundResult) {
-                const audio = new Audio('/sounds/nowinner.mp3');
-                audio.play();
-            }
-        },
-
-        winnerSound() {
-            if (this.winner === this.myId && showRoundResult) {
+        playWinnerSound() {
+            if (this.winner && showRoundResult) {
                 const audio = new Audio('/sounds/winner.mp3');
                 audio.play();
             }
+            else if (this.winner === false && showRoundResult) {
+                const audio = new Audio('/sounds/nowinner.mp3');
+                audio.play();
+            }
+            return;
         },
     }
 };
