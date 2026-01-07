@@ -5,8 +5,10 @@ export const context = reactive({
   isConnected: false,
   state: null,
   isHost: false,
+  lobbyId: "",
+  playerId: "",
 
   getCurrentPlayer() {
-    return this.state?.players.find((p) => p.id == socket.id);
+    return this.state?.players.find((p) => p.id == this.playerId);
   },
 });

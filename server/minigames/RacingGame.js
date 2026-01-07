@@ -31,7 +31,7 @@ export class RacingGame extends Minigame {
 
   registerListeners(socket) {
     console.log(`Registering racing listeners for socket ${socket.id}`);
-    socket.on("racingInput", (input) => this.onPlayerInput(socket.id, input));
+    socket.on("racingInput", (input) => this.onPlayerInput(socket.data.playerId, input));
   }
 
   unregisterListeners(socket) {

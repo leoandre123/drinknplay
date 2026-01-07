@@ -12,7 +12,7 @@
           class="player-selection"
           :disabled="selectedPlayerIndex != -1"
           :class="{ notselected: i != selectedPlayerIndex && selectedPlayerIndex != -1 }"
-          v-for="(player, i) in 10"
+          v-for="(player, i) in context.state.players"
           @click="() => selectPlayer(i, player.id)"
         >
           <p>{{ player.name }}</p>
@@ -24,6 +24,7 @@
 
 <script>
 import { context } from "../context";
+import { socket } from "../socket";
 
 export default {
   name: "PlayerResultView",
@@ -39,7 +40,9 @@ export default {
   beforeUnmount() {},
   methods: {
     selectPlayer(index, playerId) {
+      console.log;
       this.selectedPlayerIndex = index;
+      socket.emit("results:fillGlass", playerId);
     },
   },
 };

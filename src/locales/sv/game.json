@@ -1,3 +1,10 @@
 {
-    "startGame": "Starta spel"
+    "startGame": "Starta spel",
+    "joinGame": "Gå med i spel",
+    "drunknessLevel": [
+        "Familjekväll",
+        "Förfriskad",
+        "Plakat",
+        "Karatefylla"
+    ]
 }

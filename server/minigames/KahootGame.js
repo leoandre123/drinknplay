@@ -64,7 +64,9 @@ export class KahootGame extends Minigame {
   }
 
   registerListeners(socket) {
-    socket.on("submitAnswer", (index, time) => this.onAnswerSubmitted(socket.id, index, time));
+    socket.on("submitAnswer", (index, time) =>
+      this.onAnswerSubmitted(socket.data.playerId, index, time)
+    );
   }
   unregisterListeners(socket) {
     socket.off("submitAnswer");
@@ -73,6 +75,7 @@ export class KahootGame extends Minigame {
   start() {
     this.startQuestion();
   }
+
   stop() {}
 
   onAnswerSubmitted(playerId, answerIndex, time) {

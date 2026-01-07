@@ -1,4 +1,5 @@
 {
+    "name": "Drick o' Spela",
     "auth": {
         "login": "Logga in",
         "logout": "Logga ut"
@@ -6,5 +7,12 @@
     "player": {
         "players": "Spelare",
         "player": "Spelare"
-    }
+    },
+    "on": "På",
+    "off": "Av",
+    "finish": "Slut",
+    "switchMode": "Byt spelläge",
+    "modeDescription": "Nuvarande spelläge: ",
+    "slopeFinished": "Bana avslutad",
+    "finishDescription": "Bra jobbat!"
 }

@@ -6,73 +6,53 @@
       <hr />
       <h3>How many minigames should your game contain?</h3>
       <button
-        v-for="x in 5"
+        v-for="x in 20"
         class="minigameButton"
-        :class="{ selected: selectedNumberOfMinigames === x }"
+        :class="{ selected: settings.numberOfRounds === x }"
         @click="selectAmountOfMinigames(x)"
       >
         {{ x }}
       </button>
       <h3>What is your desired drunkness level?</h3>
       <button
+        v-for="(_, i) in 4"
         class="drunknessButton"
-        :class="{ selected: selectedDrunknessLevel === 1 }"
-        @click="selectDrunknessLevel(1)"
+        :class="{ selected: settings.drunknessLevel === i }"
+        @click="selectDrunknessLevel(i)"
       >
-        Sober
-      </button>
-      <button
-        class="drunknessButton"
-        :class="{ selected: selectedDrunknessLevel === 2 }"
-        @click="selectDrunknessLevel(2)"
-      >
-        Tipsy
-      </button>
-      <button
-        class="drunknessButton"
-        :class="{ selected: selectedDrunknessLevel === 3 }"
-        @click="selectDrunknessLevel(3)"
-      >
-        Hammered
-      </button>
-      <button
-        class="drunknessButton"
-        :class="{ selected: selectedDrunknessLevel === 4 }"
-        @click="selectDrunknessLevel(4)"
-      >
-        Black out drunk
+        {{ $t(`game.drunknessLevel[${i}]`) }}
       </button>
     </div>
-    <button class="submitButton" @click="createGame">SUBMIT AND CREATE LOBBY</button>
+    <button class="submitButton" @click="createGame">CREATE LOBBY</button>
   </div>
 </template>
 
 <script>
+import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
 
 export default {
   name: "CreateView",
   data: function () {
     return {
-      selectedNumberOfMinigames: null,
-      selectedDrunknessLevel: null,
+      settings: DefaultSettings,
     };
   },
   mounted() {
-    socket.on("lobbyCreated", this.onGameCreated);
+    socket.on("lobby:created", this.onGameCreated);
   },
   beforeUnmount() {
-    socket.off("lobbyCreated");
+    socket.off("lobby:created");
   },
   methods: {
     selectAmountOfMinigames(amount) {
-      this.selectedNumberOfMinigames = amount;
+      this.settings.numberOfRounds = amount;
     },
     selectDrunknessLevel(level) {
-      this.selectedDrunknessLevel = level;
+      this.settings.drunknessLevel = level;
     },
     createGame() {
-      socket.emit("createLobby");
+      socket.emit("lobby:create", this.settings);
     },
     onGameCreated(lobbyId) {
       this.$router.push({

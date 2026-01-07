@@ -7,40 +7,72 @@
       <input v-model="name" @input="name = $event.target.value" />
       <br />
       <br />
+      <div class="avatar-editor">
+        <div class="buttons">
+          <button @click="avatarSettings.eyes = mod(avatarSettings.eyes - 1, 4)">&lt;</button>
+          <button @click="avatarSettings.mouth = mod(avatarSettings.mouth - 1, 2)">&lt;</button>
+          <button @click="avatarSettings.body = mod(avatarSettings.body - 1, 3)">&lt;</button>
+        </div>
+        <div class="avatar-image">
+          <Avatar :settings="avatarSettings" />
+        </div>
+
+        <div class="buttons">
+          <button @click="avatarSettings.eyes = mod(avatarSettings.eyes + 1, 4)">&gt;</button>
+          <button @click="avatarSettings.mouth = mod(avatarSettings.mouth + 1, 2)">&gt;</button>
+          <button @click="avatarSettings.body = mod(avatarSettings.body + 1, 3)">&gt;</button>
+        </div>
+      </div>
+      <div class="randomize-avatar">
+        <button @click="randomizeAvatar">Randomize</button>
+      </div>
+      <br />
       <button :disabled="name.length == 0" @click="joinGame">Join game</button>
     </div>
   </div>
-  <div v-if="lobbyAvailable === false">LOBBY STARTED</div>
+  <div v-if="lobbyAvailable === false">{{ unavailableReason }}</div>
 </template>
 
 <script>
+import { GetRandomAvatar } from "@shared/AvatarHelper";
+import { mod } from "@shared/MathHelper";
+import Avatar from "../components/Avatar.vue";
 import { socket } from "../socket";
 
 export default {
   name: "JoinView",
+  components: { Avatar },
   data: function () {
     return {
       lobbyAvailable: undefined,
+      unavailableReason: "unknown",
       lobbyId: undefined,
       name: "",
+      mod,
+      avatarSettings: {
+        body: 0,
+        eyes: 0,
+        mouth: 0,
+      },
     };
   },
   mounted() {
-    socket.on("checkLobbyCodeResponse", (response) => {
+    socket.on("lobby:checkCodeResponse", (response) => {
       console.log(response);
       this.lobbyAvailable = response.available;
     });
 
     this.lobbyId = this.$route.params.id;
     if (this.lobbyId) {
-      socket.emit("checkLobbyCode", this.lobbyId);
+      socket.emit("lobby:checkCode", this.lobbyId);
     }
   },
   beforeUnmount() {
-    socket.off("checkLobbyCodeResponse");
+    socket.off("lobby:checkCodeResponse");
   },
   methods: {
     joinGame() {
+      sessionStorage.setItem("avatar", JSON.stringify(this.avatarSettings));
       this.$router.push({
         path: "/game",
         query: {
@@ -48,6 +80,9 @@ export default {
           name: this.name,
         },
       });
+    },
+    randomizeAvatar() {
+      this.avatarSettings = GetRandomAvatar();
     },
   },
 };
@@ -77,7 +112,7 @@ export default {
 
 .menu p {
   text-align: start;
-  min-width: 15rem;
+  min-width: 20rem;
 }
 
 .menu input {
@@ -107,5 +142,31 @@ export default {
 .menu button:disabled {
   background: #2c3b5f;
   color: rgb(169, 169, 169);
+}
+
+.avatar-editor {
+  display: flex;
+  justify-content: center;
+}
+.avatar-image {
+  flex-grow: 1;
+}
+.avatar-editor .buttons {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.avatar-editor .buttons button {
+  background-color: rgba(255, 0, 0, 0.13);
+  cursor: pointer;
+  border-radius: 50%;
+  height: 3rem;
+  width: 3rem;
+  color: black;
+}
+
+.randomize-avatar {
+  margin-top: 1rem;
 }
 </style>

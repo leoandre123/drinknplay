@@ -1,26 +1,21 @@
 <template>
-  <div v-if="context.isHost" class="container">
-    <div class="title-bar">
-      <h1 v-if="context.state.gameIndex == 0">2.5D Racer</h1>
-      <h1 v-if="context.state.gameIndex == 1">Questions game</h1>
+  <div class="fullscreen">
+    <div v-if="context.isHost" class="minigame-container">
+      <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
+      <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
+      <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+      <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
+      <ClosestView v-if="context.state.gameIndex == 4" class="minigame" />
+      <HostMazeGameView v-if="context.state.gameIndex == 5" class="minigame" />
     </div>
-    <div class="body-container">
-      <div class="scoreboard-container">
-        <p v-for="player in context.state.players">{{ player.name }}</p>
-      </div>
-      <div class="minigame-container">
-        <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
-        <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
-        <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
-        <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
-      </div>
+    <div v-if="!context.isHost" class="client-container">
+      <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
+      <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
+      <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+      <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
+      <ClosestPlayerView v-if="context.state.gameIndex == 4" class="minigame" />
+      <PlayerMazeGameView v-if="context.state.gameIndex == 5" class="minigame" />
     </div>
-  </div>
-  <div v-if="!context.isHost" class="client-container">
-    <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
-    <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
-    <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
-    <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
   </div>
 </template>
 
@@ -34,12 +29,16 @@ import HostDrawingView from "./minigames/drawing/HostDrawingView.vue";
 import PlayerDrawingView from "./minigames/drawing/PlayerDrawingView.vue";
 import ReactionGame from "./minigames/reaction/ReactionGame.vue";
 import ReactionGamePlayerView from "./minigames/reaction/ReactionGamePlayerView.vue";
+import ClosestView from "./minigames/closest/ClosestView.vue";
+import ClosestPlayerView from "./minigames/closest/ClosestPlayerView.vue";
+import HostMazeGameView from "./minigames/mazegame/HostMazeGameView.vue";
+import PlayerMazeGameView from "./minigames/mazegame/PlayerMazeGameView.vue";
 
 export default {
   name: "MinigameView",
 
   data() {
-    return { context };
+    return { context, isFullscreen: true };
   },
   components: {
     RacingView,
@@ -50,6 +49,10 @@ export default {
     PlayerDrawingView,
     ReactionGame,
     ReactionGamePlayerView,
+    ClosestView,
+    ClosestPlayerView,
+    HostMazeGameView,
+    PlayerMazeGameView,
   },
   async created() {},
 
@@ -87,6 +90,12 @@ h1 {
   margin: 0;
   text-align: start;
   background: linear-gradient(90deg, #4b6bb744 0%, #1828485f 100%);
+}
+
+.fullscreen {
+  width: 100dvw;
+  height: 100dvh;
+  display: flex;
 }
 
 .title-bar h1 {

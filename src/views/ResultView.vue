@@ -1,11 +1,11 @@
 <template>
-  <div v-if="context.isHost" class="results">
+  <div class="results">
     <h1 class="glow large">Results</h1>
-    <div class="player-cards">
+    <div class="player-cards" :style="playerGridStyle">
       <TransitionGroup name="list">
         <PlayerCard
           v-for="(player, i) in sortedPlayers"
-          :key="player"
+          :key="player.id"
           :player="player"
           :place="i"
           :score="scores.get(player.id)"
@@ -63,7 +63,7 @@ export default {
     };
   },
   created: function () {
-    this.players.forEach((p) => this.scores.set(p.id, p.score));
+    this.context.state.players.forEach((p) => this.scores.set(p.id, p.score));
   },
   methods: {
     fillGlass(index, id) {
@@ -92,17 +92,24 @@ export default {
   },
   computed: {
     sortedPlayers() {
-      return [...this.players].sort((a, b) => this.scores.get(b.id) - this.scores.get(a.id));
+      return [...this.context.state.players].sort(
+        (a, b) => this.scores.get(b.id) - this.scores.get(a.id)
+      );
     },
     playerScores() {
-      return this.players.map((p) => p.score);
+      return this.context.state.players.map((p) => p.score);
+    },
+    playerGridStyle() {
+      return {
+        gridTemplateColumns: `repeat(${Math.min(this.sortedPlayers.length, 5)}, 1fr)`,
+      };
     },
   },
   watch: {
     playerScores: {
       handler(newScores, oldScores) {
         newScores.forEach((score, i) => {
-          const player = this.players[i];
+          const player = this.context.state.players[i];
           this.animateScore(player.id, score);
         });
       },
@@ -117,6 +124,7 @@ export default {
 .results {
   width: 100dvw;
   height: 100dvh;
+  overflow: hidden;
   position: relative;
   background: linear-gradient(
     90deg,
@@ -153,11 +161,12 @@ export default {
 }
 
 .player-cards {
-  display: flex;
-  gap: 5rem;
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3rem;
   justify-content: center;
-  flex-wrap: wrap;
-  margin: 2rem;
+  margin-top: 2rem;
 }
 
 @keyframes glow {

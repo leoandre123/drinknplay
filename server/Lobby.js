@@ -1,35 +1,109 @@
 import { Player } from "./models/Player.js";
 import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
-import { RacingGame } from "./minigames/RacingGame.js";
-import { KahootGame } from "./minigames/KahootGame.js";
-import { DrawingGame } from "./minigames/drawingGame.js";
-import { ReactionGame } from "./minigames/ReactionGame.js";
+import { DefaultSettings } from "../shared/GameSettings.js";
+import { GenerateID } from "./Utils.js";
+import { ALL_GAMES } from "./GamesRegistry.js";
 
 export class Lobby {
-  constructor(io, lobbyId) {
+  constructor(io, lobbyId, settings = DefaultSettings) {
     this.context = new ServerLobbyContext(io, lobbyId);
     this.currentGame = null;
     this.phase = "lobby";
+    this.settings = settings;
   }
 
-  onPlayerJoined(socket, name) {
-    console.log(`${name} joined lobby '${this.context.lobbyId}'`);
-    socket.join(this.context.lobbyId + "_PLAYERS");
-    socket.data.lobbyId = this.context.lobbyId;
+  getPlayer(id) {
+    if (!id) return undefined;
+    return this.context.players.find((x) => x.id == id);
+  }
 
-    socket.on("fillGlassIndex", (id) => this.onGlassFilled(id));
-    socket.on("ready", (isReady) => {
-      this.onPlayerReady(socket.id, isReady);
+  onNewPlayerConnection(socket, playerId, name, avatarSettings) {
+    console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
+    let player = this.getPlayer(playerId);
+    const isNewPlayer = player == undefined;
+
+    if (isNewPlayer) {
+      playerId = GenerateID(5);
+      player = new Player(name, playerId, socket, avatarSettings);
+    } else {
+      player.socket = socket;
+    }
+
+    this.onPlayerJoined(player, isNewPlayer);
+  }
+
+  onPlayerJoined(player, isNewPlayer) {
+    if (!isNewPlayer) {
+      console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
+      player.connected = false;
+      player.disconnectedAt = null;
+      clearTimeout(player.disconnectTimer);
+    } else {
+      console.log(`${player.name} joined lobby '${this.context.lobbyId}'`);
+      this.context.players.push(player);
+    }
+
+    player.socket.join(this.context.lobbyId + "_PLAYERS");
+    player.socket.on("results:fillGlass", (id) => this.onGlassFilled(id));
+    player.socket.on("ready", (isReady) => {
+      this.onPlayerReady(player.id, isReady);
     });
 
-    socket.emit("joinLobbyResponse", this.context.lobbyId);
+    player.socket.data.lobbyId = this.context.lobbyId;
+    player.socket.data.playerId = player.id;
 
-    const player = new Player(name, socket.id, socket);
+    player.socket.emit("lobby:joinResponse", {
+      lobbyId: this.context.lobbyId,
+      playerId: player.id,
+    });
 
-    this.context.players.push(player);
     this.broadcastLobbyState();
     if (this.phase == "game") {
-      this.currentGame?.onPlayerJoined(player);
+      if (isNewPlayer) {
+        this.currentGame?.onPlayerJoined(player);
+      }
+      this.currentGame?.registerListeners(player.socket);
+    }
+  }
+
+  onPlayerJoined_old(socket, playerId, name, avatarSettings) {
+    console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
+    let player = this.getPlayer(playerId);
+    const isNewPlayer = player == undefined;
+
+    if (!isNewPlayer) {
+      console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
+      player.connected = false;
+      player.disconnectedAt = null;
+      player.socket = socket;
+      clearTimeout(player.disconnectTimer);
+    } else {
+      console.log(`${name} joined lobby '${this.context.lobbyId}'`);
+
+      playerId = GenerateID(5);
+      player = new Player(name, playerId, socket, avatarSettings);
+      this.context.players.push(player);
+    }
+
+    socket.join(this.context.lobbyId + "_PLAYERS");
+    socket.on("results:fillGlass", (id) => this.onGlassFilled(id));
+    socket.on("ready", (isReady) => {
+      this.onPlayerReady(playerId, isReady);
+    });
+
+    socket.data.lobbyId = this.context.lobbyId;
+    socket.data.playerId = playerId;
+
+    socket.emit("lobby:joinResponse", {
+      lobbyId: this.context.lobbyId,
+      playerId: playerId,
+    });
+
+    this.broadcastLobbyState();
+    if (this.phase == "game") {
+      if (isNewPlayer) {
+        this.currentGame?.onPlayerJoined(player);
+      }
       this.currentGame?.registerListeners(player.socket);
     }
   }
@@ -38,21 +112,37 @@ export class Lobby {
     socket.join(this.context.lobbyId + "_HOST");
     socket.data.lobbyId = this.context.lobbyId;
 
-    socket.on("startGame", () => this.start());
-    socket.on("advancePhase", () => this.advancePhase());
-    socket.on("startSpin", () => this.startSpin());
+    socket.on("lobby:start", () => this.start());
+    socket.on("lobby:advancePhase", () => this.advancePhase());
 
-    socket.emit("joinLobbyHostResponse", this.context.lobbyId);
+    socket.emit("lobby:joinHostResponse", this.context.lobbyId);
 
     this.broadcastLobbyState();
+    if (this.phase == "game") {
+      this.currentGame?.onHostJoined(socket);
+    }
   }
 
   onPlayerDisconnected(playerId) {
+    const player = this.getPlayer(playerId);
+    if (!player) return;
+
+    player.connected = false;
+    player.disconnectedAt = Date.now();
+    player.socket = null;
+
+    player.disconnectTimer = setTimeout(() => {
+      this.onPlayerLeft(playerId);
+    }, 5000);
+  }
+
+  onPlayerLeft(playerId) {
     const playerIndex = this.context.players.findIndex((x) => x.id == playerId);
     if (playerIndex == -1) return;
     const playersToRemove = this.context.players.splice(playerIndex);
-    console.log(`${playersToRemove.name} left the lobby '${this.context.lobbyId}'`);
+
     if (playersToRemove.length != 0) {
+      console.log(`${playersToRemove[0].name} left the lobby '${this.context.lobbyId}'`);
       this.broadcastLobbyState();
       if (this.phase == "game") {
         this.currentGame?.onPlayerDisconnected(playersToRemove[0]);
@@ -98,7 +188,7 @@ export class Lobby {
   }
 
   startSpin() {
-    const gameIndex = Math.floor(Math.random() + 3 ); //ändra tillbaka sen till * 4
+    const gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
 
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
@@ -109,20 +199,7 @@ export class Lobby {
   selectGame(gameIndex) {
     console.log(`Selecting game: ${gameIndex}`);
     this.gameIndex = gameIndex;
-    switch (gameIndex) {
-      case 0:
-        this.currentGame = new RacingGame();
-        break;
-      case 1:
-        this.currentGame = new KahootGame();
-        break;
-      case 2:
-        this.currentGame = new DrawingGame();
-        break;
-      case 3:
-        this.currentGame = new ReactionGame();
-        break;
-    }
+    this.currentGame = new ALL_GAMES[gameIndex]();
   }
 
   startLoadingScreen() {
@@ -146,7 +223,7 @@ export class Lobby {
   }
 
   finishGame(results) {
-    for (let res of results) {
+    for (let res of results ?? []) {
       this.context.players.find((x) => x.id == res.id).score += res.score;
     }
 
@@ -160,6 +237,7 @@ export class Lobby {
   }
 
   onGlassFilled(id) {
+    console.log("FILL GLASS OF PLAYER: " + id);
     const player = this.context.players.find((x) => x.id == id);
     player.glassFillLevel += 0.2; //TODO: Based on setting
 
@@ -176,8 +254,10 @@ export class Lobby {
     const player = this.context.players.find((x) => x.id == id);
     player.isReady = isReady;
 
-    if (this.context.players.filter((p) => p.isReady).length > this.context.players.length / 2) {
+    if (this.context.players.filter((p) => p.isReady).length >= this.context.players.length / 2) {
       this.advancePhase();
+    } else {
+      this.broadcastLobbyState();
     }
   }
 
@@ -185,13 +265,12 @@ export class Lobby {
     const state = {
       lobbyId: this.context.lobbyId,
       players: this.context.players.map(({ socket, ...rest }) => rest),
+      settings: this.settings,
       phase: this.phase,
       gameIndex: this.gameIndex,
     };
-    console.log(`Broadcasting state`);
-    console.log(state);
-    this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("updateLobbyState", state);
-    this.context.io.to(this.context.lobbyId + "_HOST").emit("updateLobbyState", state);
+    this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("lobby:updateState", state);
+    this.context.io.to(this.context.lobbyId + "_HOST").emit("lobby:updateState", state);
   }
 
   /*

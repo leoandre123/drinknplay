@@ -4,22 +4,16 @@ import { instrument } from "@socket.io/admin-ui";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
+  maxHttpBufferSize: 1e7,
   cors: { origin: ['*', 'https://admin.socket.io'],
   credentials: true
 
   },
 });
 
+instrument(io, { auth: false });
 
-instrument (io, {auth: false}) //Admin ui
-
-// Read in the "class" to store all our data on the server side
-// If you need to change how data is handled, check the Data.js file!
-
-import { Data } from "./Data.js";
 import { LobbyManager } from "./LobbyManager.js";
-
-//
 import { sockets } from "./sockets.js";
 
 let lobbyManager = new LobbyManager(io);

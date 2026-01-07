@@ -1,7 +1,7 @@
 <template>
   <div>
     <button class="pixel-btn" :class="color" @click="$emit('click')">
-      <slot />
+      <slot></slot>
     </button>
   </div>
 </template>
@@ -17,7 +17,7 @@ export default {
 
 <style scoped>
 .pixel-btn {
-  font-family: "Press Start 2P", monospace;
+  font-family: "Jersey 25", Helvetica, Arial, sans-serif;
   font-size: 2rem;
   padding: 1rem 2rem;
   cursor: pointer;
