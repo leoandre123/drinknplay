@@ -1,16 +1,14 @@
 <template>
   <div class="kahoot-container">
     <div class="title">
-      <p>Q</p>
-      <p>{{ currentQuestion?.titleKey ? $t(currentQuestion.titleKey) : "" }}</p>
+      <h1>{{ currentQuestion?.titleKey ? $t(currentQuestion.titleKey) : "" }}</h1>
       <p>Score: {{ score }}</p>
     </div>
     <div class="answers">
-      <div v-for="(answer, i) in (currentQuestion.answers || [])" :key="answer.textKey || i" class="answer" :class="[
+      <div v-for="(option, i) in (currentQuestion.answers || [])" :key="answer.textKey || i" class="answer" :class="[
         `answer-${i}`,
         { unselected: hasAnswered && answerIndex != i },
       ]" @click="answer(i)">
-        {{ answer.textKey ? $t(answer.textKey) : "-" }}
       </div>
     </div>
   </div>

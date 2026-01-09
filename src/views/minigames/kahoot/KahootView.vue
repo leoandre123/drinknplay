@@ -1,8 +1,8 @@
 <template>
   <div class="kahoot-container">
     <div class="title">
-      <p>Q {{ currentQuestionIndex + 1 }}/{{ questionCount }}</p>
-<p>{{ currentQuestion.titleKey ? $t(currentQuestion.titleKey) : "" }}</p>
+      <h1>Q {{ currentQuestionIndex + 1 }}/{{ questionCount }}</h1>
+<h1>{{ currentQuestion.titleKey ? $t(currentQuestion.titleKey) : "" }}</h1>
       <p>A: {{ answerCount }}/{{ playerCount }}</p>
     </div>
     <div class="body">{{ $t("kahoot.instruction") }}</div>

@@ -7,11 +7,11 @@
         "a4": "35"
     },
     "q2": {
-        "title": "What is 1 × 5?",
-        "a1": "1",
-        "a2": "3",
-        "a3": "5",
-        "a4": "10"
+        "title": "What is the world's largest ocean?",
+        "a1": "Atlantic Ocean",
+        "a2": "Arctic Ocean",
+        "a3": "Pacific Ocean",
+        "a4": "Indian Ocean"
     },
     "q3": {
         "title": "Which statement is true?",
@@ -40,6 +40,48 @@
         "a2": "HighText Machine Language",
         "a3": "Hyper Transfer Main Language",
         "a4": "Home Tool Markup Language"
+    },
+    "q7": {
+        "title": "What is 1 × 5?",
+        "a1": "1",
+        "a2": "3",
+        "a3": "5",
+        "a4": "10"
+    },
+    "q8": {
+        "title": "Who was the first man on the moon?",
+        "a1": "Michael collins",
+        "a2": "Yuri Gagarin",
+        "a3": "Buzz Aldrin",
+        "a4": "Niel Armstrong"
+    },
+    "q9": {
+        "title": "What is the chemical symbol for gold?",
+        "a1": "Ag",
+        "a2": "Fe",
+        "a3": "Pb",
+        "a4": "Au"
+    },
+    "q10": {
+        "title": "Who painted the Mona Lisa??",
+        "a1": "Michelangelo",
+        "a2": "Leonardo da Vinci",
+        "a3": "Pablo Picasso",
+        "a4": "Vincent van Gogh"
+    },
+    "q11": {
+        "title": "What is the fastest land animal?",
+        "a1": "Lion",
+        "a2": "Horse",
+        "a3": "Antelope",
+        "a4": "Cheetah"
+    },
+    "q12": {
+        "title": "What is the capital of Japan?",
+        "a1": "Tokyo",
+        "a2": "Kyoto",
+        "a3": "Seoul",
+        "a4": "Osaka"
     },
     "instruction": "Waiting for players to answer"
 }
