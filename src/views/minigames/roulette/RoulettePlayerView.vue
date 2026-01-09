@@ -109,7 +109,7 @@ data(){
        ],
        selectedColor: null,
        selectedNumber: null,
-       stake: 3,
+       stake: 1,
        placedBets: [],
 
     };

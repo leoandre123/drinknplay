@@ -19,10 +19,20 @@
     "sips": "klunkar",
     "red": "RÖD",
     "black": "SVART",
-    "addAmountBet": "Lägg till antal klunkar du vill satsa",
+    "addAmountBet": "Lägg till antal dryckeskrediter du vill satsa",
     "choose": "Välj",
     "placeBet": "Lägg satsning",
     "yourBet": "Din satsning",
     "clearBet": "Rensa",
-    "drinkCredits": "Dryckesbiljetter"
+    "drinkCredits": "dryckeskrediter",
+    "noPoints": "Detta spel kommer inte generera några poäng! Bara dricka!",
+    "betCredits": "Satsa dryckeskrediter på nummer och/eller färg",
+    "ifWin": "Om du vinner läggs vinstsumman till i ställningstabellen",
+    "ifLose": "Om du förlorar subtraheras förlustsumman i ställningstabellen",
+    "correctColor": "Rätt färg: Vinst = + satsning",
+    "correctNumber": "Rätt nummer: Vinst = 36 x satsning",
+    "wrongNumberOrColor": "Fel nummer/färg: Förlust = - satsning",
+    "after3Rounds": "Efter 3 rundor",
+    "positiveScore": "Postiv poäng = dela ut dryckeskrediter",
+    "negativeScore": "Negativ poäng = ditt glas fylls (proportionellt till förlustsumman)"
 }

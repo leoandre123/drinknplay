@@ -9,18 +9,18 @@
             <div class="content">
                 
                 <ul>
-                    <li style="font-weight: bold;">This game will not result in any points! Only drinking!</li>
-                    <li>Bet drinking credits on number and/or color</li>
-                    <li>If you win, the winning amount will be added in the standings table</li>
-                    <li>If you lose, the betting amount will be subtracted in the standings table</li>
-                    <li>Correct color: Win = + bet amount</li>
-                    <li>Correct number: Win = 36 x bet amount</li>
-                    <li>Wrong number/color: Lose = - bet amount</li>
+                    <li style="font-weight: bold;">{{$t("roulette.noPoints")}}</li>
+                    <li>{{$t("roulette.betCredits")}}</li>
+                    <li>{{$t("roulette.ifWin")}}</li>
+                    <li>{{$t("roulette.ifLose")}}</li>
+                    <li>{{$t("roulette.correctColor")}}</li>
+                    <li>{{$t("roulette.correctNumber")}}</li>
+                    <li>{{$t("roulette.wrongNumberOrColor")}}</li>
                 </ul>
                 <ul>
-                    <li>After 3 rounds:</li>
-                    <li>Postive score - hand out sips</li>
-                    <li>Negative score - drink that amount of sips</li>
+                    <li>{{$t("roulette.after3Rounds")}}:</li>
+                    <li>{{$t("roulette.positiveScore")}}</li>
+                    <li>{{$t("roulette.negativeScore")}}</li>
                 </ul> 
                 
             </div>

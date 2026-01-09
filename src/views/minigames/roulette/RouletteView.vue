@@ -18,21 +18,25 @@
                     ref="wheel"
                     :phase="phase"
                     @spinFinished="onSpinFinished"/>
-                    <button
+                    <RetroButton
+                    color="yellow"
                     class="spin-button"
+
                     @click="startSpin"
                     :disabled="phase !== 'betting'">
                     {{ $t("roulette.spin") }}
-                </button>
-                <button v-if="phase === 'result' && round < maxRounds"
-                 class="next-round-button" @click="nextRound"
+                </RetroButton>
+                <RetroButton v-if="phase === 'result' && round < maxRounds"
+                color="pink"
+                class="next-round-button" @click="nextRound"
                 >
                 {{$t("roulette.nextRound")}}
-                </button>
-                <button v-else-if="phase === 'result' && round >= maxRounds"
+                </RetroButton>
+                <RetroButton v-else-if="phase === 'result' && round >= maxRounds"
+                    color="pink"
                     class="continue-button" @click="nextRound">
                     {{$t("roulette.continue")}}
-                </button>
+                </RetroButton>
                 </div>
             </div>
             <div class="right">
@@ -123,17 +127,17 @@
 
 
 import { socket } from "../../../socket";
-import { context } from "@/context";
+
 
 import RetroContainer from '@/components/RetroContainer.vue';
 import RouletteWheel from "@/components/Roulette/RouletteWheel.vue";
-import RouletteDistributeView from "./RouletteDistributeView.vue";
 import RouletteRules from "@/components/Roulette/RouletteRules.vue";
+import RetroButton from "@/components/RetroButton.vue";
 
 
 export default {
     name: "RouletteView",
-    components: {RouletteWheel, RetroContainer, RouletteDistributeView, RouletteRules},
+    components: {RouletteWheel, RetroContainer, RouletteRules, RetroButton},
 
     data(){
         return {
@@ -144,12 +148,12 @@ export default {
             spinResult: null,
             totalPerPlayer: {},
             showRules: false,
+            spinAudio: null,
         };
     },
     mounted(){
         
         this.onRouletteUpdate = (state) =>{
-            console.log("frontend roulette:update recieved", state);
             this.round = state?.round ?? 1;
             this.maxRounds = state?.maxRounds ?? 3;
             this.phase = state?.phase ?? "betting";
@@ -160,11 +164,16 @@ export default {
         socket.on("roulette:update", this.onRouletteUpdate);
         socket.emit("roulette:requestState");
 
+        this.spinAudio = new Audio("/sounds/Roulettewheel.mp3");
+        this.spinAudio.preload = "auto";
+        this.spinAudio.volume = 0.8;
+
      
 
     },
     beforeUnmount(){
         socket.off("roulette:update", this.onRouletteUpdate);
+        this.spinAudio = null;
     },
     computed:{
 
@@ -184,9 +193,15 @@ export default {
         }
     },
     methods:{
+        playSpinSound(){
+            if(!this.spinAudio)
+                return;
+            this.spinAudio.currentTime = 0; //kan spelas direkt igen
+            this.spinAudio.play();
+        },
         startSpin(){
+            this.playSpinSound();
             socket.emit("roulette:startSpin");
-            console.log("startSpin clicked  phase =",this.phase);
             this.$refs.wheel.spin(); //spin() från RouletteWheelviewen
         },
         onSpinFinished(number){
@@ -194,6 +209,8 @@ export default {
             socket.emit("roulette:spinResult", { number });
         },
         nextRound(){
+            console.log("nextRound clicked", Date.now(), "round=", this.round, "phase=", this.phase);
+
             socket.emit("roulette:nextRound");
         }
     }
@@ -263,23 +280,13 @@ export default {
     margin: 0;
     text-align: center;
 }
-
 .spin-button{
-        font-family: "Science Gothic", sans-serif;
-        padding: 12px;
-        margin: 10px;
-        height: 60px;
-        width: 200px;
-        border-radius: 10px;
-        background-color: var(--French_Rose);
-        border: 3px, groove, var(--Caribbean_Green);
-        box-shadow: 0 0 .2rem #fff,
-        0 0 .2rem #fff,
-        0 0 2rem var(--Caribbean_Green),
-        0 0 0.8rem var(--Caribbean_Green),
-        0 0 2.8rem var(--Caribbean_Green),
-        inset 0 0 1.3rem var(--Caribbean_Green);
-    }
+    
+
+}
+.next-round-button{
+    font-size: 15px;
+}
 
 .standings table { 
     width: 100%;
