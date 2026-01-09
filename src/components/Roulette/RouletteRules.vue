@@ -9,7 +9,8 @@
             <div class="content">
                 
                 <ul>
-                    <li>Bet sips on number and/or color</li>
+                    <li style="font-weight: bold;">This game will not result in any points! Only drinking!</li>
+                    <li>Bet drinking credits on number and/or color</li>
                     <li>If you win, the winning amount will be added in the standings table</li>
                     <li>If you lose, the betting amount will be subtracted in the standings table</li>
                     <li>Correct color: Win = + bet amount</li>
