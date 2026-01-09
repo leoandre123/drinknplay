@@ -17,14 +17,62 @@ export class Lobby {
     return this.context.players.find((x) => x.id == id);
   }
 
-  onPlayerJoined(socket, playerId, name, avatarSettings) {
+  onNewPlayerConnection(socket, playerId, name, avatarSettings) {
+    console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
+    let player = this.getPlayer(playerId);
+    const isNewPlayer = player == undefined;
+
+    if (isNewPlayer) {
+      playerId = GenerateID(5);
+      player = new Player(name, playerId, socket, avatarSettings);
+    } else {
+      player.socket = socket;
+    }
+
+    this.onPlayerJoined(player, isNewPlayer);
+  }
+
+  onPlayerJoined(player, isNewPlayer) {
+    if (!isNewPlayer) {
+      console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
+      player.connected = false;
+      player.disconnectedAt = null;
+      clearTimeout(player.disconnectTimer);
+    } else {
+      console.log(`${player.name} joined lobby '${this.context.lobbyId}'`);
+      this.context.players.push(player);
+    }
+
+    player.socket.join(this.context.lobbyId + "_PLAYERS");
+    player.socket.on("results:fillGlass", (id) => this.onGlassFilled(id));
+    player.socket.on("ready", (isReady) => {
+      this.onPlayerReady(player.id, isReady);
+    });
+
+    player.socket.data.lobbyId = this.context.lobbyId;
+    player.socket.data.playerId = player.id;
+
+    player.socket.emit("lobby:joinResponse", {
+      lobbyId: this.context.lobbyId,
+      playerId: player.id,
+    });
+
+    this.broadcastLobbyState();
+    if (this.phase == "game") {
+      if (isNewPlayer) {
+        this.currentGame?.onPlayerJoined(player);
+      }
+      this.currentGame?.registerListeners(player.socket);
+    }
+  }
+
+  onPlayerJoined_old(socket, playerId, name, avatarSettings) {
     console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
     let player = this.getPlayer(playerId);
     const isNewPlayer = player == undefined;
 
     if (!isNewPlayer) {
       console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
-
       player.connected = false;
       player.disconnectedAt = null;
       player.socket = socket;
@@ -38,7 +86,7 @@ export class Lobby {
     }
 
     socket.join(this.context.lobbyId + "_PLAYERS");
-    socket.on("results:fillGlassIndex", (id) => this.onGlassFilled(id));
+    socket.on("results:fillGlass", (id) => this.onGlassFilled(id));
     socket.on("ready", (isReady) => {
       this.onPlayerReady(playerId, isReady);
     });
@@ -68,7 +116,11 @@ export class Lobby {
     socket.on("lobby:advancePhase", () => this.advancePhase());
 
     socket.emit("lobby:joinHostResponse", this.context.lobbyId);
+
     this.broadcastLobbyState();
+    if (this.phase == "game") {
+      this.currentGame?.onHostJoined(socket);
+    }
   }
 
   onPlayerDisconnected(playerId) {
@@ -121,6 +173,9 @@ export class Lobby {
         this.startResultScreen();
         break;
       case "result":
+        this.startScoreboardScreen();
+        break;
+      case "scoreboard":
         this.startGameSelection();
         break;
     }
@@ -130,9 +185,9 @@ export class Lobby {
     this.phase = "slot";
     this.broadcastLobbyState();
 
-    setTimeout(() => this.startSpin(), 5000);
+    setTimeout(() => this.startSpin(), 3000);
 
-    setTimeout(() => this.advancePhase(), 15000);
+    setTimeout(() => this.advancePhase(), 10000);
   }
 
   startSpin() {
@@ -173,7 +228,7 @@ export class Lobby {
   finishGame(results) {
     for (let res of results) {
       const player = this.context.players.find((x) => x.id == res.id);
-      
+
       if (player) {
         console.log(`Giving ${res.score} points to ${player.name}. Previous score: ${player.score}`);
         player.score += res.score;
@@ -186,13 +241,18 @@ export class Lobby {
     this.startResultScreen();
   }
 
+  startScoreboardScreen() {
+    this.phase = "scoreboard";
+    this.broadcastLobbyState();
+  }
+
   startResultScreen() {
-    console.log("Entering result phase");
     this.phase = "result";
     this.broadcastLobbyState();
   }
 
   onGlassFilled(id) {
+    console.log("FILL GLASS OF PLAYER: " + id);
     const player = this.context.players.find((x) => x.id == id);
     player.glassFillLevel += 0.2; //TODO: Based on setting
 
@@ -209,7 +269,7 @@ export class Lobby {
     const player = this.context.players.find((x) => x.id == id);
     player.isReady = isReady;
 
-    if (this.context.players.filter((p) => p.isReady).length > this.context.players.length / 2) {
+    if (this.context.players.filter((p) => p.isReady).length >= this.context.players.length / 2) {
       this.advancePhase();
     } else {
       this.broadcastLobbyState();

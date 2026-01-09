@@ -1,4 +1,5 @@
 {
+    "name": "Drink n' Play",
     "auth": {
         "login": "Log in",
         "logout": "Log out"

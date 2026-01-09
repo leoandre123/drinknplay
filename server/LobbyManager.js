@@ -23,6 +23,9 @@ export class LobbyManager {
     reactionLobby.selectGame(3);
     reactionLobby.startMinigame();
 
+    const closestLobby = new Lobby(io, "closest");
+    closestLobby.selectGame(4);
+    closestLobby.startMinigame();
     const mazeGameLobby = new Lobby(io, "maze");
     mazeGameLobby.selectGame(4);
     mazeGameLobby.startMinigame();
@@ -32,13 +35,21 @@ export class LobbyManager {
 
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [lobby, raceLobby, kahootLobby, resultLobby, drawLobby, reactionLobby, mazeGameLobby];
+    this.lobbies = [
+      lobby,
+      raceLobby,
+      kahootLobby,
+      resultLobby,
+      drawLobby,
+      reactionLobby,
+      closestLobby,
+    ];
   }
 
   createLobby(gameSettings) {
     let id;
     do {
-      id = GenerateID(4);
+      id = GenerateID(3);
     } while (this.lobbies.some((x) => x.context.lobbyId == id));
     const lobby = new Lobby(this.io, id, gameSettings);
     this.lobbies.push(lobby);

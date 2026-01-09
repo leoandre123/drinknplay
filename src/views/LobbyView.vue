@@ -1,5 +1,5 @@
 <template>
-  <RetroContainer>
+  <NewRetroContainer>
     <div v-if="context.isHost" class="lobby-container">
       <div class="side-list">
         <h1>
@@ -24,7 +24,10 @@
         <RetroButton color="pink" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
       </div>
       <div class="side-list">
-        <h1>Settings <span class="gear-icon"></span></h1>
+        <h1>
+          Settings
+          <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
+        </h1>
         <p>
           # Rounds: <span class="right">{{ context.state.settings.numberOfRounds }}</span>
         </p>
@@ -49,34 +52,41 @@
       </div>
     </div>
     <div v-if="!context.isHost" class="waiting">
-      <p>{{ context.getCurrentPlayer()?.name }} - {{ context.getCurrentPlayer()?.id }}</p>
+      <div class="player-avatar">
+        <Avatar :settings="context.getCurrentPlayer()?.avatarSettings" />
+      </div>
+      <p>{{ context.getCurrentPlayer()?.name }}</p>
       <p>{{ $t("lobby.waitingForHost") }}...</p>
     </div>
-  </RetroContainer>
+  </NewRetroContainer>
 </template>
 
 <script>
 import Avatar from "../components/Avatar.vue";
 import QrCode from "../components/QrCode.vue";
 import RetroButton from "../components/RetroButton.vue";
-import RetroContainer from "../components/RetroContainer.vue";
+import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { context } from "../context";
 import { socket } from "../socket";
+import { audioManager } from "@/AudioManager";
 
 export default {
   name: "LobbyView",
   data: function () {
-    return { context, lobbyUri: "" };
+    return { context, audioManager, lobbyUri: "" };
   },
-  components: { QrCode, RetroContainer, RetroButton, Avatar },
+  components: { QrCode, NewRetroContainer, RetroButton, Avatar },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
     this.lobbyUri = `${origin}/join/${context.state.lobbyId}`;
+
+    audioManager.play("/sounds/theme.mp3");
   },
   methods: {
     startGame() {
       socket.emit("lobby:start");
+      audioManager.stopAll();
     },
   },
 };
@@ -111,6 +121,7 @@ export default {
 .waiting {
   color: white;
   font-size: 3rem;
+  justify-items: center;
 }
 
 p {
@@ -158,5 +169,9 @@ p {
   display: flex;
   align-items: center;
   height: 4rem;
+}
+
+.player-avatar {
+  width: 4rem;
 }
 </style>

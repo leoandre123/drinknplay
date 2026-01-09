@@ -1,18 +1,18 @@
 <template>
   <div class="slot-container">
-    <RetroContainer>
+    <NewRetroContainer>
       <SlotMachine
         :symbols="availableGames.map((x) => x.symbol)"
         text="Waiting for minigame selection"
         ref="slot"
       />
       <button @click="$refs.slot.spin()">SPIN</button>
-    </RetroContainer>
+    </NewRetroContainer>
   </div>
 </template>
 
 <script>
-import RetroContainer from "../components/RetroContainer.vue";
+import NewRetroContainer from "../components/NewRetroContainer.vue";
 import RetroText from "../components/RetroText.vue";
 import SlotMachine from "../components/SlotMachine.vue";
 
@@ -25,7 +25,7 @@ const availableGames = [
 
 export default {
   name: "TestView",
-  components: { RetroContainer, SlotMachine, RetroText },
+  components: { NewRetroContainer, SlotMachine, RetroText },
   data: function () {
     return { availableGames };
   },

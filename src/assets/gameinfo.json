@@ -23,7 +23,6 @@
             "The better you draw, the more points you get!"
         ]
     },
-
     {
         "title": "Drink n' React",
         "imageUri": "game_backgrounds/reaction.webp",
@@ -33,8 +32,15 @@
         ]
     },
     {
+        "title": "Drink n' Find",
+        "imageUri": "game_backgrounds/closest.jpg",
+        "tips": [
+            "Try to win"
+        ]
+    },
+    {
         "title": "Drink n' Maze Game",
-        "imageUri": "game_backgrounds/MazeGame.jpg", 
+        "imageUri": "game_backgrounds/MazeGame.jpg",
         "tips": [
             "Switch to phone mode if playing on a a smartphone",
             "Tilt your phone to move the ball",

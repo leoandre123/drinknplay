@@ -24,13 +24,14 @@
         <button @click="advance" :disabled="!context.isHost">Advance</button>
         <input type="number" v-model="debug.gameIndex" />
         <button @click="startMinigame" :disabled="!context.isHost">Start Game</button>
+        <button @click="addBot" :disabled="!context.isHost">Add Bot</button>
       </div>
     </div>
   </div>
 
-  <div class="mascot-container">
+  <!--   <div class="mascot-container">
     <Mascot />
-  </div>
+  </div> -->
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
@@ -53,15 +54,23 @@
     </div>
   </div>
 
+  <div v-if="!audioManager.unlocked" class="popup">
+    <div class="enable-audio">
+      <p>Sound is not enabled</p>
+      <button @click="audioManager.unlock()">Grant access to play sounds</button>
+    </div>
+  </div>
+
   <div v-if="context.isConnected" class="game-container">
     <LobbyView v-if="context.state?.phase == 'lobby'" />
     <SlotView v-if="context.state?.phase == 'slot'" />
     <LoadingView v-if="context.state?.phase == 'loading'" />
     <MinigameView v-if="context.state?.phase == 'game'" />
     <template v-if="context.state?.phase == 'result'">
-      <ResultView v-if="context.isHost" />
+      <GameResultsView v-if="context.isHost" />
       <ResultPlayerView v-if="!context.isHost" />
     </template>
+    <ResultView v-if="context.state?.phase == 'scoreboard'" />
   </div>
 </template>
 
@@ -77,7 +86,9 @@ import { Flag } from "vue-flag-icon/components";
 import Mascot from "../components/Mascot.vue";
 import { useDevice } from "../UseDevice.js";
 import ResultPlayerView from "./ResultPlayerView.vue";
-import { DefaultAvatar } from "../components/Avatar.vue";
+import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
+import GameResultsView from "./GameResultsView.vue";
+import { audioManager } from "@/AudioManager";
 
 export default {
   name: "GameView",
@@ -86,6 +97,7 @@ export default {
     return {
       socket,
       context,
+      audioManager,
       isAngry: false,
       debug: {
         showDebug: false,
@@ -113,6 +125,7 @@ export default {
     LobbyView,
     Flag,
     Mascot,
+    GameResultsView,
   },
   mounted() {
     socket.on("lobby:joinResponse", (response) => {
@@ -145,7 +158,7 @@ export default {
       } else {
         const avatar = sessionStorage.getItem("avatar");
         console.log(avatar);
-        const avatarSettings = avatar != null ? JSON.parse(avatar) : DefaultAvatar;
+        const avatarSettings = avatar != null ? JSON.parse(avatar) : GetRandomAvatar();
         console.log(avatarSettings);
 
         const playerId = localStorage.getItem("playerId");
@@ -192,6 +205,9 @@ export default {
     },
     startMinigame() {
       socket.emit("debug:startMinigame", this.debug.gameIndex);
+    },
+    addBot() {
+      socket.emit("debug:addBot", "Jonas_" + Math.floor(Math.random() * 1000));
     },
   },
 };
@@ -273,5 +289,26 @@ button {
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+.popup {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000a0;
+  z-index: 100;
+  overflow: hidden;
+  place-content: center;
+  justify-items: center;
+}
+
+.enable-audio {
+  width: 10rem;
+  height: 10rem;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
 }
 </style>

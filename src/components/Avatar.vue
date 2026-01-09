@@ -7,11 +7,6 @@
 </template>
 
 <script>
-export const DefaultAvatar = {
-  body: 0,
-  mouth: 0,
-  eyes: 0,
-};
 export default {
   name: "Avatar",
   props: ["settings"],

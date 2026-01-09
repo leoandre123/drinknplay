@@ -3,9 +3,9 @@ import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
 import PlayerMazeGameView from "../views/minigames/mazegame/PlayerMazeGameView.vue";
 import ResultView from "../views/ResultView.vue";
-import drawingCanvas from "../components/drawingCanvas.vue";
-import DrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
+import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
 import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
+import AdminView from "../views/AdminView.vue";
 import HostMazeGameView from "../views/minigames/mazegame/HostMazeGameView.vue";
 
 const router = createRouter({
@@ -23,31 +23,37 @@ const router = createRouter({
     {
       path: "/hostcanvas",
       name: "HostCanvas",
-      component: HostDrawingView
+      component: HostDrawingView,
     },
-     {
+    {
       path: "/canvas",
       name: "Canvas",
-      component: DrawingView,
+      component: PlayerDrawingView,
     },
     {
       path: "/create",
       name: "Create",
       component: CreateView,
     },
-     {
+    {
       path: "/result",
       name: "Result",
-      component: ResultView,},
+      component: ResultView,
+    },
     {
       path: "/MazeGame",
       name: "MazeGame",
       component: PlayerMazeGameView,
     },
     {
+      path: "/admin",
+      name: "Admin",
+      component: AdminView,
+    },
+    {
       path: "/MazeHost",
       name: "MazeHost",
-      component: HostMazeGameView
+      component: HostMazeGameView,
     },
     {
       path: "/test",

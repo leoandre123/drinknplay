@@ -8,7 +8,10 @@
       <p>{{ tip }}</p>
 
       <div class="ready-container">
-        <p v-if="context.isHost">0 of 1 rquired players eerady</p>
+        <p v-if="context.isHost">
+          {{ context.state.players.filter((x) => x.isReady).length }} of
+          {{ context.state.players.length / 2 }} required players ready
+        </p>
         <button
           v-if="!context.isHost"
           :class="[context.getCurrentPlayer().isReady ? 'cancel' : 'ready']"
@@ -39,6 +42,7 @@ export default {
   async created() {},
   methods: {
     toggleReady() {
+      navigator.vibrate(200);
       socket.emit("ready", !context.getCurrentPlayer().isReady);
     },
   },
