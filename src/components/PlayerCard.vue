@@ -3,17 +3,16 @@
     <p class="player-name">{{ player.name }}</p>
     <p class="player-score">Score: {{ score }}</p>
     <div class="drinking-glass">
-      <DrinkingGlass :level="player.glassFillLevel" />
+      <DrinkingGlass :level="glassLevel" />
     </div>
     <div class="drunkometer">
-      <Drunkometer :level="player.drunkness" />
+      <Drunkometer :level="drunkness" />
     </div>
     <div class="place" :class="`place-${place}`">
       <p>{{ place + 1 }}</p>
     </div>
   </div>
 </template>
-
 
 <script>
 import DrinkingGlass from "./DrinkingGlass.vue";
@@ -24,6 +23,8 @@ export default {
     player: Object,
     score: Number,
     place: Number,
+    drunkness: Number,
+    glassLevel: Number,
   },
   data: function () {
     return {};
@@ -32,8 +33,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 p {
   margin: 0;
 }

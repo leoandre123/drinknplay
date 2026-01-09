@@ -17,6 +17,7 @@ import SlotMachine from "../components/SlotMachine.vue";
 import { socket } from "../socket";
 import { context } from "../context";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
+import { audioManager } from "@/AudioManager";
 
 const availableGames = [
   { name: "Drink n' Drive", symbol: "🚗" },
@@ -55,6 +56,7 @@ export default {
       console.log(`Spinning to ${symbolIndex}`);
       this.text = "Spinning...";
       this.$refs.slotRef.spin(symbolIndex % this.availableGames.length);
+      audioManager.play("/sounds/slot.mp3");
     },
     onSpinFinished(symbolIndex) {
       console.log(`Spinning finished on ${symbolIndex}`);

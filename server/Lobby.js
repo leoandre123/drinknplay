@@ -173,6 +173,9 @@ export class Lobby {
         this.startResultScreen();
         break;
       case "result":
+        this.startScoreboardScreen();
+        break;
+      case "scoreboard":
         this.startGameSelection();
         break;
     }
@@ -182,9 +185,9 @@ export class Lobby {
     this.phase = "slot";
     this.broadcastLobbyState();
 
-    setTimeout(() => this.startSpin(), 5000);
+    setTimeout(() => this.startSpin(), 3000);
 
-    setTimeout(() => this.advancePhase(), 15000);
+    setTimeout(() => this.advancePhase(), 10000);
   }
 
   startSpin() {
@@ -230,8 +233,12 @@ export class Lobby {
     this.startResultScreen();
   }
 
+  startScoreboardScreen() {
+    this.phase = "scoreboard";
+    this.broadcastLobbyState();
+  }
+
   startResultScreen() {
-    console.log("Entering result phase");
     this.phase = "result";
     this.broadcastLobbyState();
   }

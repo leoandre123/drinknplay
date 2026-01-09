@@ -1,6 +1,10 @@
 <template>
   <RouterView />
   <div class="language-switcher">
+    <div
+      :class="['flag', audioManager.muted ? 'muted' : 'audio']"
+      @click="audioManager.toggleMute()"
+    ></div>
     <div @click="switchLang('sv')" class="flag swe"></div>
     <div @click="switchLang('en')" class="flag usa"></div>
   </div>
@@ -10,9 +14,13 @@
 import Flag from "vue-flag-icon/components/icon/Flag.vue";
 import { useI18n } from "vue-i18n";
 import { RouterView } from "vue-router";
+import { audioManager } from "./AudioManager";
 
 export default {
   name: "App",
+  data() {
+    return { audioManager };
+  },
   components: { Flag },
   setup() {
     const { locale } = useI18n();
@@ -41,6 +49,13 @@ export default {
   height: 1em;
   width: 1em;
   cursor: pointer;
+}
+
+.audio {
+  background-image: url("sound.png");
+}
+.muted {
+  background-image: url("mute.png");
 }
 
 .flag:hover {

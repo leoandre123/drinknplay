@@ -24,7 +24,10 @@
         <RetroButton color="pink" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
       </div>
       <div class="side-list">
-        <h1>Settings <span class="gear-icon"></span></h1>
+        <h1>
+          Settings
+          <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
+        </h1>
         <p>
           # Rounds: <span class="right">{{ context.state.settings.numberOfRounds }}</span>
         </p>
@@ -65,21 +68,25 @@ import RetroButton from "../components/RetroButton.vue";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { context } from "../context";
 import { socket } from "../socket";
+import { audioManager } from "@/AudioManager";
 
 export default {
   name: "LobbyView",
   data: function () {
-    return { context, lobbyUri: "" };
+    return { context, audioManager, lobbyUri: "" };
   },
   components: { QrCode, NewRetroContainer, RetroButton, Avatar },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
     this.lobbyUri = `${origin}/join/${context.state.lobbyId}`;
+
+    audioManager.play("/sounds/theme.mp3");
   },
   methods: {
     startGame() {
       socket.emit("lobby:start");
+      audioManager.stopAll();
     },
   },
 };
