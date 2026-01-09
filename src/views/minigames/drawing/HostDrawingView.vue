@@ -1,7 +1,7 @@
 <template>
     <div class="host-view-container">
         <div v-if="phase === 'drawing'" class="drawing-board">
-            <div class="subject">Draw a {{ currentSubject }}</div>
+            <div class="subject">DRAW  A  {{ currentSubject }}</div>
             <div class="displayPictures">
                 <div v-for="drawing in submittedPaintings" class="drawings">
                     <img :src="drawing.png"></img>
@@ -18,7 +18,7 @@
         <DrawingResultScreen v-if="phase === 'results'" :score="scores"/>
 
         <div v-if="phase === 'start'" class = "start">
-            Welcome! Please start game on your device by pressing start-button
+            Welcome! Please submit a subject on your device.
         </div>
         <div v-if="phase !== 'results'" class="time">Time left: {{ timer }}</div>
     </div>
@@ -67,7 +67,7 @@ export default {
         socket.on("timerTick", (timerFromServer) => { this.timer = timerFromServer });
 
         socket.on("updateCanvas", (drawingFromServer) => {
-            let drawing = this.submittedPaintings.find(p => p.socketId === drawingFromServer.socketId);
+            let drawing = this.submittedPaintings.find(p => p.playerId === drawingFromServer.playerId);
             if (drawing) {
                 drawing.png = drawingFromServer.png;
             }

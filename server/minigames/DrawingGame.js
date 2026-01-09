@@ -6,8 +6,8 @@ export class DrawingGame extends Minigame {
         this.drawingPlayers = [];
         this.allDrawings = [];
         this.phase = "start";
-        this.currentSubject = "house";
-        this.subjects = ["Christmas Tree", "Reindeer", "Jultomte", "Gift", "Mistletoe", "Semla", "Lussebulle"];
+        this.currentSubject = "";
+        this.subjects = [];
         this.timer = null;
         this.timerID = null;
         this.currentDrawingIndexToVote = 0;
@@ -16,9 +16,10 @@ export class DrawingGame extends Minigame {
     onPlayerJoined(player) {
         this.broadcastPlayers("gamePhase", this.phase);
         this.drawingPlayers.push({
-            id: player.id,
+            playerId: player.id,
             score: 0,
-            name: player.name
+            name: player.name,
+            subjectSubmitted: false,
         })
     }
 
@@ -74,15 +75,27 @@ export class DrawingGame extends Minigame {
                 this.initiateResults();
                 break;
             case "results":
+                if (this.allDrawings.length>0){
                 this.phase = "drawing";
-                this.initiateDrawing();
+                this.initiateDrawing()}
+                else{
+                    this.gameFinished();
+                };
                 break;
         }
         this.broadcast("gamePhase", this.phase)
-    }
+    },
+    gameFinished(){
+        const results = this.drawingPlayers.map(dp => ({
+            playerId: dp.playerId,
+            score: dp.score
+        }));
+        this.onFinished?.(results);
+    },
 
     initiateDrawing() {
-        this.setTimer(120);
+        console.log(this.subjects);
+        this.setTimer(40);
         this.changeSubject();
         this.allDrawings = [];
         this.broadcastHosts("clearPaintings");
@@ -100,19 +113,20 @@ export class DrawingGame extends Minigame {
         if (this.allDrawings.length > 0) {
             this.setTimer(10);
             this.currentDrawingIndex = 0;
-            this.boradcastVoting();
+            this.broadcastVoting();
+            console.log("INITIATE VOITNG")
         }
         else { this.changeGamePhase() }
     }
 
-    boradcastVoting() {
+    broadcastVoting() {
         this.broadcast("drawingToVote", this.allDrawings[this.currentDrawingIndex])
     }
 
     nextDrawingToVote() {
         this.currentDrawingIndex++;
         if (this.currentDrawingIndex < this.allDrawings.length) {
-            this.boradcastVoting();
+            this.broadcastVoting();
             this.setTimer(10);
         }
         else {
@@ -137,24 +151,29 @@ export class DrawingGame extends Minigame {
 
 
     registerListeners(socket) {
-        //Start game
-        socket.on("startDrawingGame", () => {
-            this.phase = "drawing"
-            this.initiateDrawing()
-            this.broadcast("gamePhase", this.phase)
-            console.log("Game starting")
+        //Add subject that each player decides
+        socket.on("submitSubject", (subject) => {
+            this.subjects.push(subject)
+            const player = this.drawingPlayers.find(d => d.playerId === socket.data.playerId);
+            player.subjectSubmitted = true;
+            const allSubmitted = this.drawingPlayers.every(p => p.subjectSubmitted === true);
+            if (allSubmitted && this.drawingPlayers.length>0){
+            this.changeGamePhase();  
+            }
         })
 
         //push drawings and update them to host
         socket.on("updateCanvas", (canvasData) => {
-            let drawing = this.allDrawings.find(d => d.socketId === socket.id);
+            console.log(this.allDrawings)
+            console.log(socket.data.playerId)
+            let drawing = this.allDrawings.find(d => d.playerId === socket.data.playerId);
             if (drawing) {
                 console.log("updating pic")
                 drawing.png = canvasData;
             }
             else {
                 drawing = {
-                    socketId: socket.id,
+                    playerId: socket.data.playerId,
                     playerName: socket.data.username,
                     png: canvasData,
                     score: 0,
@@ -167,14 +186,14 @@ export class DrawingGame extends Minigame {
         });
         //add scores to players
         socket.on("playerVote", (scoreInfoFromPlayer) => {
-            const drawing = this.allDrawings.find(d => d.socketId === scoreInfoFromPlayer.socketId)
+            const drawing = this.allDrawings.find(d => d.playerId === scoreInfoFromPlayer.playerId)
             if (drawing) {
                 console.log(scoreInfoFromPlayer.score)
                 drawing.score += scoreInfoFromPlayer.score;
                 console.log(`Updated score for ${drawing.playerName}: ${drawing.score}`);
             }
 
-            const player = this.drawingPlayers.find(p => p.id === drawing.socketId);
+            const player = this.drawingPlayers.find(p => p.playerId === drawing.playerId);
             if (player) {
                 player.score += scoreInfoFromPlayer.score;
             }

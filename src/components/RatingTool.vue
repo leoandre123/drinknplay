@@ -30,7 +30,7 @@ export default {
         },
         sendRating() {
             this.voted = true;
-            this.$emit('raiting-submitted', this.rating);
+            this.$emit('rating-submitted', this.rating);
         }
     }
 }
@@ -95,7 +95,7 @@ export default {
     width: 100%;
 }
 
-.raiting-view-container{
+.rating-view-container{
     display: flex;
     flex-direction: column;
     height: 100vh;
