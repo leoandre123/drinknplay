@@ -2,13 +2,13 @@
     <div class="reaction-game-player-container">
         <h1>REACTION GAME</h1>
         <div v-if="winner === myId && showRoundResult">
-            <h2>YOU WIN THIS ROUND!</h2>
+            <h2>{{ $t("reaction.you_win") }}</h2>
         </div>
         <div v-else-if="winner && showRoundResult">
-            <h2>{{ winnerName }} WON THIS ROUND!</h2>
+            <h2>{{ winnerName }} {{ $t("reaction.player_wins") }}</h2>
         </div>
         <div v-else-if="showRoundResult">
-            <h2>No winner this round</h2>
+            <h2>{{ $t("reaction.no_winner") }}</h2>
         </div>
         <div class="amount-display">
             <h2>{{ amount }}</h2>
@@ -18,7 +18,7 @@
                 <button class="add-button" @click="add"> + </button>
 
                 <div class="done-button-container">
-                    <button class="submit-button" @click="submit" :disabled="submitDisabled"> DONE </button>
+                    <button class="submit-button" @click="submit" :disabled="submitDisabled"> {{ $t("reaction.done") }} </button>
                 </div>
             </div>
         </div>

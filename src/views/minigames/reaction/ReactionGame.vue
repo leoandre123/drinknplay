@@ -6,7 +6,7 @@
         </div>
         <div class="game-area">
             <h1>REACTION GAME</h1>
-            <p>Count the figures in the picture as fast as you can!</p>
+            <p>{{ $t("reaction.headline") }}</p>
             <div v-if="countdown != 0" class="countdown-container">
                 <p>{{ countdownText }}</p>
             </div>
@@ -18,8 +18,8 @@
                 }" />
             </div>
             <div v-else class="round-result">
-                <h2 v-if="winnerName">Winner: {{ winnerName }}</h2>
-                <h2 v-if="showRoundResult && !winnerName">No winner this round</h2>
+                <h2 v-if="winnerName">{{ $t("reaction.winner") }} : {{ winnerName }}</h2>
+                <h2 v-if="showRoundResult && !winnerName">{{ $t("reaction.no_winner") }}</h2>
             </div>
 
         </div>
@@ -100,7 +100,6 @@ export default {
                 score: this.playerScores.get(player.id) || 0,
                 amount: player.amount ?? null,
 
-
             }));
         },
         sortedPlayers() {
@@ -171,11 +170,11 @@ export default {
         },
 
         playWinnerSound() {
-            if (this.winner && showRoundResult) {
+            if (this.winner && this.showRoundResult) {
                 const audio = new Audio('/sounds/winner.mp3');
                 audio.play();
             }
-            else if (this.winner === false && showRoundResult) {
+            else if (this.winner === false && this.showRoundResult) {
                 const audio = new Audio('/sounds/nowinner.mp3');
                 audio.play();
             }

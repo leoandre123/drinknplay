@@ -5,7 +5,7 @@ export class ReactionGame extends Minigame {
         super();
         this.submissions = [];
         this.currentRound = 0;
-        this.maxRounds = 10;
+        this.maxRounds = 3; //ändra till 10
         this.figureCount = 0;
         this.winner = null;
         this.figurePositions = [];
@@ -27,7 +27,7 @@ export class ReactionGame extends Minigame {
 
     registerListeners(socket) {
         socket.on("reaction:submit", ({ amount, time }) => {
-            this.onSubmit(socket.id, amount, time);
+            this.onSubmit(socket.data.playerId, amount, time);
         });
 
     }
@@ -46,11 +46,11 @@ export class ReactionGame extends Minigame {
     }
 
     generatePositions(count) {
-        const containerW = 100; 
-        const containerH = 55;  
-        const figureW = 7;     
+        const containerW = 100;
+        const containerH = 55;
+        const figureW = 7;
         const half = figureW / 2;
-        const pad = 1;      
+        const pad = 1;
         const rand = (min, max) => Math.random() * (max - min) + min;
 
         return Array.from({ length: count }, () => ({
@@ -71,7 +71,7 @@ export class ReactionGame extends Minigame {
             figureCount: this.figureCount,
             positions: this.figurePositions,
         });
-          this.broadcast("reaction:resetAmounts");
+        this.broadcast("reaction:resetAmounts");
     }
 
     stop() {
@@ -120,7 +120,7 @@ export class ReactionGame extends Minigame {
         }
     }
     finishRound() {
-    
+
         this.currentRound++;
 
         if (this.currentRound < this.maxRounds) {
@@ -130,7 +130,16 @@ export class ReactionGame extends Minigame {
         }
         else {
             console.log("GAME FINISHED");
-            this.onFinished?.([]);
+
+            const playersWithScores = (this.context.players || []).map((p) => ({
+                id: p.id,
+                name: p.name || p.playerName || p.nickname || "Player",
+                score: this.scores.get(p.id) ?? 0,
+            }));
+            console.log("FINAL RESULTS:", playersWithScores);
+            console.log("scores map entries:", [...this.scores.entries()]);
+
+            this.onFinished?.(playersWithScores);
         }
     }
 }
