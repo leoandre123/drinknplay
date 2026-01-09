@@ -84,14 +84,15 @@ export class DrawingGame extends Minigame {
                 break;
         }
         this.broadcast("gamePhase", this.phase)
-    },
+    }
+
     gameFinished(){
         const results = this.drawingPlayers.map(dp => ({
             playerId: dp.playerId,
             score: dp.score
         }));
         this.onFinished?.(results);
-    },
+    }
 
     initiateDrawing() {
         console.log(this.subjects);
