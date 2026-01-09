@@ -1,7 +1,7 @@
 <template>
     <div class="host-view-container">
         <div v-if="phase === 'drawing'" class="drawing-board">
-            <div class="subject">DRAW  A  {{ currentSubject }}</div>
+            <div class="subject">Draw  a  {{ currentSubject }}</div>
             <div class="displayPictures">
                 <div v-for="drawing in submittedPaintings" class="drawings">
                     <img :src="drawing.png"></img>
@@ -94,6 +94,7 @@ export default {
 
 <style scoped>
 .host-view-container {
+    text-transform: uppercase;
     font-family: "Science Gothic", sans-serif;
     display: flex;
     flex-direction: column;

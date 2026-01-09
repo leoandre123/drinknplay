@@ -60,7 +60,6 @@ export class DrawingGame extends Minigame {
 
     //Handles switching game phase, gets called by setTimer and voting methods
     changeGamePhase() {
-
         switch (this.phase) {
             case "start":
                 this.phase = "drawing"
@@ -75,7 +74,7 @@ export class DrawingGame extends Minigame {
                 this.initiateResults();
                 break;
             case "results":
-                if (this.allDrawings.length>0){
+                if (this.subjects.length>0){
                 this.phase = "drawing";
                 this.initiateDrawing()}
                 else{
@@ -91,6 +90,7 @@ export class DrawingGame extends Minigame {
             playerId: dp.playerId,
             score: dp.score
         }));
+        console.log("GAME FINISHED")
         this.onFinished?.(results);
     }
 
@@ -175,7 +175,7 @@ export class DrawingGame extends Minigame {
             else {
                 drawing = {
                     playerId: socket.data.playerId,
-                    playerName: socket.data.username,
+                    playerName: "Pelle", //fix name here
                     png: canvasData,
                     score: 0,
                 };
