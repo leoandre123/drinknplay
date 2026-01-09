@@ -1,49 +1,22 @@
 <template>
-  <div v-if="!isFullscreen">
-    <div v-if="context.isHost" class="container">
-      <div class="title-bar">
-        <h1 v-if="context.state.gameIndex == 0">2.5D Racer</h1>
-        <h1 v-if="context.state.gameIndex == 1">Questions game</h1>
-      </div>
-      <div class="body-container">
-        <div class="scoreboard-container">
-          <p v-for="player in context.state.players">{{ player.name }}</p>
-        </div>
-        <div class="minigame-container">
-          <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
-          <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
-          <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
-          <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
-        </div>
-      </div>
+  <div class="fullscreen">
+    <div v-if="context.isHost" class="minigame-container">
+      <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
+      <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
+      <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
+      <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
+      <ClosestView v-if="context.state.gameIndex == 4" class="minigame" />
+      <HostMazeGameView v-if="context.state.gameIndex == 5" class="minigame" />
+      <RouletteView v-if="context.state.gameIndex == 6" class="minigame" />
     </div>
     <div v-if="!context.isHost" class="client-container">
       <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
       <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
       <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
       <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
-    </div>
-  </div>
-  <div v-if="isFullscreen">
-    <div class="fullscreen">
-      <div v-if="context.isHost" class="minigame-container">
-        <RacingView v-if="context.state.gameIndex == 0" class="minigame" />
-        <KahootView v-if="context.state.gameIndex == 1" class="minigame" />
-        <HostDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
-        <ReactionGame v-if="context.state.gameIndex == 3" class="minigame" />
-        <ClosestView v-if="context.state.gameIndex == 4" class="minigame" />
-        <HostMazeGameView v-if="context.state.gameIndex == 5" class="minigame" />
-        <RouletteView v-if="context.state.gameIndex == 6" class="minigame" />
-      </div>
-      <div v-if="!context.isHost" class="client-container">
-        <RacingControllerView v-if="context.state.gameIndex == 0" class="minigame" />
-        <KahootPlayerView v-if="context.state.gameIndex == 1" class="minigame" />
-        <PlayerDrawingView v-if="context.state.gameIndex == 2" class="minigame" />
-        <ReactionGamePlayerView v-if="context.state.gameIndex == 3" class="minigame" />
-        <ClosestPlayerView v-if="context.state.gameIndex == 4" class="minigame" />
-        <PlayerMazeGameView v-if="context.state.gameIndex == 5" class="minigame" />
-        <RoulettePlayerView v-if="context.state.gameIndex == 6" class="minigame" />
-      </div>
+      <ClosestPlayerView v-if="context.state.gameIndex == 4" class="minigame" />
+      <PlayerMazeGameView v-if="context.state.gameIndex == 5" class="minigame" />
+      <RoulettePlayerView v-if="context.state.gameIndex == 6" class="minigame" />
     </div>
   </div>
 </template>
