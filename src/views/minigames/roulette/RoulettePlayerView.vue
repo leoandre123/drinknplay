@@ -63,7 +63,7 @@
                             ? (b.value.toUpperCase())
                             : ('Number: '+ b.value)
                         }}
-                       - {{ b.amount }} {{$t("roulette.sips")}}
+                       - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                     </span>
                     <button class="remove-bet" @click="removeBet(i)">x</button>
                 </li>

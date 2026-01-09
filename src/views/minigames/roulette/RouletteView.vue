@@ -54,10 +54,10 @@
                                 <ul v-if="p.bets && p.bets.length" class="bet-list">
                                     <li v-for="b in p.bets" :key="`${b.type} - ${b.value}`">
                                         <span v-if="b.type === 'color'">
-                                            {{$t("roulette.color")}}: {{ String(b.value).toUpperCase() }} - {{ b.amount }} {{$t("roulette.sips")}}
+                                            {{$t("roulette.color")}}: {{ String(b.value).toUpperCase() }} - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                                         </span>
                                         <span v-else>
-                                            {{$t("roulette.number")}}: {{ b.value }} - {{ b.amount }} {{$t("roulette.sips")}}
+                                            {{$t("roulette.number")}}: {{ b.value }} - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                                         </span>
                                     </li>
                                 </ul>
@@ -83,7 +83,7 @@
                                     <div v-if="spinResult.winners.length === 0">{{$t("roulette.noWinners")}}</div>
                                     <ul v-else>
                                         <li v-for="w in spinResult.winners" :key="w.playerId">
-                                            {{ w.name }} - {{ w.winningAmount }} {{$t("roulette.sips")}}
+                                            {{ w.name }} - {{ w.winningAmount }} {{$t("roulette.drinkCredits")}}
                                         </li>
                                     </ul>
                                 </div>
