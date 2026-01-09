@@ -172,7 +172,15 @@ export class Lobby {
 
   finishGame(results) {
     for (let res of results) {
-      this.context.players.find((x) => x.id == res.id).score += res.score;
+      const player = this.context.players.find((x) => x.id == res.id);
+      
+      if (player) {
+        console.log(`Giving ${res.score} points to ${player.name}. Previous score: ${player.score}`);
+        player.score += res.score;
+        console.log(`--> New Score for ${player.name}: ${player.score}`);
+      } else {
+        console.warn(`Could not find player with ID: ${res.id} (Might have disconnected)`);
+      }
     }
 
     this.startResultScreen();

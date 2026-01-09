@@ -36,9 +36,9 @@
         "title": "Drink n' Maze Game",
         "imageUri": "game_backgrounds/MazeGame.jpg", 
         "tips": [
-            "Be the first to reach the goal!",
-            "Avoid walls and obstacles.",
-            "Use your phone to navigate."
+            "Switch to phone mode if playing on a a smartphone",
+            "Tilt your phone to move the ball",
+            "The faster you reach the finish, the more points you get!"
         ]
     }
 ]
