@@ -4,43 +4,61 @@ export class KahootGame extends Minigame {
   constructor(neverEnd = false) {
     super();
     this.questions = [
-      {
-        title: "Vad är 5x5?",
-        answers: [
-          { text: "20", correct: false },
-          { text: "25", correct: true },
-          { text: "15", correct: false },
-          { text: "35", correct: false },
-        ],
-      },
-      {
-        title: "Vad är 1x5?",
-        answers: [
-          { text: "1", correct: false },
-          { text: "3", correct: false },
-          { text: "5", correct: true },
-          { text: "5", correct: true },
-        ],
-      },
-      {
-        title: "Vad är sant?",
-        answers: [
-          { text: "Leo är bäst", correct: true },
-          { text: "Leo är sämst", correct: false },
-          { text: "Leo är 22", correct: false },
-          { text: "Leo är 23", correct: true },
-        ],
-      },
-      {
-        title: "Hur gammal är du",
-        answers: [
-          { text: "0-15", correct: true },
-          { text: "15-25", correct: true },
-          { text: "25-35", correct: true },
-          { text: "35+", correct: true },
-        ],
-      },
-    ];
+  {
+    titleKey: "kahoot.q1.title",
+    answers: [
+      { textKey: "kahoot.q1.a1", correct: false },
+      { textKey: "kahoot.q1.a2", correct: true },
+      { textKey: "kahoot.q1.a3", correct: false },
+      { textKey: "kahoot.q1.a4", correct: false },
+    ],
+  },
+  {
+    titleKey: "kahoot.q2.title",
+    answers: [
+      { textKey: "kahoot.q2.a1", correct: false },
+      { textKey: "kahoot.q2.a2", correct: false },
+      { textKey: "kahoot.q2.a3", correct: true },
+      { textKey: "kahoot.q2.a4", correct: false },
+    ],
+  },
+  {
+    titleKey: "kahoot.q3.title",
+    answers: [
+      { textKey: "kahoot.q3.a1", correct: true },
+      { textKey: "kahoot.q3.a2", correct: false },
+      { textKey: "kahoot.q3.a3", correct: false },
+      { textKey: "kahoot.q3.a4", correct: true },
+    ],
+  },
+  {
+    titleKey: "kahoot.q4.title",
+    answers: [
+      { textKey: "kahoot.q4.a1", correct: true },
+      { textKey: "kahoot.q4.a2", correct: true },
+      { textKey: "kahoot.q4.a3", correct: true },
+      { textKey: "kahoot.q4.a4", correct: true },
+    ],
+  },
+  {
+    titleKey: "kahoot.q5.title",
+    answers: [
+      { textKey: "kahoot.q5.a1", correct: false },
+      { textKey: "kahoot.q5.a2", correct: true },
+      { textKey: "kahoot.q5.a3", correct: false },
+      { textKey: "kahoot.q5.a4", correct: false },
+    ],
+  },
+  {
+    titleKey: "kahoot.q6.title",
+    answers: [
+      { textKey: "kahoot.q6.a1", correct: true },
+      { textKey: "kahoot.q6.a2", correct: false },
+      { textKey: "kahoot.q6.a3", correct: false },
+      { textKey: "kahoot.q6.a4", correct: false },
+    ],
+  },
+];
     this.currentQuestionIndex = 0;
 
     this.currentQuestion = null;
@@ -121,15 +139,38 @@ export class KahootGame extends Minigame {
   startQuestion() {
     this.updateAnswerCount();
     this.updateQuestionsCount();
-    this.currentQuestion = {
-      time: Date.now() + 5000,
-      title: this.questions[this.currentQuestionIndex].title,
-      answers: this.questions[this.currentQuestionIndex].answers,
-    };
-    this.kahootPlayers.forEach((p) => (p.hasAnswered = false));
-    this.updateAnswerCount();
-    this.broadcastPlayers("startRound");
-    this.broadcastHosts("startQuestion", this.currentQuestion);
+  const q = this.questions[this.currentQuestionIndex];
+  const time = Date.now() + 5000;
+
+  // Host ska få correct (för reveal)
+  const questionForHost = {
+    time,
+    titleKey: q.titleKey,
+    answers: q.answers.map((a) => ({
+      textKey: a.textKey,
+      correct: a.correct,
+    })),
+  };
+
+  // Players ska INTE få correct (för att inte kunna fuska)
+  const questionForPlayers = {
+    time,
+    titleKey: q.titleKey,
+    answers: q.answers.map((a) => ({
+      textKey: a.textKey,
+    })),
+  };
+
+  // Spara host-varianten internt (bra om du använder den i scoring/reveal)
+  this.currentQuestion = questionForHost;
+
+  this.kahootPlayers.forEach((p) => (p.hasAnswered = false));
+  this.updateAnswerCount();
+
+  this.broadcastPlayers("startRound");
+  this.broadcastPlayers("startQuestion", questionForPlayers);
+
+  this.broadcastHosts("startQuestion", questionForHost);
   }
 
   updateAnswerCount() {

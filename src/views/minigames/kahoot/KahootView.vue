@@ -2,10 +2,10 @@
   <div class="kahoot-container">
     <div class="title">
       <p>Q {{ currentQuestionIndex + 1 }}/{{ questionCount }}</p>
-      <p>{{ currentQuestion.title }}</p>
+<p>{{ currentQuestion.titleKey ? $t(currentQuestion.titleKey) : "" }}</p>
       <p>A: {{ answerCount }}/{{ playerCount }}</p>
     </div>
-    <div class="body">HEJ</div>
+    <div class="body">{{ $t("kahoot.instruction") }}</div>
     <div class="answers">
       <div
         v-for="(answer, i) in currentQuestion.answers"
@@ -16,7 +16,7 @@
           { wrong: reveal && !currentQuestion.answers[i].correct },
         ]"
       >
-        {{ timer == 0 ? answer.text : "-" }}
+{{ timer == 0 ? (answer.textKey ? $t(answer.textKey) : "") : "-" }}
       </div>
       <div v-if="timer" class="timer-container">
         <div class="timer" :key="timer">{{ timer }}</div>

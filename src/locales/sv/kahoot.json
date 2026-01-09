@@ -1,0 +1,46 @@
+{
+    "q1": {
+        "title": "Vad är 5 × 5?",
+        "a1": "20",
+        "a2": "25",
+        "a3": "15",
+        "a4": "35"
+    },
+    "q2": {
+        "title": "Vad är 1 × 5?",
+        "a1": "1",
+        "a2": "3",
+        "a3": "5",
+        "a4": "10"
+    },
+    "q3": {
+        "title": "Vad är sant?",
+        "a1": "Leo är bäst",
+        "a2": "Leo är sämst",
+        "a3": "Leo är 22 år",
+        "a4": "Leo är 23 år"
+    },
+    "q4": {
+        "title": "Hur gammal är du?",
+        "a1": "0–15",
+        "a2": "15–25",
+        "a3": "25–35",
+        "a4": "35+"
+    },
+    "q5": {
+        "title": "Vilket språk körs i webbläsaren?",
+        "a1": "Python",
+        "a2": "JavaScript",
+        "a3": "Java",
+        "a4": "C++"
+    },
+    "q6": {
+        "title": "Vad står HTML för?",
+        "a1": "HyperText Markup Language",
+        "a2": "HighText Machine Language",
+        "a3": "Hyper Transfer Main Language",
+        "a4": "Home Tool Markup Language"
+    },
+    
+    "instruction": "Väntar på att spelarna ska svara"
+}

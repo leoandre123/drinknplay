@@ -85,6 +85,7 @@ export class ReactionGame extends Minigame {
         if (existing) return;
 
         const responseTime = submitTime - this.roundStartTime;
+        const points = Math.max(1200 - responseTime / 12, 0);
 
         amount = Number(amount);
 
@@ -98,7 +99,7 @@ export class ReactionGame extends Minigame {
 
             const currentScore = this.scores.get(playerId) || 0;
 
-            this.scores.set(playerId, currentScore + responseTime);
+            this.scores.set(playerId, currentScore + points);
 
             this.broadcast("reaction:roundResult", {
                 winner: this.winner,
