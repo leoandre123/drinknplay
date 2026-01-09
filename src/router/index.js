@@ -1,12 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
-import PlayerMazeGameView from "../views/minigames/mazegame/PlayerMazeGameView.vue";
 import ResultView from "../views/ResultView.vue";
+
+import PlayerMazeGameView from "../views/minigames/mazegame/PlayerMazeGameView.vue";
+import HostMazeGameView from "../views/minigames/mazegame/HostMazeGameView.vue";
+
 import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
 import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
+
 import AdminView from "../views/AdminView.vue";
-import HostMazeGameView from "../views/minigames/mazegame/HostMazeGameView.vue";
+
+import RouletteView from "../views/minigames/roulette/RouletteView.vue";
+import RoulettePlayerView from "@/views/minigames/roulette/RoulettePlayerView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,11 +25,6 @@ const router = createRouter({
     {
       path: "/join",
       redirect: "/",
-    },
-    {
-      path: "/hostcanvas",
-      name: "HostCanvas",
-      component: HostDrawingView,
     },
     {
       path: "/canvas",
@@ -41,19 +42,21 @@ const router = createRouter({
       component: ResultView,
     },
     {
-      path: "/MazeGame",
-      name: "MazeGame",
-      component: PlayerMazeGameView,
-    },
-    {
       path: "/admin",
       name: "Admin",
       component: AdminView,
     },
     {
-      path: "/MazeHost",
-      name: "MazeHost",
-      component: HostMazeGameView,
+      path: "/roulette",
+      name: "Roulette",
+      component: RouletteView,
+
+    },
+
+    {
+      path: "/roulette/player",
+      name: "RoulettePlayer",
+      component: RoulettePlayerView,
     },
     {
       path: "/test",

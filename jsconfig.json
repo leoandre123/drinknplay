@@ -2,10 +2,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@shared/*": ["shared/*"]
-    },
-    "checkJs": false
+      "@/*": [
+        "src/*"
+      ]
+    }
   },
-  "include": ["src/**/*", "server/**/*", "shared/**/*"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

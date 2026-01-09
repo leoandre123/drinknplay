@@ -3,11 +3,14 @@ import enCommon from "@/locales/en/common.json";
 import enLobby from "@/locales/en/lobby.json";
 import enGame from "@/locales/en/game.json";
 import enResults from "@/locales/en/results.json";
+import enRoulette from "@/locales/en/roulette.json";
 
 import svCommon from "@/locales/sv/common.json";
 import svLobby from "@/locales/sv/lobby.json";
 import svGame from "@/locales/sv/game.json";
 import svResults from "@/locales/sv/results.json";
+import svRoulette from "@/locales/sv/roulette.json";
+
 
 export default createI18n({
   legacy: false,
@@ -19,12 +22,14 @@ export default createI18n({
       lobby: enLobby,
       game: enGame,
       results: enResults,
+      roulette: enRoulette,
     },
     sv: {
       common: svCommon,
       lobby: svLobby,
       game: svGame,
       results: svResults,
+      roulette: svRoulette,
     },
   },
 });

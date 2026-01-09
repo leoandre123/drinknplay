@@ -75,8 +75,7 @@ export class KahootGame extends Minigame {
   start() {
     this.startQuestion();
   }
-
-  stop() {}
+  stop() { }
 
   onAnswerSubmitted(playerId, answerIndex, time) {
     const player = this.kahootPlayers.find((x) => x.id == playerId);
