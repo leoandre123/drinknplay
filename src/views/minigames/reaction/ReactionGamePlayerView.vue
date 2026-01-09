@@ -13,9 +13,9 @@
         <div class="amount-display">
             <h2>{{ amount }}</h2>
 
-            <div class="button-container">
-                <button class="remove-button" @click="remove"> - </button>
-                <button class="add-button" @click="add"> + </button>
+      <div class="button-container">
+        <button class="remove-button" @click="remove">-</button>
+        <button class="add-button" @click="add">+</button>
 
                 <div class="done-button-container">
                     <button class="submit-button" @click="submit" :disabled="submitDisabled"> {{ $t("reaction.done") }} </button>
@@ -60,61 +60,60 @@ export default {
 
     },
 
-    computed: {
-        myId() {
-            return socket.id;
-        }
+  computed: {
+    myId() {
+      return socket.id;
     },
+  },
 
     beforeUnmount() {
         socket.off("reaction:roundResult");
         socket.off("reaction:startRound");
     },
 
-    methods: {
+  methods: {
+    playRoundResultSound() {
+      if (!this.showRoundResult) return;
 
-        playRoundResultSound() {
-            if (!this.showRoundResult) return;
+      if (this.winner === null) {
+        const audio = new Audio("/sounds/nowinner.mp3");
+        audio.play();
+        return;
+      }
 
-            if (this.winner === null) {
-                const audio = new Audio("/sounds/nowinner.mp3");
-                audio.play();
-                return;
-            }
+      if (this.winner) {
+        const audio = new Audio("/sounds/winner.mp3");
+        audio.play();
+        return;
+      }
+    },
 
-            if (this.winner) {
-                const audio = new Audio("/sounds/winner.mp3");
-                audio.play();
-                return;
-            }
-        },
+    playSound() {
+      const audio = new Audio("/sounds/buttonclick.mp3");
+      audio.play();
+    },
+    playSubmitSound() {
+      const audio = new Audio("/sounds/submitbutton.mp3");
+      audio.play();
+    },
+    remove() {
+      if (this.amount > 0) {
+        this.amount--;
+        this.playSound();
+      }
+    },
+    add() {
+      this.playSound();
+      navigator.vibrate(200);
 
-        playSound() {
-            const audio = new Audio('/sounds/buttonclick.mp3');
-            audio.play();
-        },
-        playSubmitSound() {
-            const audio = new Audio('/sounds/submitbutton.mp3');
-            audio.play();
-        },
-        remove() {
-            if (this.amount > 0) {
-                this.amount--;
-                this.playSound();
-            }
-        },
-        add() {
-            this.playSound();
-            this.amount++;
-        },
-        submit() {
-            this.playSubmitSound();
-            socket.emit("reaction:submit", { amount: this.amount, time: Date.now() });
-        }
-    }
-
+      this.amount++;
+    },
+    submit() {
+      this.playSubmitSound();
+      socket.emit("reaction:submit", { amount: this.amount, time: Date.now() });
+    },
+  },
 };
-
 </script>
 
 <style>
@@ -177,9 +176,9 @@ export default {
 }
 
 .submit-button:disabled {
-    opacity: 0.4;
-    pointer-events: none;
-    cursor: not-allowed;
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .remove-button {

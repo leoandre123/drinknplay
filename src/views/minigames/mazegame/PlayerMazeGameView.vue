@@ -34,6 +34,7 @@
 
 <script>
 import { socket } from '../../../socket';
+import { context } from '../../../context';
 export default {
   name: "PlayerMazeGameView",
 
@@ -69,17 +70,20 @@ export default {
   },
 
   computed: {
-    myID() {
-      return socket.id;
+    myId() {
+      return context.playerId;
     }
   },
 
-  created() {
-    socket.on("maze:roundResult", ({ winnerID, winnerName }) => {
+created() {
+    socket.on("maze:roundResult", ({ winnerId, winnerName, scores }) => {
       this.gameActive = false;
-      this.winnerID = winnerID;
+      
+      this.winnerId = winnerId; 
       this.winnerName = winnerName;
       this.showResultModal = true;
+
+      console.log("Result received:", { winnerId, myId: this.myId });
 
       if (this.winnerId === this.myId) {
         new Audio("/sounds/winner.mp3").play();
@@ -266,7 +270,7 @@ export default {
       ) {
         this.slopeFinished = true;
         console.log("Slope finished!");
-        socket.emit("maze:finished");
+        socket.emit("maze:finished", { time: Date.now() });
         window.removeEventListener("deviceorientation", this.handleRotation);
         window.removeEventListener("keydown", this.onKeyDown);
         window.removeEventListener("keyup", this.onKeyUp);
