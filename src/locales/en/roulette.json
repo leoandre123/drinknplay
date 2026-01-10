@@ -1,4 +1,5 @@
 {
+    "howToPlay": "How to play",
     "bets": "Bets",
     "result": "Result",
     "spin": "Spin",
@@ -25,6 +26,7 @@
     "yourBet": "Your bet",
     "clearBet": "Clear bet",
     "drinkCredits": " Drinking credits",
+    "close": "Close",
     "noPoints": "This game will not result in any points! Only drinking!",
     "betCredits": "Bet drinking credits on number and/or color",
     "ifWin": "If you win, the winning amount will be added in the standings table",

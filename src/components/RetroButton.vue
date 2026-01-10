@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="pixel-btn" :class="color" @click="$emit('click')">
+    <button class="pixel-btn" :class="color" :disabled="disabled" @click="$emit('click')">
       <slot></slot>
     </button>
   </div>
@@ -10,8 +10,17 @@
 export default {
   props: {
     color: String,
+    disabled: {type: Boolean, default: false},
   },
   emits: ["click"],
+
+  methods: {
+    onClick(e){
+      if (this.disabled)
+        return;
+      this.$emit("click", e);
+    }
+  }
 };
 </script>
 
@@ -51,6 +60,9 @@ export default {
 .purple {
   background: #b48cff;
 }
+.green{
+  background: #08ad29;
+}
 
 /* pixel highlight bars */
 .pixel-btn::before {
@@ -69,5 +81,19 @@ export default {
   top: 2px;
   box-shadow: -4px 0 0 0 #000, 4px 0 0 0 #000, 0 -4px 0 0 #000, 0 4px 0 0 #000, -4px -4px 0 0 #000,
     4px -4px 0 0 #000, -4px 4px 0 0 #000, 4px 4px 0 0 #000, 4px 4px 0 0 #000;
+}
+
+.pixel-btn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+  
+}
+
+.pixel-btn:disabled:active{
+  top: 0;
+  box-shadow:
+    -4px 0 0 0 #000, 4px 0 0 0 #000, 0 -4px 0 0 #000, 0 4px 0 0 #000,
+    -4px -4px 0 0 #000, 4px -4px 0 0 #000, -4px 4px 0 0 #000, 4px 4px 0 0 #000,
+    4px 6px 0 0 #000;
 }
 </style>

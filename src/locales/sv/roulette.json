@@ -1,4 +1,5 @@
 {
+    "howToPlay": "Hur man spelar",
     "bets": "Satsningar",
     "spin": "Snurra",
     "nextRound": "Nästa runda",
@@ -25,6 +26,7 @@
     "yourBet": "Din satsning",
     "clearBet": "Rensa",
     "drinkCredits": "dryckeskrediter",
+    "close": "Stäng",
     "noPoints": "Detta spel kommer inte generera några poäng! Bara dricka!",
     "betCredits": "Satsa dryckeskrediter på nummer och/eller färg",
     "ifWin": "Om du vinner läggs vinstsumman till i ställningstabellen",

@@ -3,13 +3,15 @@
        <div class="pop-up" >
             
             <button class="close-button" @click="$emit('close')">
-                Close
+                {{$t("roulette.close")}}
             </button>
 
             <div class="content">
                 
                 <ul>
-                    <li style="font-weight: bold;">{{$t("roulette.noPoints")}}</li>
+                    <h3 class="noPointInfo">{{$t("roulette.noPoints")}}</h3>
+                </ul>
+                    <ul class="betInfo">
                     <li>{{$t("roulette.betCredits")}}</li>
                     <li>{{$t("roulette.ifWin")}}</li>
                     <li>{{$t("roulette.ifLose")}}</li>
@@ -17,7 +19,7 @@
                     <li>{{$t("roulette.correctNumber")}}</li>
                     <li>{{$t("roulette.wrongNumberOrColor")}}</li>
                 </ul>
-                <ul>
+                <ul class="scoreInfo">
                     <li>{{$t("roulette.after3Rounds")}}:</li>
                     <li>{{$t("roulette.positiveScore")}}</li>
                     <li>{{$t("roulette.negativeScore")}}</li>
@@ -36,14 +38,25 @@
 </script>
 
 
-<style>
-.style-layout{
-    background: rgba(0,0,0,0.7);
+<style scoped>
+
+.betInfo,
+.scoreInfo{
+    color: var(--Drunkness_Info);
+}
+.noPointInfo{
+    color:  var(--Rules_Info);
+    font-weight: bold;
+}
+.rules-layout{
+    font-size: 2vw;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 16px;
-
+    position: absolute;
+    z-index: 999;
+    text-align: left;
 }
 
 .pop-up{
@@ -51,6 +64,8 @@
     border-radius: 10px;
     border: 1px solid rgba(250,250,250,0.5);
     background: rgba(6, 188, 243,0.5);
+    padding: 20px;
+    background: var(--Trans_Violet_Blue);
 }
 .close-button{
     position: absolute;

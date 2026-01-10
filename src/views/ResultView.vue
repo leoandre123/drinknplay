@@ -21,7 +21,7 @@
       </div>
     </template>
     <template v-if="!context.isHost">
-      <button class="continue-button">Continue</button>
+      <button class="continue-button">{{$t("results.continue")}}</button>
     </template>
   </div>
 </template>

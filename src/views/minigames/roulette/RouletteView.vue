@@ -1,42 +1,35 @@
 <template>
     <RetroContainer>
-        <RouletteDistributeView 
-        v-if="phase === 'distribute'"
-        :totals="totalPerPlayer"
-        :players="betsByPlayer"/>
-
-    
-        <div v-else class="layout">
+        <div class="layout">
             <div class="left">
-               <button class="rules-button" @click="showRules = true">
-                How to play
-               </button> 
+               <RetroButton class="rules-button" color="blue" @click="showRules = true">
+                {{$t("roulette.howToPlay")}}
+               </RetroButton> 
                <RouletteRules v-if="showRules" @close="showRules = false"/>
 
                 <div class="wheel-area">
                     <RouletteWheel
-                    ref="wheel"
-                    :phase="phase"
-                    @spinFinished="onSpinFinished"/>
+                        ref="wheel"
+                        :phase="phase"
+                        @spinFinished="onSpinFinished"/>
                     <RetroButton
-                    color="yellow"
-                    class="spin-button"
-
-                    @click="startSpin"
-                    :disabled="phase !== 'betting'">
-                    {{ $t("roulette.spin") }}
-                </RetroButton>
-                <RetroButton v-if="phase === 'result' && round < maxRounds"
-                color="pink"
-                class="next-round-button" @click="nextRound"
-                >
-                {{$t("roulette.nextRound")}}
-                </RetroButton>
-                <RetroButton v-else-if="phase === 'result' && round >= maxRounds"
-                    color="pink"
-                    class="continue-button" @click="nextRound">
-                    {{$t("roulette.continue")}}
-                </RetroButton>
+                        color="yellow"
+                        class="spin-button"
+                        @click="startSpin"
+                        :disabled="phase !== 'betting'">
+                        {{ $t("roulette.spin") }}
+                    </RetroButton>
+                    <RetroButton v-if="phase === 'result' && round < maxRounds"
+                        color="pink"
+                        class="next-round-button" @click="nextRound"
+                        >
+                        {{$t("roulette.nextRound")}}
+                    </RetroButton>
+                    <RetroButton v-else-if="phase === 'result' && round >= maxRounds"
+                        color="green"
+                        class="continue-button" @click="nextRound">
+                        {{$t("roulette.continue")}}
+                    </RetroButton>
                 </div>
             </div>
             <div class="right">
@@ -133,7 +126,7 @@ import RetroContainer from '@/components/RetroContainer.vue';
 import RouletteWheel from "@/components/Roulette/RouletteWheel.vue";
 import RouletteRules from "@/components/Roulette/RouletteRules.vue";
 import RetroButton from "@/components/RetroButton.vue";
-
+import { audioManager } from "@/AudioManager";
 
 export default {
     name: "RouletteView",
@@ -167,6 +160,7 @@ export default {
         this.spinAudio = new Audio("/sounds/Roulettewheel2.mp3");
         this.spinAudio.preload = "auto";
         this.spinAudio.volume = 0.8;
+        this.jazz = audioManager.play("/sounds/Jazz.mp3", {loop: true, volume: 0.5});
 
      
 
@@ -174,6 +168,8 @@ export default {
     beforeUnmount(){
         socket.off("roulette:update", this.onRouletteUpdate);
         this.spinAudio = null;
+        audioManager.stopAll();
+        
     },
     computed:{
 
@@ -216,7 +212,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .layout{
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -258,9 +254,7 @@ export default {
     align-items: center;
 
 }
-.next-round-button{
-    margin-top: 20px;
-}
+
 .bets-area,
 .result-area,
 .standings-area {
@@ -281,12 +275,17 @@ export default {
     text-align: center;
 }
 .spin-button{
-    
+    width: 250px;
+    top: -100px;
+    letter-spacing: 1px;
 
 }
 .next-round-button{
-    font-size: 15px;
+    top: -60px;
+    letter-spacing: 0.5px;
+    
 }
+
 
 .standings table { 
     width: 100%;
@@ -304,13 +303,11 @@ export default {
      }
 .rules-button{
     cursor: pointer;
-    border-radius: 12px;
-    border: 1px solid rgba(250,250,250,0.2);
-    background: rgb(12, 144, 231);
-    font-weight: bold;
-    color:white;
-    width: 100px;
-    margin-top: 10px;
-    margin-left: 10px;
+    position: absolute;
+    top: 12px;
+    left:12px;
+    z-index: 50;
+    cursor: pointer;
+
 }
 </style>

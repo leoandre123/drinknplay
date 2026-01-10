@@ -178,9 +178,7 @@ data(){
             this.selectedNumber = null;
             this.placedBets = [];
         },
-        /*removeBet(index){
-            this.placedBets.splice(index,1);
-        },*/
+    
         selectNumber(n){
             if(this.selectedNumber === n){
                 this.selectedNumber = null;
