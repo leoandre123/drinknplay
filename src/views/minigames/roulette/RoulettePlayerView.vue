@@ -249,8 +249,6 @@ data(){
   
 }
 
-
-
 .square{
     border:1px solid rgba(255, 255, 255, 0.65);
     border-radius: 8px;

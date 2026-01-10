@@ -1,21 +1,14 @@
 <template>
   <div class="kahoot-container">
     <div class="title">
-      <p>Q</p>
-      <p>Q</p>
+      <h1>{{ currentQuestion?.titleKey ? $t(currentQuestion.titleKey) : "" }}</h1>
       <p>Score: {{ score }}</p>
     </div>
     <div class="answers">
-      <div
-        v-for="(_, i) in 4"
-        class="answer"
-        :class="[
-          `answer-${i}`,
-          { unselected: hasAnswered && answerIndex != i },
-        ]"
-        @click="answer(i)"
-      >
-        {{ i }}
+      <div v-for="(option, i) in (currentQuestion.answers || [])" :key="answer.textKey || i" class="answer" :class="[
+        `answer-${i}`,
+        { unselected: hasAnswered && answerIndex != i },
+      ]" @click="answer(i)">
       </div>
     </div>
   </div>
@@ -30,6 +23,7 @@ export default {
 
   data() {
     return {
+      currentQuestion: { answers: [] },
       score: 0,
       hasAnswered: true,
       answerIndex: 0,
@@ -43,11 +37,16 @@ export default {
       this.answerIndex = answerIndex;
     });
     socket.on("startRound", () => (this.hasAnswered = false));
+
+    socket.on("startQuestion", (q) => {
+    this.currentQuestion = q;   // q har titleKey + answers[textKey]
+  });
   },
   beforeUnmount() {
     socket.off("setScore");
     socket.off("answerRegistered");
     socket.off("startRound");
+    socket.off("startQuestion");
   },
   methods: {
     answer(index) {
@@ -89,12 +88,15 @@ export default {
 .answer-0 {
   background-color: rgb(255, 0, 0);
 }
+
 .answer-1 {
   background-color: rgb(0, 0, 255);
 }
+
 .answer-2 {
   background-color: rgb(200, 150, 0);
 }
+
 .answer-3 {
   background-color: rgb(0, 200, 0);
 }
@@ -102,12 +104,15 @@ export default {
 .answer-0.unselected {
   background-color: rgba(255, 0, 0, 0.25);
 }
+
 .answer-1.unselected {
   background-color: rgb(0, 0, 255, 0.25);
 }
+
 .answer-2.unselected {
   background-color: rgb(200, 150, 0, 0.25);
 }
+
 .answer-3.unselected {
   background-color: rgb(0, 200, 0, 0.25);
 }

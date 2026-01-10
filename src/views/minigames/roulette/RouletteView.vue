@@ -164,7 +164,7 @@ export default {
         socket.on("roulette:update", this.onRouletteUpdate);
         socket.emit("roulette:requestState");
 
-        this.spinAudio = new Audio("/sounds/Roulettewheel.mp3");
+        this.spinAudio = new Audio("/sounds/Roulettewheel2.mp3");
         this.spinAudio.preload = "auto";
         this.spinAudio.volume = 0.8;
 
