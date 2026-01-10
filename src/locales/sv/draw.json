@@ -1,0 +1,20 @@
+{
+    "draw": "RITA EN",
+    "time": "Tid kvar:",
+    "title": "Drick o' Rita",
+    "save": "SPARA",
+    "submitHost": "Välkommen! Vänligen skicka in ett ämne på din enhet.",
+    "rate":"Betygsätt bilden på din enhet",
+    "typeSubject": "Vänligen skriv ett ämne att rita",
+    "submitted":"inskickat, väntar på andra spelare",
+    "submitSubject": "Skicka in ämne",
+    "bestDrawing": "BÄSTA BILDEN",
+    "points": "poäng",
+    "scoreboard": "POÄNGTAVLA",
+    "drawA": "Rita en...", 
+    "rate10":"Betygsätt 1-10, välj ett nummer och tryck på rösta",
+    "vote":"RÖSTA",
+    "voteConfirmed": "RÖST BEKRÄFTAD! Betyg:"
+     
+
+}

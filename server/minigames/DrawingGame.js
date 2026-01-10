@@ -10,7 +10,7 @@ export class DrawingGame extends Minigame {
         this.subjects = [];
         this.timer = null;
         this.timerID = null;
-        this.currentDrawingIndexToVote = 0;
+        this.currentDrawingIndex = 0;
     }
 
     onPlayerJoined(player) {
@@ -204,6 +204,7 @@ export class DrawingGame extends Minigame {
     }
 
     unregisterListeners(socket) {
+        socket?.removeAllListeners("submitSubject");
         socket?.removeAllListeners("updateCanvas");
         socket?.removeAllListeners("playerVote");
     }

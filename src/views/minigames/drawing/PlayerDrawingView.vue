@@ -1,19 +1,19 @@
 <template>
   <div class="player-view-container">
     <div  v-if="gamePhase === 'start'" class="submit-subject">
-    <h1 v-if="!subjectSubmitted">Please type a subject to draw</h1>
-    <h1 v-if="subjectSubmitted">{{ subject }} submitted, waiting for other players</h1>
-    <input v-model="subject" :disabled="subjectSubmitted" @input="subject = subject.toUpperCase()" placeholder="Draw a..."/>
+    <h1 v-if="!subjectSubmitted">{{ $t("draw.typeSubject") }}</h1>
+    <h1 v-if="subjectSubmitted">{{ subject }} {{ $t("draw.submitted") }}</h1>
+    <input v-model="subject" :disabled="subjectSubmitted" @input="subject = subject.toUpperCase()" :placeholder='$t("draw.drawA")'/>
     <hr></hr>
     <RetroButton
     color="yellow"
     class="subject-button" 
     :disabled="!isSubjectValid || subjectSubmitted"
-    @click="submitSubject">Submit subject</RetroButton>
+    @click="submitSubject">{{ $t("draw.submitSubject") }}</RetroButton>
     </div>
 
     <div v-if="gamePhase === 'drawing'" class="drawing-canvas" :style="{ flexDirection: isMobile ? 'row' : 'column' }">
-      <div v-if="!isMobile" class="drawing-title">Drink n' Draw</div>
+      <div v-if="!isMobile" class="drawing-title">{{ $t("draw.title") }}</div>
       <DrawingColors v-if="isMobile" :options="drawingOptions" direction="column" />
       <div class="canvas-container">
         <DrawingCanvas :options="drawingOptions" ref="canvas" />
@@ -125,7 +125,15 @@ export default {
       );
     },
   },
+beforeUnmount() {
+    socket.off("gamePhase");
+    socket.off("drawingToVote");
+    socket.off("timerTick");
+    
+    console.log("Player socket listeners unregistered");
+  }
 };
+
 </script>
 
 <style scoped>
