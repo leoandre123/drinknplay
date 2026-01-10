@@ -98,6 +98,7 @@ export default {
 .rating-view-container{
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    background-color: var(--Caribbean_Green);
 }
 </style>

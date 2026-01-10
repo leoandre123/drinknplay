@@ -1,8 +1,9 @@
 <template>
   <div class="player-view-container">
     <div  v-if="gamePhase === 'start'" class="submit-subject">
-    <h1>Please type a subject to draw</h1>
-    <input v-model="subject" placeholder="Draw a..."/>
+    <h1 v-if="!subjectSubmitted">Please type a subject to draw</h1>
+    <h1 v-if="subjectSubmitted">{{ subject }} submitted, waiting for other players</h1>
+    <input v-model="subject" @input="subject = subject.toUpperCase()" placeholder="Draw a..."/>
     <hr></hr>
     <RetroButton
     color="yellow"
@@ -43,8 +44,8 @@
 <script>
 import DrawingColors from "@/components/DrawingColors.vue";
 import RatingTool from "../../../components/RatingTool.vue";
-import DrawingCanvas from "@/components/drawingCanvas.vue";
-import DrawingTools from "@/components/drawingTools.vue";
+import DrawingCanvas from "@/components/DrawingCanvas.vue";
+import DrawingTools from "@/components/DrawingTools.vue";
 import RetroButton from "@/components/RetroButton.vue";
 
 import { context } from "../../../context";
@@ -60,6 +61,7 @@ export default {
       drawingOptions: {
         brushColor: "black",
         brushSize: 10,
+        mode: "pen",
         isBucketSelected: false,
       },
       gamePhase: "",

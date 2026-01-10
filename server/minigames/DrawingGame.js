@@ -87,8 +87,8 @@ export class DrawingGame extends Minigame {
 
     gameFinished(){
         const results = this.drawingPlayers.map(dp => ({
-            playerId: dp.playerId,
-            score: dp.score
+            id: dp.playerId,
+            score: dp.score ?? 0
         }));
         console.log("GAME FINISHED")
         this.onFinished?.(results);
@@ -173,9 +173,10 @@ export class DrawingGame extends Minigame {
                 drawing.png = canvasData;
             }
             else {
+                let player = this.drawingPlayers.find(d => d.playerId === socket.data.playerId);
                 drawing = {
                     playerId: socket.data.playerId,
-                    playerName: "Pelle", //fix name here
+                    playerName: player.name,
                     png: canvasData,
                     score: 0,
                 };
