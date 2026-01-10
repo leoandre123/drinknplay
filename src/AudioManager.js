@@ -1,7 +1,7 @@
 class AudioManager {
   constructor() {
     this.unlocked = false;
-    this.muted = localStorage.getItem("muted") === "true";
+    this.muted = true;
     this.ctx = null;
     this.queue = [];
     this.masterGain = null;
@@ -77,6 +77,7 @@ class AudioManager {
   }
 
   toggleMute() {
+    this.unlock();
     this.muted = !this.muted;
     localStorage.setItem("muted", this.muted);
     if (this.masterGain) {

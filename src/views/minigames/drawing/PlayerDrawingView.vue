@@ -2,7 +2,11 @@
   <div class="player-view-container">
     <button v-if="gamePhase === 'start'" class="start-button" @click="startGame">START GAME</button>
 
-    <div class="drawing-canvas" :style="{ flexDirection: isMobile ? 'row' : 'column' }">
+    <div
+      v-if="gamePhase === 'drawing'"
+      class="drawing-canvas"
+      :style="{ flexDirection: isMobile ? 'row' : 'column' }"
+    >
       <div v-if="!isMobile" class="drawing-title">Drink n' Draw</div>
       <DrawingColors v-if="isMobile" :options="drawingOptions" direction="column" />
       <div class="canvas-container">

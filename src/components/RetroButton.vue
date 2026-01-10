@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="pixel-btn" :class="color" @click="$emit('click')">
+    <button class="pixel-btn" :class="[color, size]" :disabled="disabled" @click="$emit('click')">
       <slot></slot>
     </button>
   </div>
@@ -9,7 +9,9 @@
 <script>
 export default {
   props: {
-    color: String,
+    color: { type: String, default: "blue" },
+    size: { type: String, default: "medium" },
+    disabled: { type: Boolean, default: false },
   },
   emits: ["click"],
 };
@@ -51,6 +53,23 @@ export default {
 .purple {
   background: #b48cff;
 }
+.green {
+  background: #8cff8c;
+}
+
+.small {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+.medium {
+  font-size: 2rem;
+  padding: 1rem 2rem;
+}
+
+.large {
+  font-size: 4rem;
+  padding: 1rem 2rem;
+}
 
 /* pixel highlight bars */
 .pixel-btn::before {
@@ -65,9 +84,15 @@ export default {
 }
 
 /* press effect */
-.pixel-btn:active {
+.pixel-btn:active:not([disabled]) {
   top: 2px;
   box-shadow: -4px 0 0 0 #000, 4px 0 0 0 #000, 0 -4px 0 0 #000, 0 4px 0 0 #000, -4px -4px 0 0 #000,
     4px -4px 0 0 #000, -4px 4px 0 0 #000, 4px 4px 0 0 #000, 4px 4px 0 0 #000;
+}
+
+.pixel-btn:disabled {
+  cursor: auto;
+  opacity: 0.6;
+  filter: grayscale(60%);
 }
 </style>

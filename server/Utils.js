@@ -6,3 +6,7 @@ export function GenerateID(length) {
     () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)]
   ).join("");
 }
+
+export function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
