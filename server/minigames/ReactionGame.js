@@ -43,13 +43,15 @@ export class ReactionGame extends Minigame {
     return p?.name || p?.playerName || p?.nickname || "Player";
   }
 
-    generatePositions(count) {
-        const containerW = 100;
-        const containerH = 55;
-        const figureW = 7;
-        const half = figureW / 2;
-        const pad = 1;
-        const rand = (min, max) => Math.random() * (max - min) + min;
+  generatePositions(count) {
+    const containerW = 100; // vh
+    const containerH = 55; // vh
+
+    const figureW = 7; // vh (matchar CSS width: 7vh)
+    const half = figureW / 2;
+    const pad = 1; // extra marginal i vh
+
+    const rand = (min, max) => Math.random() * (max - min) + min;
 
     return Array.from({ length: count }, () => ({
       leftVh: rand(half + pad, containerW - half - pad),
@@ -57,13 +59,13 @@ export class ReactionGame extends Minigame {
     }));
   }
 
-    startRound() {
-        this.submissions = [];
-        this.winner = null;
-        this.winnerName = null;
-        this.roundStartTime = Date.now();
-        this.figureCount = Math.floor(Math.random() * 14 + 1);
-        this.figurePositions = this.generatePositions(this.figureCount);
+  startRound() {
+    this.submissions = [];
+    this.winner = null;
+    this.winnerName = null;
+    this.roundStartTime = Date.now();
+    this.figureCount = Math.floor(Math.random() * 5 + 1);
+    this.figurePositions = this.generatePositions(this.figureCount);
 
     this.broadcast("reaction:startRound", {
       figureCount: this.figureCount,
