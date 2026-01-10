@@ -3,7 +3,7 @@
         <div class="pop-up">
 
             <button class="close-button" @click="$emit('close')">
-                Close
+                {{ $t("createlobbyinfo.b1") }}
             </button>
 
             <div class="content">

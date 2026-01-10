@@ -7,6 +7,7 @@ import enRoulette from "@/locales/en/roulette.json";
 import enReaction from "@/locales/en/reaction.json";
 import enKahoot from "@/locales/en/kahoot.json";
 import enCreateLoobyInfo from "@/locales/en/createlobbyinfo.json";
+import enCreateLobby from "@/locales/en/createlobby.json";
 
 
 import svCommon from "@/locales/sv/common.json";
@@ -18,6 +19,7 @@ import svKahoot from "@/locales/sv/kahoot.json";
 
 import svRoulette from "@/locales/sv/roulette.json";
 import svCreateLoobyInfo from "@/locales/sv/createlobbyinfo.json";
+import svCreateLobby from "@/locales/sv/createlobby.json";
 
 export default createI18n({
   legacy: false,
@@ -32,7 +34,8 @@ export default createI18n({
       roulette: enRoulette,
       reaction: enReaction,
       kahoot: enKahoot,
-      createlobbyinfo: enCreateLoobyInfo
+      createlobbyinfo: enCreateLoobyInfo,
+      createlobby: enCreateLobby
     },
     sv: {
       common: svCommon,
@@ -42,7 +45,8 @@ export default createI18n({
       roulette: svRoulette,
       reaction: svReaction,
       kahoot: svKahoot,
-      createlobbyinfo: svCreateLoobyInfo
+      createlobbyinfo: svCreateLoobyInfo,
+      createlobby: svCreateLobby
     },
   },
 });
