@@ -2,7 +2,7 @@
   <RetroContainer>
   
     <button class="rules-button" @click="showRules = true">
-     How to play{{ $t('createlobby.buttonInfo') }}
+     {{ $t('createlobby.buttonInfo') }}
     </button> 
     <CreateLobbyInfo v-if="showRules" @close="showRules = false"/>
     
