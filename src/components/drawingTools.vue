@@ -4,6 +4,29 @@
       <button
         v-for="brushSize in this.brushSize"
         @click="options.brushSize = brushSize"
+        :style="{
+          backgroundColor: options.brushSize == brushSize ? '#ff8181' : 'gray',
+        }"
+        class="button"
+      >
+        <div
+          class="dot"
+          :style="{
+            height: brushSize + 'px',
+            width: brushSize + 'px',
+            backgroundColor:
+              options.brushSize == brushSize
+                ? `rgba(${options.brushColor.r},${options.brushColor.g},${options.brushColor.b},${options.brushColor.a})`
+                : 'gray',
+          }"
+        ></div>
+      </button>
+    </div>
+  <div class="drawing-tools">
+    <div class="button-group" :class="{ row: direction == 'row', col: direction == 'column' }">
+      <button
+        v-for="brushSize in this.brushSize"
+        @click="options.brushSize = brushSize"
         :disabled="options.mode === 'bucket'"
         :style="{
           backgroundColor: options.brushSize == brushSize ? '#ff8181' : 'gray',
