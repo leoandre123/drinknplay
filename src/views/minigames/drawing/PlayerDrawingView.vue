@@ -3,7 +3,7 @@
     <div  v-if="gamePhase === 'start'" class="submit-subject">
     <h1 v-if="!subjectSubmitted">Please type a subject to draw</h1>
     <h1 v-if="subjectSubmitted">{{ subject }} submitted, waiting for other players</h1>
-    <input v-model="subject" @input="subject = subject.toUpperCase()" placeholder="Draw a..."/>
+    <input v-model="subject" :disabled="subjectSubmitted" @input="subject = subject.toUpperCase()" placeholder="Draw a..."/>
     <hr></hr>
     <RetroButton
     color="yellow"
@@ -59,12 +59,13 @@ export default {
       subject: "",
       subjectSubmitted: false,
       drawingOptions: {
-        brushColor: "black",
+        brushColor: { name: "black", r: 0, g: 0, b: 0, a: 255 },
         brushSize: 10,
         mode: "pen",
         isBucketSelected: false,
       },
       gamePhase: "",
+      canvasSent: false,
       canvasPNG: null,
       currentDrawingToVote: null,
     };
@@ -86,10 +87,20 @@ export default {
     socket.on("gamePhase", (phaseFromServer) => {
       this.gamePhase = phaseFromServer;
       console.log("player phase change: "+ phaseFromServer);
+      if (this.gamePhase !== "drawing") {
+      this.canvasSent = false;
+      this.canvasPNG = null;
+      }
+
     });
     socket.on("drawingToVote", (drawingFromServer) => {
       this.currentDrawingToVote = drawingFromServer;
     });
+    socket.on("timerTick", (timer) => {
+      if (timer <= 2 && !this.canvasSent && this.gamePhase=="drawing"){
+        this.saveCanvas(); 
+      }
+    })
   },
   methods: {
     submitSubject() {
@@ -100,6 +111,8 @@ export default {
     saveCanvas() {
       this.canvasPNG = this.$refs.canvas.getCanvas();
       socket.emit("updateCanvas", this.canvasPNG);
+      this.canvasSent = true;
+
     },
     playerRated(score) {
       console.log("SCORES ADDED: " + score);

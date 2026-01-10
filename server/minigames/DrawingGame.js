@@ -30,10 +30,10 @@ export class DrawingGame extends Minigame {
     setTimer(seconds) {
         this.stopTimer();
         this.timer = seconds;
-        this.broadcastHosts("timerTick", this.timer)
+        this.broadcast("timerTick", this.timer)
         this.timerID = setInterval(() => {
             if (this.timer >= 0) {
-                this.broadcastHosts("timerTick", this.timer)
+                this.broadcast("timerTick", this.timer)
                 this.timer--;
             }
             if (this.timer < 0) {

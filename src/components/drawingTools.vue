@@ -4,6 +4,7 @@
       <button
         v-for="brushSize in this.brushSize"
         @click="options.brushSize = brushSize"
+        :disabled="options.mode === 'bucket'"
         :style="{
           backgroundColor: options.brushSize == brushSize ? '#ff8181' : 'gray',
         }"
