@@ -1,5 +1,11 @@
 <template>
   <RetroContainer>
+  
+    <button class="rules-button" @click="showRules = true">
+     How to play
+    </button> 
+    <CreateLobbyInfo v-if="showRules" @close="showRules = false"/>
+    
     <div class = create-container>
     <h1>Choose your settings</h1>
     <div class="settingsbox">
@@ -35,18 +41,21 @@ import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
 import RetroContainer from "@/components/RetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
+import CreateLobbyInfo from "@/components/CreateLobbyInfo.vue";
 
 export default {
   name: "CreateView",
   data: function () {
     return {
       settings: DefaultSettings,
-      numberOfRoundsInSettings: [5,10,15,20,25,30]
+      numberOfRoundsInSettings: [5,10,15,20,25,30],
+      showRules: false,
     };
   },
    components: {
         RetroContainer,
-        RetroButton
+        RetroButton,
+        CreateLobbyInfo
     },
   mounted() {
     socket.on("lobby:created", this.onGameCreated);
