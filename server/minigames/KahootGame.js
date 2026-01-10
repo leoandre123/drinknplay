@@ -5,39 +5,111 @@ export class KahootGame extends Minigame {
     super();
     this.questions = [
       {
-        title: "Vad är 5x5?",
+        titleKey: "kahoot.q1.title",
         answers: [
-          { text: "20", correct: false },
-          { text: "25", correct: true },
-          { text: "15", correct: false },
-          { text: "35", correct: false },
+          { textKey: "kahoot.q1.a1", correct: false },
+          { textKey: "kahoot.q1.a2", correct: true },
+          { textKey: "kahoot.q1.a3", correct: false },
+          { textKey: "kahoot.q1.a4", correct: false },
         ],
       },
       {
-        title: "Vad är 1x5?",
+        titleKey: "kahoot.q2.title",
         answers: [
-          { text: "1", correct: false },
-          { text: "3", correct: false },
-          { text: "5", correct: true },
-          { text: "5", correct: true },
+          { textKey: "kahoot.q2.a1", correct: false },
+          { textKey: "kahoot.q2.a2", correct: false },
+          { textKey: "kahoot.q2.a3", correct: true },
+          { textKey: "kahoot.q2.a4", correct: false },
         ],
       },
       {
-        title: "Vad är sant?",
+        titleKey: "kahoot.q3.title",
         answers: [
-          { text: "Leo är bäst", correct: true },
-          { text: "Leo är sämst", correct: false },
-          { text: "Leo är 22", correct: false },
-          { text: "Leo är 23", correct: true },
+          { textKey: "kahoot.q3.a1", correct: true },
+          { textKey: "kahoot.q3.a2", correct: false },
+          { textKey: "kahoot.q3.a3", correct: false },
+          { textKey: "kahoot.q3.a4", correct: true },
         ],
       },
       {
-        title: "Hur gammal är du",
+        titleKey: "kahoot.q4.title",
         answers: [
-          { text: "0-15", correct: true },
-          { text: "15-25", correct: true },
-          { text: "25-35", correct: true },
-          { text: "35+", correct: true },
+          { textKey: "kahoot.q4.a1", correct: true },
+          { textKey: "kahoot.q4.a2", correct: true },
+          { textKey: "kahoot.q4.a3", correct: true },
+          { textKey: "kahoot.q4.a4", correct: true },
+        ],
+      },
+      {
+        titleKey: "kahoot.q5.title",
+        answers: [
+          { textKey: "kahoot.q5.a1", correct: false },
+          { textKey: "kahoot.q5.a2", correct: true },
+          { textKey: "kahoot.q5.a3", correct: false },
+          { textKey: "kahoot.q5.a4", correct: false },
+        ],
+      },
+      {
+        titleKey: "kahoot.q6.title",
+        answers: [
+          { textKey: "kahoot.q6.a1", correct: true },
+          { textKey: "kahoot.q6.a2", correct: false },
+          { textKey: "kahoot.q6.a3", correct: false },
+          { textKey: "kahoot.q6.a4", correct: false },
+        ],
+      },
+      {
+        titleKey: "kahoot.q7.title",
+        answers: [
+          { textKey: "kahoot.q7.a1", correct: false },
+          { textKey: "kahoot.q7.a2", correct: false },
+          { textKey: "kahoot.q7.a3", correct: true },
+          { textKey: "kahoot.q7.a4", correct: false },
+        ],
+      },
+      {
+        titleKey: "kahoot.q8.title",
+        answers: [
+          { textKey: "kahoot.q8.a1", correct: false },
+          { textKey: "kahoot.q8.a2", correct: false },
+          { textKey: "kahoot.q8.a3", correct: false },
+          { textKey: "kahoot.q8.a4", correct: true },
+        ],
+      },
+      {
+        titleKey: "kahoot.q9.title",
+        answers: [
+          { textKey: "kahoot.q9.a1", correct: false },
+          { textKey: "kahoot.q9.a2", correct: false },
+          { textKey: "kahoot.q9.a3", correct: false },
+          { textKey: "kahoot.q9.a4", correct: true },
+        ],
+      },
+      {
+        titleKey: "kahoot.q10.title",
+        answers: [
+          { textKey: "kahoot.q10.a1", correct: false },
+          { textKey: "kahoot.q10.a2", correct: true },
+          { textKey: "kahoot.q10.a3", correct: false },
+          { textKey: "kahoot.q10.a4", correct: false },
+        ],
+      },
+      {
+        titleKey: "kahoot.q11.title",
+        answers: [
+          { textKey: "kahoot.q11.a1", correct: false },
+          { textKey: "kahoot.q11.a2", correct: false },
+          { textKey: "kahoot.q11.a3", correct: false },
+          { textKey: "kahoot.q11.a4", correct: true },
+        ],
+      },
+      {
+        titleKey: "kahoot.q12.title",
+        answers: [
+          { textKey: "kahoot.q12.a1", correct: true },
+          { textKey: "kahoot.q12.a2", correct: false },
+          { textKey: "kahoot.q12.a3", correct: false },
+          { textKey: "kahoot.q12.a4", correct: false },
         ],
       },
     ];
@@ -82,7 +154,7 @@ export class KahootGame extends Minigame {
     if (player.hasAnswered) return;
     if (time < this.currentQuestion.time) return;
     const score = this.currentQuestion.answers[answerIndex].correct
-      ? Math.max(1000 - (time - this.currentQuestion.time) / 5, 0)
+      ? Math.round(Math.max(100 - (time - this.currentQuestion.time) / 50, 0))
       : 0;
     player.score += Math.round(score);
     player.hasAnswered = true;
@@ -123,15 +195,35 @@ export class KahootGame extends Minigame {
   startQuestion() {
     this.updateAnswerCount();
     this.updateQuestionsCount();
-    this.currentQuestion = {
-      time: Date.now() + 5000,
-      title: this.questions[this.currentQuestionIndex].title,
-      answers: this.questions[this.currentQuestionIndex].answers,
+    const q = this.questions[this.currentQuestionIndex];
+    const time = Date.now() + 5000;
+
+    const questionForHost = {
+      time,
+      titleKey: q.titleKey,
+      answers: q.answers.map((a) => ({
+        textKey: a.textKey,
+        correct: a.correct,
+      })),
     };
+
+    const questionForPlayers = {
+      time,
+      titleKey: q.titleKey,
+      answers: q.answers.map((a) => ({
+        textKey: a.textKey,
+      })),
+    };
+
+    this.currentQuestion = questionForHost;
+
     this.kahootPlayers.forEach((p) => (p.hasAnswered = false));
     this.updateAnswerCount();
+
     this.broadcastPlayers("startRound");
-    this.broadcastHosts("startQuestion", this.currentQuestion);
+    this.broadcastPlayers("startQuestion", questionForPlayers);
+
+    this.broadcastHosts("startQuestion", questionForHost);
   }
 
   updateAnswerCount() {

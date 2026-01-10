@@ -204,7 +204,6 @@ export class Lobby {
   finishGame(results) {
     this.logger.info("Game Finished!");
     this.logger.debug(results);
-
     this.context.players.forEach((p) => {
       p.isReady = false;
       p.gameScore = 0;
