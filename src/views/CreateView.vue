@@ -2,16 +2,16 @@
   <RetroContainer>
   
     <button class="rules-button" @click="showRules = true">
-     How to play
+     {{ $t('createlobby.buttonInfo') }}
     </button> 
     <CreateLobbyInfo v-if="showRules" @close="showRules = false"/>
     
     <div class = create-container>
     <h1>Choose your settings</h1>
     <div class="settingsbox">
-      <h2>Settings</h2>
+      <h2>{{ $t('createlobby.settings') }}</h2>
       <hr/>
-      <h3>How many minigames should your game contain?</h3>
+      <h3>{{ $t('createlobby.minigames') }}</h3>
       <button
         v-for="x in numberOfRoundsInSettings"
         class="minigameButton"
@@ -20,7 +20,7 @@
       >
         {{ x }}
       </button>
-      <h3>What is your desired drunkness level?</h3>
+      <h3>{{ $t('createlobby.drunkness') }}</h3>
       <button
         v-for="(_, i) in 4"
         class="drunknessButton"
@@ -31,7 +31,7 @@
       </button>
     </div>
     <hr/>
-    <RetroButton class="submitButton" @click="createGame" color='pink'>CREATE LOBBY</RetroButton>
+    <RetroButton class="submitButton" @click="createGame" color='pink'>{{ $t('createlobby.buttonLobby') }}</RetroButton>
     </div>
 </RetroContainer>
 </template>
