@@ -28,7 +28,7 @@ export class DrawingGame extends Minigame {
 
     //runs the game phase switching with timer
     setTimer(seconds) {
-        this.stopTimer();
+        //this.stopTimer();
         this.timer = seconds;
         this.broadcast("timerTick", this.timer)
         this.timerID = setInterval(() => {
@@ -96,7 +96,7 @@ export class DrawingGame extends Minigame {
 
     initiateDrawing() {
         console.log(this.subjects);
-        this.setTimer(40);
+        this.setTimer(120);
         this.changeSubject();
         this.allDrawings = [];
         this.broadcastHosts("clearPaintings");

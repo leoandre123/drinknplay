@@ -3,7 +3,7 @@
         <div v-if="phase === 'drawing'" class="drawing-board">
             <div class="subject">DRAW  A  {{ currentSubject }}</div>
             <div class="displayPictures">
-                <div v-for="drawing in submittedPaintings" class="drawings">
+                <div v-for="drawing in submittedPaintings">
                     <img :src="drawing.png"></img>
                 </div>
             </div>
@@ -123,24 +123,25 @@ export default {
 .displayPictures {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10vw, 1fr));
-    grid-auto-rows: min-content;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 1rem;
     padding: 20px;
-    min-height: 0;
     border: 1px solid black;
-    overflow: hidden;
+    overflow: auto;
+    justify-content: center;
+    
 
 }
 
 .displayPictures img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-fit: contain;
+    max-width: 600px;
+    height: auto;
     display: block;
     box-sizing: border-box;
+    border: 3px outset gray;
 }
+
 
 .time {
     flex-shrink: 0;
@@ -151,13 +152,6 @@ export default {
     margin-top: auto;
 }
 
-.drawings {
-    border: 5px outset gray;
-    object-fit: contain;
-    background-color: gray;
-    overflow: auto;
-    box-sizing: border-box;
-}
 
 .voting-container {
     background-color: var(--Caribbean_Green);
