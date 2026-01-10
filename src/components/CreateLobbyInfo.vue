@@ -7,19 +7,18 @@
             </button>
 
             <div class="content">
-
-                <ul>
+               
+                <h3 class="howToWin">{{ $t("createlobbyinfo.h1") }}</h3>
+                <ul class = "howToWinList">
                     <li>{{ $t("createlobbyinfo.p1") }}</li>
                     <li>{{ $t("createlobbyinfo.p2") }}</li>
-                    <li>If you lose, the betting amount will be subtracted in the standings table</li>
-                    <li>Correct color: Win = + bet amount</li>
-                    <li>Correct number: Win = 36 x bet amount</li>
-                    <li>Wrong number/color: Lose = - bet amount</li>
+                    <li>{{ $t("createlobbyinfo.p3") }}</li>
                 </ul>
-                <ul>
-                    <li>After 3 rounds:</li>
-                    <li>Postive score - hand out sips</li>
-                    <li>Negative score - drink that amount of sips</li>
+                <h3 class="drinkingInfo">{{ $t("createlobbyinfo.h2") }}</h3>
+                <ul class="drinkingInfoList">
+                    <li>{{ $t("createlobbyinfo.p4") }}</li>
+                    <li>{{ $t("createlobbyinfo.p5") }}</li>
+                    <li>{{ $t("createlobbyinfo.p6") }}</li>
                 </ul>
 
             </div>
@@ -36,32 +35,52 @@
 
 
 <style scoped>
+
+.howToWin{
+    text-align: center;
+    color: var(--Rules_Info);
+  
+}
+.howToWinList{
+    color: var(--Rules_Info);
+}
+.drinkingInfo{
+    text-align: center;
+    color: var(--Drunkness_Info);
+}
+
+.drinkingInfoList {
+    color: var(--Drunkness_Info);
+}
+
 .rules-layout {
-    background: rgba(0, 0, 0, 0.7);
+    text-align: left;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 16px;
     position: absolute;
     z-index: 1000;
-
+    font-size: 2vw;
+    color: var(--Metallic_Yellow);
+    text-shadow: 2px 2px black;
 }
 
-.pop-up {
+.pop-up{
+    padding: 20px;
     position: relative;
     border-radius: 10px;
-    border: 1px solid rgba(250, 250, 250, 0.5);
-    background: rgba(6, 188, 243, 0.5);
+    border: 1px solid rgba(250,250,250,0.5);
+    background: var(--Trans_Violet_Blue);
 }
 
 .close-button {
+    cursor: pointer;
     position: absolute;
     top: 5px;
     right: 5px;
     background: rgb(59, 56, 56);
-    color: white;
+    color:white;
     font-weight: bold;
-
-
 }
 </style>

@@ -1,12 +1,10 @@
 {
-    "p1": "Bets",
-    "p2": "Result",
-    "p3": "Spin",
-    "p4": "Next round",
-    "p5": "Continue",
-    "p6": "No bets placed yet!",
-    "p7": "No bets",
-    "p8": "Waiting for spin...",
-    "p9": "Spinning...",
-    "p10": "Round"
+    "h1": "Number of minigames",
+    "p1": "Decide how long the game will last by the number of minigames",
+    "p2": "Every minigame varies in lenght but in average they each last a few minutes",
+    "h2": "Drunkness level",
+    "p3": "Minigames are selected at random by the game",
+    "p4": "Decide the level of drunkness by choosing the appropriate level",
+    "p5": "Higher level gives each player more DRINKING CREDITS to hand out each turn",
+    "p6": "This results in glasses being filled faster on higher levels"
 }
