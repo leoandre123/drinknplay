@@ -1,30 +1,54 @@
 <template>
-  <div class="create-container">
-    <h1>{{$t("settings.chooseSettings")}}</h1>
-    <div class="settingsbox">
-      <h2>{{$t('settings.settings')}}</h2>
-      <hr />
-      <h3>{{$t('settings.minigameQ')}}</h3>
-      <button
-        v-for="x in numberOfRoundsInSettings"
-        class="minigameButton"
-        :class="{ selected: settings.numberOfRounds === x }"
-        @click="selectAmountOfMinigames(x)"
-      >
-        {{ x }}
-      </button>
-      <h3>{{$t('settings.drunknessQ')}}</h3>
-      <button
-        v-for="(_, i) in 4"
-        class="drunknessButton"
-        :class="{ selected: settings.drunknessLevel === i }"
-        @click="selectDrunknessLevel(i)"
-      >
-        {{ $t(`game.drunknessLevel[${i}]`) }}
-      </button>
+  <RetroContainer>
+    <div class="info-button">
+      <RetroButton color="blue" size="small" @click="showRules = true"> ? </RetroButton>
     </div>
-    <button class="submitButton" @click="createGame">{{ $t("settings.create") }}</button>
-  </div>
+    <CreateLobbyInfo v-if="showRules" @close="showRules = false" />
+    <div class="create-container">
+      <h1>{{ $t("settings.settings") }}</h1>
+      <div class="settingsbox">
+        <h2>{{ $t("settings.minigameQ") }}</h2>
+        <div class="button-group">
+          <RetroButton
+            v-for="x in numberOfRoundsInSettings"
+            :color="x == settings.numberOfRounds ? 'purple' : 'pink'"
+            size="small"
+            class="minigameButton"
+            @click="selectAmountOfMinigames(x)"
+          >
+            {{ x }}
+          </RetroButton>
+        </div>
+        <h2>{{ $t("settings.maxPlayers") }}</h2>
+        <div class="button-group">
+          <RetroButton
+            v-for="x in [2, 3, 4, 5, 6, 7, 8]"
+            :color="x == settings.maxPlayers ? 'purple' : 'pink'"
+            size="small"
+            class="minigameButton"
+            @click="this.settings.maxPlayers = x"
+          >
+            {{ x }}
+          </RetroButton>
+        </div>
+        <h2>{{ $t("settings.drunknessQ") }}</h2>
+        <div class="button-group">
+          <RetroButton
+            v-for="(_, i) in 4"
+            size="small"
+            :color="i == settings.drunknessLevel ? 'purple' : 'pink'"
+            class="drunknessButton"
+            @click="selectDrunknessLevel(i)"
+          >
+            {{ $t(`game.drunknessLevel[${i}]`) }}
+          </RetroButton>
+        </div>
+      </div>
+      <RetroButton class="submitButton" @click="createGame" color="green">{{
+        $t("settings.create")
+      }}</RetroButton>
+    </div>
+  </RetroContainer>
 </template>
 
 <script>
@@ -32,19 +56,22 @@ import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
 import RetroContainer from "@/components/RetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
+import CreateLobbyInfo from "@/components/CreateLobbyInfo.vue";
 
 export default {
   name: "CreateView",
   data: function () {
     return {
       settings: DefaultSettings,
-      numberOfRoundsInSettings: [5,10,15,20,25,30]
+      numberOfRoundsInSettings: [5, 10, 15, 20, 25, 30],
+      showRules: false,
     };
   },
-   components: {
-        RetroContainer,
-        RetroButton
-    },
+  components: {
+    RetroContainer,
+    RetroButton,
+    CreateLobbyInfo,
+  },
   mounted() {
     socket.on("lobby:created", this.onGameCreated);
   },
@@ -54,6 +81,7 @@ export default {
   methods: {
     selectAmountOfMinigames(amount) {
       this.settings.numberOfRounds = amount;
+      console.log(this.settings);
     },
     selectDrunknessLevel(level) {
       this.settings.drunknessLevel = level;
@@ -79,33 +107,35 @@ export default {
   justify-items: center;
   align-content: center;
   color: white;
+  height: 100vh;
+  overflow: hidden;
 }
 .settingsbox {
   background: linear-gradient(90deg, #4b6bb744 30%, #1828485f 100%);
-  border: 2px outset black;
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
 }
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
 .minigameButton {
-  width: 50px;
+  width: 3rem;
 }
-button {
-  width: 120px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 10px;
-  font-weight: bold;
-  font-size: 15px;
-  background-color: pink;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+.info-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
 }
+
 .drunknessButton {
-  width: 140px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 10px;
-  font-weight: bold;
-  font-size: 15px;
-  
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  width: 8rem;
 }
 .selected {
   background-color: #701050;

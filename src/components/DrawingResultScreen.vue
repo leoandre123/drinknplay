@@ -3,13 +3,13 @@
     <div class="results-container">
         
         <div class="best-drawing">
-            <div class="best-drawing-title">BEST DRAWING</div>
+            <div class="best-drawing-title">{{ $t("draw.bestDrawing") }}</div>
             <img :src="score.drawings[0].png"></img>
-            <div>{{ score.drawings[0].playerName }}: {{ score.drawings[0].score }} points</div>
+            <div>{{ score.drawings[0].playerName }}: {{ score.drawings[0].score }} {{ $t("draw.points") }}</div>
         </div>
         <div class="scoreboard">
-            <div class="results-title">SCOREBOARD</div>
-            <div v-for="player in score.players" :key="player.id" class="player-in-leaderboard">{{ player.name }}: {{ player.score}} points</div>
+            <div class="results-title">{{ $t("draw.scoreboard") }}</div>
+            <div v-for="player in score.players" :key="player.id" class="player-in-leaderboard">{{ player.name }}: {{ player.score}} {{ $t("draw.points") }}</div>
         </div>
     </div>
 </template>

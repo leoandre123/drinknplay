@@ -1,7 +1,7 @@
 class AudioManager {
   constructor() {
     this.unlocked = false;
-    this.muted = localStorage.getItem("muted") === "true";
+    this.muted = true;
     this.ctx = null;
     this.queue = [];
     this.masterGain = null;
@@ -49,14 +49,16 @@ class AudioManager {
         const gain = this.ctx.createGain();
         gain.gain.value = volume;
 
+        source.onended = () => this.playing.delete(source);
+
         source.connect(gain).connect(this.masterGain);
         source.start();
 
         this.playing.add(source);
-      });
+        return source;
+      })
 
-    source.onended = () => this.playing.delete(source);
-    return source;
+      .catch(() => { });
   }
 
   stop(source) {
@@ -64,19 +66,20 @@ class AudioManager {
     try {
       source.stop();
       this.playing.delete(source);
-    } catch {}
+    } catch { }
   }
 
   stopAll() {
     for (let source of this.playing) {
       try {
         source.stop();
-      } catch {}
+      } catch { }
     }
     this.playing.clear();
   }
 
   toggleMute() {
+    this.unlock();
     this.muted = !this.muted;
     localStorage.setItem("muted", this.muted);
     if (this.masterGain) {

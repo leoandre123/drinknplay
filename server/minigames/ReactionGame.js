@@ -126,22 +126,21 @@ export class ReactionGame extends Minigame {
         console.log("ROUND FINISHED");
         this.currentRound++;
 
-        if (this.currentRound < this.maxRounds) {
-            this.submissions = [];
-            setTimeout(() => this.startRound(), 1500);
-            console.log("STARTING NEW ROUND");
-            return;
-        } else {
-            console.log("GAME FINISHED");
-            const playersWithScores = (this.context.players || []).map((p) => ({
-                id: p.id,
-                name: p.name || p.playerName || p.nickname || "Player",
-                score: this.scores.get(p.id) ?? 0,
-            }));
-            console.log("FINAL RESULTS:", playersWithScores);
-            console.log("scores map entries:", [...this.scores.entries()]);
-
-            this.onFinished?.(playersWithScores);
-        }
+    if (this.currentRound < this.maxRounds) {
+      this.submissions = [];
+      setTimeout(() => this.startRound(), 1500);
+      console.log("STARTING NEW ROUND");
+      return;
+    } else {
+      console.log("GAME FINISHED");
+      const results = {
+        type: "scores",
+        data: [...this.scores].map(([playerId, score]) => ({
+          playerId,
+          score,
+        })),
+      };
+      this.onFinished?.(results);
     }
+  }
 }

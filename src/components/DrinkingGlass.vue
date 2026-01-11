@@ -1,7 +1,7 @@
 <template>
   <svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4">
-    <path v-if="level" :d="topFillPath" fill="#b0762a" stroke="none" />
-    <path v-if="level" :d="fillPath" fill="#eda240" stroke="none" />
+    <path v-if="level % 1" :d="topFillPath" fill="#b0762a" stroke="none" />
+    <path v-if="level % 1" :d="fillPath" fill="#eda240" stroke="none" />
 
     <path :d="glassPath" />
     <path :d="glassPath2" />
@@ -16,7 +16,7 @@
       font-weight="bold"
       fill="black"
     >
-      {{ Math.round(level * 100) }}%
+      {{ Math.round((level % 1) * 100) }}%
     </text>
   </svg>
 </template>
@@ -48,8 +48,8 @@ export default {
       L${this.bottomRight.x} ${this.bottomRight.y}`;
     },
     fillPath() {
-      const fillTopLeft = lerp(this.bottomLeft, this.topLeft, Math.min(this.level, 1) * 0.8);
-      const fillTopRight = lerp(this.bottomRight, this.topRight, Math.min(this.level, 1) * 0.8);
+      const fillTopLeft = lerp(this.bottomLeft, this.topLeft, Math.min(this.level % 1, 1) * 0.8);
+      const fillTopRight = lerp(this.bottomRight, this.topRight, Math.min(this.level % 1, 1) * 0.8);
       const width = Math.abs(fillTopRight.x - fillTopLeft.x) / 2;
 
       return `M${fillTopLeft.x} ${fillTopLeft.y} L${this.bottomLeft.x} ${this.bottomLeft.y}
@@ -57,8 +57,8 @@ export default {
       A${width} 5 0 0 1 ${fillTopLeft.x} ${fillTopLeft.y}`;
     },
     topFillPath() {
-      const fillTopLeft = lerp(this.bottomLeft, this.topLeft, Math.min(this.level, 1) * 0.8);
-      const fillTopRight = lerp(this.bottomRight, this.topRight, Math.min(this.level, 1) * 0.8);
+      const fillTopLeft = lerp(this.bottomLeft, this.topLeft, Math.min(this.level % 1, 1) * 0.8);
+      const fillTopRight = lerp(this.bottomRight, this.topRight, Math.min(this.level % 1, 1) * 0.8);
       const width = Math.abs(fillTopRight.x - fillTopLeft.x) / 2;
 
       return `M${fillTopLeft.x} ${fillTopLeft.y} A${width} 5 0 0 1 ${fillTopRight.x} ${fillTopRight.y} A${width} 5 0 0 1 ${fillTopLeft.x} ${fillTopLeft.y}`;

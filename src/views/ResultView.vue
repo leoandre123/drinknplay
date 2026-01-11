@@ -21,6 +21,7 @@
       </div>
     </template>
     <template v-if="!context.isHost">
+      <div class="flex-expander"></div>
       <button class="continue-button">Continue</button>
     </template>
   </div>
@@ -42,21 +43,22 @@ export default {
       scores: new Map(),
       glassLevels: new Map(),
       drunknesses: new Map(),
-      message: "Leo filled Jonas ass",
+      message: "",
       isMessageShowing: false,
     };
   },
   created: function () {
     this.context.state.players.forEach((p) => {
       this.scores.set(p.id, p.score);
-      this.glassLevels.set(p.id, p.glassFillLevel);
+      this.glassLevels.set(p.id, p.glassLevel ?? 0);
       this.drunknesses.set(p.id, p.drunkness);
     });
 
-    socket.on("scoreboard:setScores", () => {});
-    socket.on("scoreboard:updateScores", () => {});
-    socket.on("scoreboard:showGlassFillingMessage", (fillerId, filleeId, newValue) => {
-      this.updateGlass(fillerId, filleeId, newValue);
+    socket.on("scoreboard:update", () => {
+      this.updatePlayerInfos();
+    });
+    socket.on("scoreboard:creditsReceived", (filleeId, newValue) => {
+      this.onCreditsReceived(filleeId, newValue);
     });
   },
   methods: {
@@ -74,11 +76,7 @@ export default {
 
       await new Promise((r) => setTimeout(r, 6000));
 
-      this.updateGlass(
-        this.context.state.players[0].id,
-        this.context.state.players[1].id,
-        Math.random()
-      );
+      this.onCreditsReceived(this.context.state.players[0].id, Math.random());
       await new Promise((r) => setTimeout(r, 10000));
       this.animateDrunkness(this.context.state.players[0].id, 2);
     },
@@ -87,16 +85,24 @@ export default {
         this.scores.set(s.id, s.score);
       });
     },
+
+    updatePlayerInfos() {
+      console.log("UPDATE INFO");
+      console.log(this.context.state.players);
+      this.context.state.players.forEach((p) => {
+        this.animateScore(p.id, p.score);
+        this.animateGlass(p.id, p.glassLevel);
+        this.animateDrunkness(p.id, p.drunkness);
+      });
+    },
     updateScores(values) {
       values.forEach((s) => {
         this.animateScore(s.id, s.score);
       });
     },
-    updateGlass(fillerId, filleeId, newValue) {
-      const filler = this.context.state.players.find((x) => x.id == fillerId);
-      const fillee = this.context.state.players.find((x) => x.id == filleeId);
-      this.showMessage(`${filler.name} filled ${fillee.name}'s glass!`);
-      setTimeout(() => this.animateGlass(fillee.id, newValue), 6000);
+    onCreditsReceived(receiverId, credits) {
+      const fillee = this.context.state.players.find((x) => x.id == receiverId);
+      this.showMessage(`${fillee.name} har mottagit ${credits} dryckeskrediter!`);
     },
     showMessage(msg) {
       this.message = msg;
@@ -110,13 +116,14 @@ export default {
       socket.emit("fillGlassIndex", id);
     },
     animateGlass(id, target) {
+      console.log(`Fill glass of ${id} to ${target} from ${this.glassLevels.get(id)}`);
       this.animate(this.glassLevels, id, target, 2000, false);
     },
     animateDrunkness(id, target) {
       this.animate(this.drunknesses, id, target, 2000, false);
     },
     animateScore(id, target) {
-      this.animate(this.scores, id, target, 5000, true);
+      this.animate(this.scores, id, target, 3000, true);
     },
     animate(map, id, target, duration, round) {
       const start = map.get(id) ?? target;
@@ -154,19 +161,12 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Limelight&display=swap");
-
 .results {
   width: 100dvw;
   height: 100dvh;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(
-    90deg,
-    rgba(131, 58, 180, 1) 0%,
-    rgba(253, 29, 29, 1) 50%,
-    rgba(252, 176, 69, 1) 87%
-  );
+  background: linear-gradient(90deg, #44195f 0%, #0a0d36 100%);
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -182,7 +182,6 @@ export default {
 .glow {
   letter-spacing: 10px;
   color: #fff;
-  font-family: "LimeLight Display";
   -webkit-animation: glow 1s ease-in-out infinite alternate;
   -moz-animation: glow 1s ease-in-out infinite alternate;
   animation: glow 1s ease-in-out infinite alternate;

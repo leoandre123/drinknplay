@@ -33,7 +33,7 @@
       >
         <img :src="`${mode}.png`" />
       </button>
-      <button class="button" @click="saveRequest">Save</button>
+      <button class="button" @click="saveRequest">{{ $t("draw.save") }}</button>
     </div>
   </div>
 </template>

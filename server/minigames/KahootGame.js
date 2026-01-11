@@ -147,7 +147,7 @@ export class KahootGame extends Minigame {
   start() {
     this.startQuestion();
   }
-  stop() { }
+  stop() {}
 
   onAnswerSubmitted(playerId, answerIndex, time) {
     const player = this.kahootPlayers.find((x) => x.id == playerId);
@@ -176,12 +176,15 @@ export class KahootGame extends Minigame {
         this.currentQuestionIndex = 0;
         setTimeout(() => this.startQuestion(), 2000);
       } else {
-        const results = this.kahootPlayers.map((kp) => {
-          return {
-            id: kp.id,
-            score: kp.score,
-          };
-        });
+        const results = {
+          type: "scores",
+          data: this.kahootPlayers.map((kp) => {
+            return {
+              playerId: kp.id,
+              score: kp.score,
+            };
+          }),
+        };
         this.onFinished(results);
       }
     } else {

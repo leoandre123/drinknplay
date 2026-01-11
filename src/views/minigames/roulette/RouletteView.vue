@@ -1,38 +1,35 @@
 <template>
     <RetroContainer>
-        <RouletteDistributeView 
-        v-if="phase === 'distribute'"
-        :totals="totalPerPlayer"
-        :players="betsByPlayer"/>
-
-    
-        <div v-else class="layout">
+        <div class="layout">
             <div class="left">
-               <button class="rules-button" @click="showRules = true">
-                How to play
-               </button> 
+               <RetroButton class="rules-button" color="blue" @click="showRules = true">
+                {{$t("roulette.howToPlay")}}
+               </RetroButton> 
                <RouletteRules v-if="showRules" @close="showRules = false"/>
 
                 <div class="wheel-area">
                     <RouletteWheel
-                    ref="wheel"
-                    :phase="phase"
-                    @spinFinished="onSpinFinished"/>
-                    <button
-                    class="spin-button"
-                    @click="startSpin"
-                    :disabled="phase !== 'betting'">
-                    {{ $t("roulette.spin") }}
-                </button>
-                <button v-if="phase === 'result' && round < maxRounds"
-                 class="next-round-button" @click="nextRound"
-                >
-                {{$t("roulette.nextRound")}}
-                </button>
-                <button v-else-if="phase === 'result' && round >= maxRounds"
-                    class="continue-button" @click="nextRound">
-                    {{$t("roulette.continue")}}
-                </button>
+                        ref="wheel"
+                        :phase="phase"
+                        @spinFinished="onSpinFinished"/>
+                    <RetroButton
+                        color="yellow"
+                        class="spin-button"
+                        @click="startSpin"
+                        :disabled="phase !== 'betting'">
+                        {{ $t("roulette.spin") }}
+                    </RetroButton>
+                    <RetroButton v-if="phase === 'result' && round < maxRounds"
+                        color="pink"
+                        class="next-round-button" @click="nextRound"
+                        >
+                        {{$t("roulette.nextRound")}}
+                    </RetroButton>
+                    <RetroButton v-else-if="phase === 'result' && round >= maxRounds"
+                        color="green"
+                        class="continue-button" @click="nextRound">
+                        {{$t("roulette.continue")}}
+                    </RetroButton>
                 </div>
             </div>
             <div class="right">
@@ -54,10 +51,10 @@
                                 <ul v-if="p.bets && p.bets.length" class="bet-list">
                                     <li v-for="b in p.bets" :key="`${b.type} - ${b.value}`">
                                         <span v-if="b.type === 'color'">
-                                            {{$t("roulette.color")}}: {{ String(b.value).toUpperCase() }} - {{ b.amount }} {{$t("roulette.sips")}}
+                                            {{$t("roulette.color")}}: {{ String(b.value).toUpperCase() }} - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                                         </span>
                                         <span v-else>
-                                            {{$t("roulette.number")}}: {{ b.value }} - {{ b.amount }} {{$t("roulette.sips")}}
+                                            {{$t("roulette.number")}}: {{ b.value }} - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                                         </span>
                                     </li>
                                 </ul>
@@ -83,7 +80,7 @@
                                     <div v-if="spinResult.winners.length === 0">{{$t("roulette.noWinners")}}</div>
                                     <ul v-else>
                                         <li v-for="w in spinResult.winners" :key="w.playerId">
-                                            {{ w.name }} - {{ w.winningAmount }} {{$t("roulette.sips")}}
+                                            {{ w.name }} - {{ w.winningAmount }} {{$t("roulette.drinkCredits")}}
                                         </li>
                                     </ul>
                                 </div>
@@ -123,17 +120,17 @@
 
 
 import { socket } from "../../../socket";
-import { context } from "@/context";
+
 
 import RetroContainer from '@/components/RetroContainer.vue';
 import RouletteWheel from "@/components/Roulette/RouletteWheel.vue";
-import RouletteDistributeView from "./RouletteDistributeView.vue";
 import RouletteRules from "@/components/Roulette/RouletteRules.vue";
-
+import RetroButton from "@/components/RetroButton.vue";
+import { audioManager } from "@/AudioManager";
 
 export default {
     name: "RouletteView",
-    components: {RouletteWheel, RetroContainer, RouletteDistributeView, RouletteRules},
+    components: {RouletteWheel, RetroContainer, RouletteRules, RetroButton},
 
     data(){
         return {
@@ -144,12 +141,12 @@ export default {
             spinResult: null,
             totalPerPlayer: {},
             showRules: false,
+            spinAudio: null,
         };
     },
     mounted(){
         
         this.onRouletteUpdate = (state) =>{
-            console.log("frontend roulette:update recieved", state);
             this.round = state?.round ?? 1;
             this.maxRounds = state?.maxRounds ?? 3;
             this.phase = state?.phase ?? "betting";
@@ -160,11 +157,19 @@ export default {
         socket.on("roulette:update", this.onRouletteUpdate);
         socket.emit("roulette:requestState");
 
+        this.spinAudio = new Audio("/sounds/Roulettewheel2.mp3");
+        this.spinAudio.preload = "auto";
+        this.spinAudio.volume = 0.8;
+        this.jazz = audioManager.play("/sounds/Jazz.mp3", {loop: true, volume: 0.5});
+
      
 
     },
     beforeUnmount(){
         socket.off("roulette:update", this.onRouletteUpdate);
+        this.spinAudio = null;
+        audioManager.stopAll();
+        
     },
     computed:{
 
@@ -184,9 +189,15 @@ export default {
         }
     },
     methods:{
+        playSpinSound(){
+            if(!this.spinAudio)
+                return;
+            this.spinAudio.currentTime = 0; //kan spelas direkt igen
+            this.spinAudio.play();
+        },
         startSpin(){
+            this.playSpinSound();
             socket.emit("roulette:startSpin");
-            console.log("startSpin clicked  phase =",this.phase);
             this.$refs.wheel.spin(); //spin() från RouletteWheelviewen
         },
         onSpinFinished(number){
@@ -194,12 +205,14 @@ export default {
             socket.emit("roulette:spinResult", { number });
         },
         nextRound(){
+            console.log("nextRound clicked", Date.now(), "round=", this.round, "phase=", this.phase);
+
             socket.emit("roulette:nextRound");
         }
     }
 }
 </script>
-<style>
+<style scoped>
 .layout{
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -241,9 +254,7 @@ export default {
     align-items: center;
 
 }
-.next-round-button{
-    margin-top: 20px;
-}
+
 .bets-area,
 .result-area,
 .standings-area {
@@ -263,23 +274,18 @@ export default {
     margin: 0;
     text-align: center;
 }
-
 .spin-button{
-        font-family: "Science Gothic", sans-serif;
-        padding: 12px;
-        margin: 10px;
-        height: 60px;
-        width: 200px;
-        border-radius: 10px;
-        background-color: var(--French_Rose);
-        border: 3px, groove, var(--Caribbean_Green);
-        box-shadow: 0 0 .2rem #fff,
-        0 0 .2rem #fff,
-        0 0 2rem var(--Caribbean_Green),
-        0 0 0.8rem var(--Caribbean_Green),
-        0 0 2.8rem var(--Caribbean_Green),
-        inset 0 0 1.3rem var(--Caribbean_Green);
-    }
+    width: 250px;
+    top: -100px;
+    letter-spacing: 1px;
+
+}
+.next-round-button{
+    top: -60px;
+    letter-spacing: 0.5px;
+    
+}
+
 
 .standings table { 
     width: 100%;
@@ -297,13 +303,11 @@ export default {
      }
 .rules-button{
     cursor: pointer;
-    border-radius: 12px;
-    border: 1px solid rgba(250,250,250,0.2);
-    background: rgb(12, 144, 231);
-    font-weight: bold;
-    color:white;
-    width: 100px;
-    margin-top: 10px;
-    margin-left: 10px;
+    position: absolute;
+    top: 12px;
+    left:12px;
+    z-index: 50;
+    cursor: pointer;
+
 }
 </style>
