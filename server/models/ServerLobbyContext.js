@@ -3,5 +3,6 @@ export class ServerLobbyContext {
     this.io = io;
     this.lobbyId = lobbyId;
     this.players = [];
+    this.hosts = [];
   }
 }

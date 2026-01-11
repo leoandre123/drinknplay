@@ -14,9 +14,5 @@
     "switchMode": "Switch mode",
     "modeDescription": "Current mode: ",
     "slopeFinished": "Slope finished",
-    "finishDescription": "Great job!",
-    "spin": {
-        "spin": "SPIN",
-        "spinning": "SPINNING..."
-    }
+    "finishDescription": "Great job!"
 }

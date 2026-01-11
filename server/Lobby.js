@@ -11,6 +11,7 @@ import {
   PLAYER_ID_LENGTH,
   TOTAL_SCORE_PER_GAME,
 } from "./Constants.js";
+import { Host } from "./models/Host.js";
 
 export class Lobby {
   constructor(io, lobbyId, settings = DefaultSettings) {
@@ -79,6 +80,9 @@ export class Lobby {
   }
 
   onHostJoined(socket) {
+    this.logger.info(`Host ${socket.id} connected`);
+    this.context.hosts.push(new Host(socket));
+
     socket.join(this.context.lobbyId + "_HOST");
     socket.data.lobbyId = this.context.lobbyId;
 
@@ -91,6 +95,11 @@ export class Lobby {
     if (this.phase == "game") {
       this.currentGame?.onHostJoined(socket);
     }
+  }
+
+  onHostDisconnected(socket) {
+    this.logger.info(`Host ${socket.id} disonnected`);
+    this.context.hosts = this.context.hosts.filter((x) => x.id != socket.id);
   }
 
   //Anropas när en spelare har tappats kontakten med
@@ -164,21 +173,14 @@ export class Lobby {
 
     this.currentGame.context = this.context;
 
-    for (let player of this.context.players) {
+    for (const player of this.context.players) {
       this.currentGame?.onPlayerJoined(player);
       if (player.socket) this.currentGame.registerListeners(player.socket);
     }
-    //host joinar vid lobbyfasen, dvs innan gamefasen, o joinar inte vid minigamebyte
-    //Host aktiv i roulette,så host socketen behöver listeners från onHostJoined()
-    //inte bara i lobbyfasen
-    this.context.io
-      .in(this.context.lobbyId + "_HOST")
-      .fetchSockets()
-      .then((hostSockets) => {
-        for (const s of hostSockets) {
-          this.currentGame?.onHostJoined(s);
-        }
-      });
+
+    for (const host of this.context) {
+      this.currentGame?.onHostJoined(host.socket);
+    }
 
     this.currentGame.onFinished = (results) => this.finishGame(results);
     this.currentGame.start();
@@ -188,8 +190,11 @@ export class Lobby {
     this.logger.info("Game Finished!");
     this.logger.debug(results);
 
-    for (let player of this.context.players) {
+    for (const player of this.context.players) {
       if (player.socket) this.currentGame.unregisterListeners(player.socket);
+    }
+    for (const host of this.context.hosts) {
+      if (host.socket) this.currentGame.unregisterListeners(host.socket);
     }
 
     this.context.players.forEach((p) => {

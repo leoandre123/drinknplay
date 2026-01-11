@@ -36,7 +36,11 @@ function sockets(io, socket, lobbyManager) {
   });
 
   socket.on("disconnect", function () {
-    lobbyManager.getLobby(socket.data.lobbyId)?.onPlayerDisconnected(socket.data.playerId);
+    if (socket.data.lobbyId) {
+      if (socket.data.playerId)
+        lobbyManager.getLobby(socket.data.lobbyId)?.onPlayerDisconnected(socket.data.playerId);
+      else lobbyManager.getLobby(socket.data.lobbyId)?.onHostDisconnected(socket);
+    }
   });
 
   socket.on("debug:getAllLobbies", function () {

@@ -2,43 +2,36 @@
     {
         "titleKey": "games.g1.title",
         "imageUri": "game_backgrounds/racing.png",
-        "tipsKeys": ["games.g1.tips.t1", "games.g1.tips.t2"],
-        "symbol": "🚗"
+        "tipsKeys": ["games.g1.tips.t1", "games.g1.tips.t2"]
     },
     {
         "titleKey": "games.g2.title",
         "imageUri": "game_backgrounds/question.jpg",
-        "tipsKeys": ["games.g2.tips.t1"],
-        "symbol": "❓"
+        "tipsKeys": ["games.g2.tips.t1"]
     },
     {
         "titleKey": "games.g3.title",
         "imageUri": "game_backgrounds/drawing_2.jpg",
-        "tipsKeys": ["games.g3.tips.t1", "games.g3.tips.t2", "games.g3.tips.t3"],
-        "symbol": "✍️"
+        "tipsKeys": ["games.g3.tips.t1", "games.g3.tips.t2", "games.g3.tips.t3"]
     },
     {
         "titleKey": "games.g4.title",
         "imageUri": "game_backgrounds/reaction.webp",
-        "tipsKeys": ["games.g4.tips.t1", "games.g4.tips.t2"],
-        "symbol": "⏰"
+        "tipsKeys": ["games.g4.tips.t1", "games.g4.tips.t2"]
     },
     {
         "titleKey": "games.g5.title",
         "imageUri": "game_backgrounds/closest.jpg",
-        "tipsKeys": ["games.g5.tips.t1"],
-        "symbol": "📍"
+        "tipsKeys": ["games.g5.tips.t1"]
     },
     {
         "titleKey": "games.g6.title",
         "imageUri": "game_backgrounds/MazeGame.jpg",
-        "tipsKeys": ["games.g6.tips.t1", "games.g6.tips.t2", "games.g6.tips.t3"],
-        "symbol": "🗺️"
+        "tipsKeys": ["games.g6.tips.t1", "games.g6.tips.t2", "games.g6.tips.t3"]
     },
     {
         "titleKey": "games.g7.title",
         "imageUri": "game_backgrounds/roulette.jpeg",
-        "tipsKeys": ["games.g7.tips.t1"],
-        "symbol": "🎡"
+        "tipsKeys": ["games.g7.tips.t1"]
     }
 ]
