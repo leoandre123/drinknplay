@@ -6,7 +6,7 @@
       <hr />
       <h3>{{$t('settings.minigameQ')}}</h3>
       <button
-        v-for="x in 20"
+        v-for="x in numberOfRoundsInSettings"
         class="minigameButton"
         :class="{ selected: settings.numberOfRounds === x }"
         @click="selectAmountOfMinigames(x)"
@@ -30,14 +30,21 @@
 <script>
 import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
+import RetroContainer from "@/components/RetroContainer.vue";
+import RetroButton from "@/components/RetroButton.vue";
 
 export default {
   name: "CreateView",
   data: function () {
     return {
       settings: DefaultSettings,
+      numberOfRoundsInSettings: [5,10,15,20,25,30]
     };
   },
+   components: {
+        RetroContainer,
+        RetroButton
+    },
   mounted() {
     socket.on("lobby:created", this.onGameCreated);
   },
@@ -69,20 +76,13 @@ export default {
 
 <style scoped>
 .create-container {
-  width: 100vw;
-  height: 100vh;
   justify-items: center;
   align-content: center;
-  background-image: radial-gradient(
-    circle farthest-corner at 10% 20%,
-    rgb(102, 0, 32) 0%,
-    rgb(116, 18, 92) 49.5%,
-    rgb(164, 34, 144) 90%
-  );
   color: white;
 }
 .settingsbox {
-  background: linear-gradient(90deg, #4b6bb744 0%, #1828485f 100%);
+  background: linear-gradient(90deg, #4b6bb744 30%, #1828485f 100%);
+  border: 2px outset black;
 }
 .minigameButton {
   width: 50px;
@@ -93,22 +93,23 @@ button {
   padding-bottom: 10px;
   margin: 10px;
   font-weight: bold;
-  font-size: 16;
+  font-size: 15px;
   background-color: pink;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 .drunknessButton {
-  width: 120px;
+  width: 140px;
   padding-top: 10px;
   padding-bottom: 10px;
   margin: 10px;
   font-weight: bold;
-  font-size: 16;
-  background-color: pink;
+  font-size: 15px;
+  
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 .selected {
   background-color: #701050;
   color: white;
+  font-weight: bolder;
 }
 </style>
