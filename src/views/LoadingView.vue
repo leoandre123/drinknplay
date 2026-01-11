@@ -12,13 +12,14 @@
           {{ context.state.players.filter((x) => x.isReady).length }} of
           {{ Math.ceil(context.state.players.length / 2) }} required players ready
         </p>
-        <button
+        <RetroButton
           v-if="!context.isHost"
-          :class="[context.getCurrentPlayer().isReady ? 'cancel' : 'ready']"
+          size="large"
+          :color="[context.getCurrentPlayer().isReady ? 'red' : 'green']"
           @click="toggleReady"
         >
-          READY
-        </button>
+          {{ context.getCurrentPlayer().isReady ? "Cancel" : "Ready" }}
+        </RetroButton>
       </div>
     </div>
   </div>
@@ -28,6 +29,7 @@
 import { context } from "../context";
 import gameinfo from "@/assets/gameinfo.json";
 import { socket } from "../socket";
+import RetroButton from "@/components/RetroButton.vue";
 
 export default {
   name: "LoadingView",
@@ -38,7 +40,7 @@ export default {
       context,
     };
   },
-  components: {},
+  components: { RetroButton },
   async created() {},
   methods: {
     toggleReady() {
@@ -58,7 +60,7 @@ export default {
       const allTipKeys = this.currentGameInfo.tipsKeys;
 
       if (!allTipKeys || allTipKeys.length === 0) {
-        return "Lycka till!"; 
+        return "Lycka till!";
       }
 
       const randomKey = allTipKeys[Math.floor(Math.random() * allTipKeys.length)];
@@ -118,24 +120,8 @@ export default {
   align-content: center;
 }
 
-.ready-container button {
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 2.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 1rem black;
-  cursor: pointer;
-}
 .ready-container button:hover {
   transform: scale(1.05);
   background: rgb(47, 192, 47);
-}
-
-.ready {
-  background: rgb(34, 155, 34);
-}
-.cancel {
-  background: rgb(155, 34, 48);
 }
 </style>

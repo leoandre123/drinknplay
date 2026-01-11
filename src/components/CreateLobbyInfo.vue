@@ -50,7 +50,7 @@ export default {
 }
 
 .pop-up {
-  padding: 20px;
+  padding: 1.5rem;
   position: relative;
   border: 0.25rem solid rgba(250, 250, 250, 0.5);
   background: var(--Trans_Violet_Blue);

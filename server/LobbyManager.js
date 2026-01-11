@@ -24,7 +24,8 @@ export class LobbyManager {
 
   #addDebugLobby(id, gameIndex) {
     const lobby = new Lobby(this.io, id);
-    lobby.startGameSelection(gameIndex);
+    lobby.selectGame(gameIndex);
+    lobby.startLoadingScreen();
     this.lobbies.push(lobby);
   }
 

@@ -138,27 +138,31 @@ export class Lobby {
   /*
    * FASER
    */
-  startGameSelection(gameIndex = -1) {
+  startGameSelection() {
     this.phase = "slot";
     this.broadcastLobbyState();
 
     setTimeout(() => {
-      if (gameIndex == -1) gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
-
+      const gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
+      this.selectGame(gameIndex);
       this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
       this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
-
-      this.logger.debug(`Selecting game: ${gameIndex}`);
-      this.gameIndex = gameIndex;
-      const game = ALL_GAMES[gameIndex];
-      if (game) {
-        this.currentGame = new game();
-      } else {
-        this.logger.error(`No game with index ${gameIndex}`);
-      }
     }, 3000);
 
-    this.tryAdvance(10000);
+    setTimeout(() => {
+      this.advancePhase();
+    }, 10000);
+  }
+
+  selectGame(gameIndex) {
+    this.logger.debug(`Selecting game: ${gameIndex}`);
+    this.gameIndex = gameIndex;
+    const game = ALL_GAMES[gameIndex];
+    if (game) {
+      this.currentGame = new game();
+    } else {
+      this.logger.error(`No game with index ${gameIndex}`);
+    }
   }
 
   startLoadingScreen() {
@@ -178,7 +182,7 @@ export class Lobby {
       if (player.socket) this.currentGame.registerListeners(player.socket);
     }
 
-    for (const host of this.context) {
+    for (const host of this.context.hosts) {
       this.currentGame?.onHostJoined(host.socket);
     }
 

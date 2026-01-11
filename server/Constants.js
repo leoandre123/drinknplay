@@ -6,3 +6,11 @@ export const PLAYER_ID_LENGTH = 5;
 export const CREDITS_PER_GLASS = 5;
 export const CREDITS_PER_ROUND = [0, 2, 5, 10];
 export const TOTAL_SCORE_PER_GAME = 1_000;
+
+//GAME CONSTANTS
+//KAHOOT
+export const KAHOOT_QUESTIONS_PER_GAME = 5;
+
+//CLOSEST
+export const CLOSEST_ROUNDS_PER_GAME = 5;
+export const CLOSEST_ROUND_TIMER = 30_000;
