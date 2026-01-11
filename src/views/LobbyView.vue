@@ -1,10 +1,25 @@
 <template>
   <NewRetroContainer>
     <div class="info-button">
-      <RetroButton color="blue" size="small" @click="showRules = true"> ? </RetroButton>
+      <RetroButton color="blue" size="small" @click="$refs.infoPopup?.show()"> ? </RetroButton>
     </div>
     <div v-if="context.isHost" class="lobby-container">
-      <LobbyInfo v-if="showRules" @close="showRules = false" />
+      <Popup :title="$t('lobbyInfo.howToWin')" ref="infoPopup">
+        <div class="info-content">
+          <ul class="howToWinList">
+            <li>{{ $t("lobbyInfo.info1") }}</li>
+            <li>{{ $t("lobbyInfo.info2") }}</li>
+            <li>{{ $t("lobbyInfo.info3") }}</li>
+          </ul>
+          <h3 class="drinkingInfo">{{ $t("lobbyInfo.drinking") }}</h3>
+          <ul class="drinkingInfoList">
+            <li>{{ $t("lobbyInfo.info4") }}</li>
+            <li>{{ $t("lobbyInfo.info5") }}</li>
+            <li>{{ $t("lobbyInfo.info6") }}</li>
+            <li>{{ $t("lobbyInfo.info7") }}</li>
+          </ul>
+        </div>
+      </Popup>
       <Popup title="Change settings" ref="settingsPopup">
         <SettingsPanel :settings="context.state.settings" @settingsChanged="onSettingsChanged" />
       </Popup>
@@ -74,7 +89,6 @@ import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { context } from "../context";
 import { socket } from "../socket";
 import { audioManager } from "@/AudioManager";
-import LobbyInfo from "@/components/lobbyInfo.vue";
 import Popup from "@/components/Popup.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 
@@ -83,7 +97,7 @@ export default {
   data: function () {
     return { context, audioManager, lobbyUri: "", showRules: false };
   },
-  components: { QrCode, NewRetroContainer, RetroButton, Avatar, LobbyInfo, Popup, SettingsPanel },
+  components: { QrCode, NewRetroContainer, RetroButton, Avatar, Popup, SettingsPanel },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
@@ -196,5 +210,24 @@ p {
 
 .player-avatar {
   width: 4rem;
+}
+
+.info-content {
+  text-align: start;
+}
+
+.howToWinList {
+  color: var(--Points_Info);
+  text-shadow: 2px 2px black;
+}
+.drinkingInfo {
+  text-align: center;
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
+}
+
+.drinkingInfoList {
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
 }
 </style>
