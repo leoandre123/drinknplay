@@ -1,10 +1,10 @@
 <template>
   <div class="create-container">
-    <h1>Choose your settings</h1>
+    <h1>{{$t("settings.chooseSettings")}}</h1>
     <div class="settingsbox">
-      <h2>Settings</h2>
+      <h2>{{$t('settings.settings')}}</h2>
       <hr />
-      <h3>How many minigames should your game contain?</h3>
+      <h3>{{$t('settings.minigameQ')}}</h3>
       <button
         v-for="x in 20"
         class="minigameButton"
@@ -13,7 +13,7 @@
       >
         {{ x }}
       </button>
-      <h3>What is your desired drunkness level?</h3>
+      <h3>{{$t('settings.drunknessQ')}}</h3>
       <button
         v-for="(_, i) in 4"
         class="drunknessButton"
@@ -23,7 +23,7 @@
         {{ $t(`game.drunknessLevel[${i}]`) }}
       </button>
     </div>
-    <button class="submitButton" @click="createGame">CREATE LOBBY</button>
+    <button class="submitButton" @click="createGame">{{ $t("settings.create") }}</button>
   </div>
 </template>
 

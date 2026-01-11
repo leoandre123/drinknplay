@@ -1,6 +1,8 @@
 {
     "startGame": "Starta spel",
     "joinGame": "Gå med i spel",
+    "hostQuestion": "Om du vill hålla ett spel, tryck ",
+    "here": "här",
     "drunknessLevel": [
         "Familjekväll",
         "Förfriskad",
