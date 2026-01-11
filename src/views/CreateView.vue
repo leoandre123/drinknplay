@@ -1,11 +1,10 @@
 <template>
-  <RetroContainer>
-    <div class = create-container>
-    <h1>Choose your settings</h1>
+  <div class="create-container">
+    <h1>{{$t("settings.chooseSettings")}}</h1>
     <div class="settingsbox">
-      <h2>Settings</h2>
-      <hr/>
-      <h3>How many minigames should your game contain?</h3>
+      <h2>{{$t('settings.settings')}}</h2>
+      <hr />
+      <h3>{{$t('settings.minigameQ')}}</h3>
       <button
         v-for="x in numberOfRoundsInSettings"
         class="minigameButton"
@@ -14,7 +13,7 @@
       >
         {{ x }}
       </button>
-      <h3>What is your desired drunkness level?</h3>
+      <h3>{{$t('settings.drunknessQ')}}</h3>
       <button
         v-for="(_, i) in 4"
         class="drunknessButton"
@@ -24,10 +23,8 @@
         {{ $t(`game.drunknessLevel[${i}]`) }}
       </button>
     </div>
-    <hr/>
-    <RetroButton class="submitButton" @click="createGame" color='pink'>CREATE LOBBY</RetroButton>
-    </div>
-</RetroContainer>
+    <button class="submitButton" @click="createGame">{{ $t("settings.create") }}</button>
+  </div>
 </template>
 
 <script>

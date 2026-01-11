@@ -1,0 +1,50 @@
+{
+    "g1": {
+        "title": "Drick å' Kör",
+        "tips": {
+            "t1": "Försök att vinna loppet",
+            "t2": "Kom ihåg: Gasen gör dig snabbare än vad bromsen gör"
+        }
+    },
+    "g2": {
+        "title": "Drick å' Svara",
+        "tips": {
+            "t1": "Försök svara rätt på frågan"
+        }
+    },
+    "g3": {
+        "title": "Drick å' Rita",
+        "tips": {
+            "t1": "Rita fina saker",
+            "t2": "Om du ritar bättre än de andra är det bra!",
+            "t3": "Ju bättre du ritar, desto mer poäng får du!"
+        }
+    },
+    "g4": {
+        "title": "Drick å' Reagera",
+        "tips": {
+            "t1": "Reagera så fort du kan när spelet börjar",
+            "t2": "Ju snabbare du reagerar, desto mer poäng!"
+        }
+    },
+    "g5": {
+        "title": "Drick å' Hitta",
+        "tips": {
+            "t1": "Försök att vinna"
+        }
+    },
+    "g6": {
+        "title": "Drink å' Laburint",
+        "tips": {
+            "t1": "Byt till mobilläge om du spelar på en smartphone",
+            "t2": "Luta telefonen för att styra bollen",
+            "t3": "Ju snabbare du går i mål, desto mer poäng!"
+        }
+    },
+    "g7": {
+        "title": "Drink å' Satsa",
+        "tips": {
+            "t1": "Turen gynnar den som vågar"
+        }
+    }
+}
