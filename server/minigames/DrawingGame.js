@@ -1,17 +1,17 @@
 import { Minigame } from "../Minigame.js";
 
 export class DrawingGame extends Minigame {
-  constructor() {
-    super();
-    this.drawingPlayers = [];
-    this.allDrawings = [];
-    this.phase = "start";
-    this.currentSubject = "";
-    this.subjects = [];
-    this.timer = null;
-    this.timerID = null;
-    this.currentDrawingIndexToVote = 0;
-  }
+    constructor() {
+        super();
+        this.drawingPlayers = [];
+        this.allDrawings = [];
+        this.phase = "start";
+        this.currentSubject = "";
+        this.subjects = [];
+        this.timer = null;
+        this.timerID = null;
+        this.currentDrawingIndex = 0;
+    }
 
   onPlayerJoined(player) {
     this.broadcastPlayers("gamePhase", this.phase);
@@ -202,13 +202,16 @@ export class DrawingGame extends Minigame {
     });
   }
 
-  unregisterListeners(socket) {
-    socket?.removeAllListeners("updateCanvas");
-    socket?.removeAllListeners("playerVote");
-  }
 
-  start() {}
-  stop() {
-    this.stopTimer();
-  }
+    unregisterListeners(socket) {
+        socket?.removeAllListeners("submitSubject");
+        socket?.removeAllListeners("updateCanvas");
+        socket?.removeAllListeners("playerVote");
+    }
+
+    start() {
+    }
+    stop() {
+        this.stopTimer();
+    }
 }

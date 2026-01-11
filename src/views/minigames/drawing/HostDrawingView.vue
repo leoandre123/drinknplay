@@ -1,7 +1,7 @@
 <template>
     <div class="host-view-container">
         <div v-if="phase === 'drawing'" class="drawing-board">
-            <div class="subject">DRAW  A  {{ currentSubject }}</div>
+            <div class="subject">{{ $t("draw.draw") }}  {{ currentSubject }}</div>
             <div class="displayPictures">
                 <div v-for="drawing in submittedPaintings">
                     <img :src="drawing.png"></img>
@@ -11,16 +11,16 @@
 
 
         <div v-if="phase === 'voting'" class="voting-container">
-            <div class="vote-title">Rate picture on your device</div>
+            <div class="vote-title">{{ $t("draw.rate") }}</div>
             <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
         </div>
 
         <DrawingResultScreen v-if="phase === 'results'" :score="scores"/>
 
         <div v-if="phase === 'start'" class = "start">
-            Welcome! Please submit a subject on your device.
+            {{ $t("draw.submitHost") }}
         </div>
-        <div v-if="phase !== 'results'" class="time">Time left: {{ timer }}</div>
+        <div v-if="phase !== 'results'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
     </div>
 </template>
 
@@ -85,7 +85,15 @@ export default {
 
     },
     beforeUnmount() {
-
+        socket.off("currentSubject");
+        socket.off("gamePhase");
+        socket.off("timerTick");
+        socket.off("updateCanvas");
+        socket.off("drawingToVote");
+        socket.off("clearPaintings");
+        socket.off("results");
+        
+        console.log("Socket listeners unregistered");
     }
 
 }
