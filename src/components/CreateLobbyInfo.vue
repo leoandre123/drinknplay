@@ -50,17 +50,17 @@ export default {
 }
 
 .pop-up {
-  padding: 20px;
+  padding: 1.5rem;
   position: relative;
-  border-radius: 10px;
-  border: 1px solid rgba(250, 250, 250, 0.5);
+  border: 0.25rem solid rgba(250, 250, 250, 0.5);
   background: var(--Trans_Violet_Blue);
   font-size: 2rem;
+  text-align: start;
 }
 
 .close-button {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 1rem;
+  right: 1rem;
 }
 </style>

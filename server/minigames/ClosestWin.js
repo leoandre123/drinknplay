@@ -1,4 +1,5 @@
 import { geoDistance } from "../../shared/MathHelper.js";
+import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "../Constants.js";
 import { Minigame } from "../Minigame.js";
 import { readFileSync } from "fs";
 
@@ -7,7 +8,7 @@ export class ClosestWin extends Minigame {
     super();
     this.locations = JSON.parse(readFileSync("./server/data/closest-locations.json"));
 
-    this.roundCount = 5;
+    this.roundCount = CLOSEST_ROUNDS_PER_GAME;
     this.currentRound = 0;
     this.endTime = 0;
     this.currentLocation = this.locations[0];
@@ -52,9 +53,7 @@ export class ClosestWin extends Minigame {
   startRound() {
     this.currentLocation = this.locations[Math.floor(Math.random() * this.locations.length)];
 
-    const guessTime = 25_000;
-
-    this.endTime = Date.now() + guessTime;
+    this.endTime = Date.now() + CLOSEST_ROUND_TIMER;
     this.broadcastHosts("closest:setLocation", this.currentLocation);
     this.broadcast("closest:updateRound", this.currentRound, this.roundCount);
     this.broadcast("closest:startRound", this.endTime);
@@ -78,7 +77,7 @@ export class ClosestWin extends Minigame {
 
       this.broadcastHosts("closest:updatePlayers", this.closestPlayers);
       this.onRoundFinished();
-    }, guessTime);
+    }, CLOSEST_ROUND_TIMER);
   }
 
   onRoundFinished() {

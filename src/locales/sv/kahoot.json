@@ -1,88 +1,77 @@
 {
-    "q1": {
-        "title": "Vad är 5 × 5?",
-        "a1": "20",
-        "a2": "25", 
-        "a3": "15",
-        "a4": "35"
-    },
-    "q2": {
-        "title": "Vilken är världens största ocean?",
-        "a1": "Atlanten",
-        "a2": "Norra ishavet",
-        "a3": "Stilla havet",
-        "a4": "indiska oceanen"
-    },
-    "q3": {
-        "title": "Vad är sant?",
-        "a1": "Leo är bäst",
-        "a2": "Leo är sämst",
-        "a3": "Leo är 22 år",
-        "a4": "Leo är 23 år"
-    },
-    "q4": {
-        "title": "Hur gammal är du?",
-        "a1": "0–15",
-        "a2": "15–25",
-        "a3": "25–35",
-        "a4": "35+"
-    },
-    "q5": {
-        "title": "Vilket språk körs i webbläsaren?",
-        "a1": "Python",
-        "a2": "JavaScript",
-        "a3": "Java",
-        "a4": "C++"
-    },
-    "q6": {
-        "title": "Vad står HTML för?",
-        "a1": "HyperText Markup Language",
-        "a2": "HighText Machine Language",
-        "a3": "Hyper Transfer Main Language",
-        "a4": "Home Tool Markup Language"
-    },
-    "q7": {
-        "title": "Vad är 1 × 5?",
-        "a1": "1",
-        "a2": "3",
-        "a3": "5",
-        "a4": "10"
-    },
-    "q8": {
-        "title": "Vem var den första mannen på månen?",
-        "a1": "Michael collins",
-        "a2": "Yuri Gagarin",
-        "a3": "Buzz Aldrin",
-        "a4": "Niel Armstrong"
-    },
-    "q9": {
-        "title": "Vilket keniskt tecken har guld?",
-        "a1": "Ag",
-        "a2": "Fe",
-        "a3": "Pb",
-        "a4": "Au"
-    },
-    "q10": {
-        "title": "Vem målade Mona Lisa?",
-        "a1": "Michelangelo",
-        "a2": "Leonardo da Vinci",
-        "a3": "Pablo Picasso",
-        "a4": "Vincent van Gogh"
-    },
-    "q11": {
-        "title": "Vilket är världens snabbaste landdjur?",
-        "a1": "Lejon",
-        "a2": "Häst",
-        "a3": "Antilop",
-        "a4": "Gepard"
-    },
-    "q12": {
-        "title": "Vad heter Japans huvudstad?",
-        "a1": "Tokyo",
-        "a2": "Kyoto",
-        "a3": "Seoul",
-        "a4": "Osaka"
-    },
-    
-    "instruction": "Väntar på att spelarna ska svara"
+    "instruction": "Väntar på att alla spelare ska svara",
+    "questions": {
+        "q_largest_ocean": {
+            "title": "Vilket är det största havet i världen?",
+            "answers": {
+                "a_atlantic": "Atlanten",
+                "a_arctic": "Norra ishavet",
+                "a_pacific": "Stilla havet",
+                "a_indian": "Indiska oceanen"
+            }
+        },
+        "q_browser_language": {
+            "title": "Vilket språk körs i webbläsaren?",
+            "answers": {
+                "a_python": "Python",
+                "a_javascript": "JavaScript",
+                "a_java": "Java",
+                "a_cpp": "C++"
+            }
+        },
+        "q_html": {
+            "title": "Vad står HTML för?",
+            "answers": {
+                "a_hypertext": "HyperText Markup Language",
+                "a_hightext": "HighText Machine Language",
+                "a_hypertransfer": "Hyper Transfer Main Language",
+                "a_hometool": "Home Tool Markup Language"
+            }
+        },
+        "q_first_man_on_moon": {
+            "title": "Vem var den första människan på månen?",
+            "answers": {
+                "a_micheal_collins": "Michael Collins",
+                "a_yuri_gagarin": "Yuri Gagarin",
+                "a_buzz_aldrin": "Buzz Aldrin",
+                "a_niel_armstrong": "Niel Armstrong"
+            }
+        },
+        "q_gold_symbol": {
+            "title": "Vad är den kemiska beteckningen för guld?",
+            "answers": {
+                "a_ag": "Ag",
+                "a_fe": "Fe",
+                "a_pb": "Pb",
+                "a_au": "Au"
+            }
+        },
+        "q_mona_lisa_painter": {
+            "title": "Vem målade Mona Lisa?",
+            "answers": {
+                "a_michelangelo": "Michelangelo",
+                "a_davinci": "Leonardo da Vinci",
+                "a_picasso": "Pablo Picasso",
+                "a_vangogh": "Vincent van Gogh"
+            }
+        },
+        "q_fastest_animal": {
+            "title": "Vilket är det snabbaste djuret på land?",
+            "answers": {
+                "a_lion": "Lion",
+                "a_horse": "Horse",
+                "a_antelope": "Antelope",
+                "a_cheetah": "Cheetah"
+            }
+        },
+        "q_capital_japan": {
+            "title": "Vilken är Japans huvudstad?",
+            "answers": {
+                "a_tokyo": "Tokyo",
+                "a_kyoto": "Kyoto",
+                "a_seoul": "Seoul",
+                "a_osaka": "Osaka"
+            }
+        }
+    }
 }
