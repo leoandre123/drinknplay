@@ -5,6 +5,9 @@
     </div>
     <div v-if="context.isHost" class="lobby-container">
       <LobbyInfo v-if="showRules" @close="showRules = false" />
+      <Popup title="Change settings" ref="settingsPopup">
+        <SettingsPanel :settings="context.state.settings" @settingsChanged="onSettingsChanged" />
+      </Popup>
       <div class="side-list player-list">
         <h1>
           {{ $t("common.player.players") }} ({{ context.state.players.length }}/{{
@@ -27,7 +30,7 @@
       <div class="side-list settings-list">
         <h1>
           {{ $t("settings.settings") }}
-          <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
+          <span class="gear-icon" @click="$refs.settingsPopup.show()"></span>
         </h1>
         <p>
           # {{ $t("settings.rounds") }}:
@@ -72,13 +75,15 @@ import { context } from "../context";
 import { socket } from "../socket";
 import { audioManager } from "@/AudioManager";
 import LobbyInfo from "@/components/lobbyInfo.vue";
+import Popup from "@/components/Popup.vue";
+import SettingsPanel from "@/components/SettingsPanel.vue";
 
 export default {
   name: "LobbyView",
   data: function () {
     return { context, audioManager, lobbyUri: "", showRules: false };
   },
-  components: { QrCode, NewRetroContainer, RetroButton, Avatar, LobbyInfo },
+  components: { QrCode, NewRetroContainer, RetroButton, Avatar, LobbyInfo, Popup, SettingsPanel },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
@@ -90,6 +95,9 @@ export default {
     startGame() {
       socket.emit("lobby:start");
       audioManager.stopAll();
+    },
+    onSettingsChanged() {
+      socket.emit("lobby:updateSettings", this.context.state.settings);
     },
   },
 };
