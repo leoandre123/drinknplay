@@ -28,7 +28,7 @@
 <script>
     import { socket } from '../../../socket';
     import { context } from '../../../context';
-    import MiniPlayerCard from "@/components/MiniPlayerCard.vue"; //Kan vara fel
+    import MiniPlayerCard from "@/components/MiniPlayerCard.vue";
 
     export default {
         name: "HostMazeGameView",

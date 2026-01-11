@@ -173,6 +173,9 @@ export class Lobby {
         this.startResultScreen();
         break;
       case "result":
+        this.startScoreboardScreen();
+        break;
+      case "scoreboard":
         this.startGameSelection();
         break;
     }
@@ -182,9 +185,9 @@ export class Lobby {
     this.phase = "slot";
     this.broadcastLobbyState();
 
-    setTimeout(() => this.startSpin(), 5000);
+    setTimeout(() => this.startSpin(), 3000);
 
-    setTimeout(() => this.advancePhase(), 15000);
+    setTimeout(() => this.advancePhase(), 10000);
   }
 
   startSpin() {
@@ -213,25 +216,50 @@ export class Lobby {
     this.broadcastLobbyState();
 
     this.currentGame.context = this.context;
+
+    //host joinar vid lobbyfasen, dvs innan gamefasen, o joinar inte vid minigamebyte
+    //Host aktiv i roulette,så host socketen behöver listeners från onHostJoined()
+    //inte bara i lobbyfasen
     for (let player of this.context.players) {
       this.currentGame?.onPlayerJoined(player);
       this.currentGame.registerListeners(player.socket);
     }
+
+    this.context.io
+      .in(this.context.lobbyId + "_HOST")
+      .fetchSockets()
+      .then((hostSockets) => {
+        for (const s of hostSockets) {
+          this.currentGame?.onHostJoined(s);
+        }
+      });
 
     this.currentGame.onFinished = (results) => this.finishGame(results);
     this.currentGame.start();
   }
 
   finishGame(results) {
-    for (let res of results ?? []) {
-      this.context.players.find((x) => x.id == res.id).score += res.score;
+    for (let res of results) {
+      const player = this.context.players.find((x) => x.id == res.id);
+
+      if (player) {
+        console.log(`Giving ${res.score} points to ${player.name}. Previous score: ${player.score}`);
+        player.score += res.score;
+        console.log(`--> New Score for ${player.name}: ${player.score}`);
+      } else {
+        console.warn(`Could not find player with ID: ${res.id} (Might have disconnected)`);
+      }
     }
 
     this.startResultScreen();
   }
 
+  startScoreboardScreen() {
+    this.phase = "scoreboard";
+    this.broadcastLobbyState();
+  }
+
   startResultScreen() {
-    console.log("Entering result phase");
     this.phase = "result";
     this.broadcastLobbyState();
   }

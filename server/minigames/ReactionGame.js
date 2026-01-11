@@ -5,14 +5,13 @@ export class ReactionGame extends Minigame {
         super();
         this.submissions = [];
         this.currentRound = 0;
-        this.maxRounds = 10; //ändra till 10
+        this.maxRounds = 3; //ändra
         this.figureCount = 0;
         this.winner = null;
         this.figurePositions = [];
-        this.winnername = null;
+        this.winnerName = null;
         this.scores = new Map();
         this.roundActive = false;
-
     }
 
     onPlayerJoined(player) {
@@ -29,6 +28,7 @@ export class ReactionGame extends Minigame {
         socket.on("reaction:submit", ({ amount, time }) => {
             this.onSubmit(socket.data.playerId, amount, time);
         });
+          socket.emit("player:yourId", socket.data.playerId);
 
     }
 
@@ -50,12 +50,12 @@ export class ReactionGame extends Minigame {
         const containerH = 55;
         const figureW = 7;
         const half = figureW / 2;
-        const pad = 1;
         const rand = (min, max) => Math.random() * (max - min) + min;
 
         return Array.from({ length: count }, () => ({
-            leftVh: rand(half + pad, containerW - half - pad),
-            topVh: rand(half + pad, containerH - half - pad),
+            leftVh: rand(half + 1, containerW - half - 1),
+            topVh: rand(half + 1, containerH - half - 1),
+
         }));
     }
 
@@ -64,13 +64,14 @@ export class ReactionGame extends Minigame {
         this.winner = null;
         this.winnerName = null;
         this.roundStartTime = Date.now();
-        this.figureCount = Math.floor(Math.random() * 14 + 1);
+        this.figureCount = Math.floor(Math.random() * 6 + 1);
         this.figurePositions = this.generatePositions(this.figureCount);
 
         this.broadcast("reaction:startRound", {
             figureCount: this.figureCount,
             positions: this.figurePositions,
         });
+
         this.broadcast("reaction:resetAmounts");
     }
 
@@ -95,7 +96,6 @@ export class ReactionGame extends Minigame {
         if (amount === this.figureCount) {
             this.winner = playerId;
             this.winnerName = this.getPlayerName(playerId);
-            this.amount = amount;
 
             const currentScore = this.scores.get(playerId) || 0;
 
@@ -107,6 +107,7 @@ export class ReactionGame extends Minigame {
                 scores: Object.fromEntries(this.scores),
             });
             this.finishRound();
+            console.log("ROUND FINISHED WITH WINNER:", this.winner);
             return;
         }
 
@@ -119,19 +120,19 @@ export class ReactionGame extends Minigame {
                 scores: Object.fromEntries(this.scores),
             });
         }
+
     }
     finishRound() {
-
+        console.log("ROUND FINISHED");
         this.currentRound++;
 
         if (this.currentRound < this.maxRounds) {
             this.submissions = [];
             setTimeout(() => this.startRound(), 1500);
+            console.log("STARTING NEW ROUND");
             return;
-        }
-        else {
+        } else {
             console.log("GAME FINISHED");
-
             const playersWithScores = (this.context.players || []).map((p) => ({
                 id: p.id,
                 name: p.name || p.playerName || p.nickname || "Player",

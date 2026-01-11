@@ -1,0 +1,10 @@
+{
+    "settings": "Settings",
+    "chooseSettings": "Choose your settings",
+    "minigameQ": "How many minigames should your game contain?",
+    "rounds": "Rounds",
+    "drunknessQ": "What is your desired drunkness?",
+    "drunknessLevel": "Drunkness level",
+    "maxPlayers": "Max players",
+    "create": "CREATE LOBBY"
+}

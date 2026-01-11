@@ -147,7 +147,6 @@ export class KahootGame extends Minigame {
   start() {
     this.startQuestion();
   }
-
   stop() { }
 
   onAnswerSubmitted(playerId, answerIndex, time) {

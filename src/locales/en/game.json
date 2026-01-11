@@ -1,6 +1,8 @@
 {
     "startGame": "Start Game",
     "joinGame": "Join game",
+    "hostQuestion": "If you want to host a game press ",
+    "here": "here",
     "drunknessLevel": [
         "Sober",
         "Tipsy",

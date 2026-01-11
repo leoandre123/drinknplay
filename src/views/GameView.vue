@@ -54,6 +54,13 @@
     </div>
   </div>
 
+  <div v-if="!audioManager.unlocked" class="popup">
+    <div class="enable-audio">
+      <p>Sound is not enabled</p>
+      <button @click="audioManager.unlock()">Grant access to play sounds</button>
+    </div>
+  </div>
+
   <div v-if="context.isConnected" class="game-container">
     <LobbyView v-if="context.state?.phase == 'lobby'" />
     <SlotView v-if="context.state?.phase == 'slot'" />
@@ -63,6 +70,7 @@
       <GameResultsView v-if="context.isHost" />
       <ResultPlayerView v-if="!context.isHost" />
     </template>
+    <ResultView v-if="context.state?.phase == 'scoreboard'" />
   </div>
 </template>
 
@@ -80,6 +88,7 @@ import { useDevice } from "../UseDevice.js";
 import ResultPlayerView from "./ResultPlayerView.vue";
 import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
+import { audioManager } from "@/AudioManager";
 
 export default {
   name: "GameView",
@@ -88,6 +97,7 @@ export default {
     return {
       socket,
       context,
+      audioManager,
       isAngry: false,
       debug: {
         showDebug: false,
@@ -279,5 +289,26 @@ button {
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+.popup {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000a0;
+  z-index: 100;
+  overflow: hidden;
+  place-content: center;
+  justify-items: center;
+}
+
+.enable-audio {
+  width: 10rem;
+  height: 10rem;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
 }
 </style>

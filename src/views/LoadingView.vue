@@ -42,20 +42,32 @@ export default {
   async created() {},
   methods: {
     toggleReady() {
+      navigator.vibrate(200);
       socket.emit("ready", !context.getCurrentPlayer().isReady);
     },
   },
   computed: {
+    currentGameInfo() {
+      return this.gameinfo[this.context.state.gameIndex] || {};
+    },
     title() {
-      return gameinfo[context.state.gameIndex].title;
+      const key = this.currentGameInfo.titleKey;
+      return key ? this.$t(key) : "Unknown Game";
     },
     tip() {
-      const allTips = gameinfo[context.state.gameIndex].tips;
-      return allTips[Math.floor(Math.random() * allTips.length)];
+      const allTipKeys = this.currentGameInfo.tipsKeys;
+
+      if (!allTipKeys || allTipKeys.length === 0) {
+        return "Lycka till!"; 
+      }
+
+      const randomKey = allTipKeys[Math.floor(Math.random() * allTipKeys.length)];
+      return this.$t(randomKey);
     },
     backgroundStyle() {
+      const uri = this.currentGameInfo.imageUri || "game_backgrounds/question.jpg";
       return {
-        backgroundImage: `url(/${this.gameinfo[this.context.state.gameIndex].imageUri})`,
+        backgroundImage: `url(/${uri})`,
       };
     },
   },

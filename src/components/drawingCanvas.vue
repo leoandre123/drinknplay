@@ -30,8 +30,8 @@ export default {
   },
   mounted() {
     this.c = this.$refs.myCanvas;
-    this.c.width = 320;
-    this.c.height = 180;
+    this.c.width = 640;
+    this.c.height = 360;
     this.ctx = this.$refs.myCanvas.getContext("2d");
     this.ctx.imageSmoothingEnabled = false;
     this.clearCanvas();
@@ -41,17 +41,17 @@ export default {
       this.ctx.fillStyle = "white";
       this.ctx.fillRect(0, 0, this.c.width, this.c.height);
 
-      this.ctx.font = "10px Arial";
-      for (let x = 0; x < 1600; x += 50) {
-        for (let y = 0; y < 900; y += 50) {
-          this.ctx.fillStyle = "red";
-          this.ctx.beginPath();
-          this.ctx.arc(x, y, 2, 0, 2 * Math.PI);
-          this.ctx.fill();
-          this.ctx.fillStyle = "black";
-          this.ctx.fillText(`${x},${y}`, x, y);
-        }
-      }
+      //this.ctx.font = "10px Arial";
+      //for (let x = 0; x < 1600; x += 50) {
+      //  for (let y = 0; y < 900; y += 50) {
+      //    this.ctx.fillStyle = "red";
+      //    this.ctx.beginPath();
+      //    this.ctx.arc(x, y, 2, 0, 2 * Math.PI);
+      //    this.ctx.fill();
+      //    this.ctx.fillStyle = "black";
+      //    this.ctx.fillText(`${x},${y}`, x, y);
+      //  }
+      //}
     },
     startPosition(evt) {
       console.log("PAINT");
