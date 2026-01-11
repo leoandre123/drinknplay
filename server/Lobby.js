@@ -87,6 +87,7 @@ export class Lobby {
     socket.data.lobbyId = this.context.lobbyId;
 
     socket.on("lobby:start", () => this.startGameSelection());
+    socket.on("lobby:updateSettings", (settings) => this.onSettingsChanged(settings));
     socket.on("lobby:advancePhase", () => this.advancePhase());
 
     socket.emit("lobby:joinHostResponse", this.context.lobbyId);
@@ -323,6 +324,12 @@ export class Lobby {
     this.broadcastLobbyState();
 
     this.tryAdvance();
+  }
+
+  onSettingsChanged(settings) {
+    this.logger.debug("Settings changed");
+    this.settings = settings;
+    this.broadcastLobbyState();
   }
 
   /*
