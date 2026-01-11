@@ -9,25 +9,57 @@
       <br />
       <div class="avatar-editor">
         <div class="buttons">
-          <button @click="avatarSettings.eyes = mod(avatarSettings.eyes - 1, 4)">&lt;</button>
-          <button @click="avatarSettings.mouth = mod(avatarSettings.mouth - 1, 2)">&lt;</button>
-          <button @click="avatarSettings.body = mod(avatarSettings.body - 1, 3)">&lt;</button>
+          <RetroButton
+            size="small"
+            color="yellow"
+            @click="avatarSettings.eyes = mod(avatarSettings.eyes - 1, 4)"
+            >&lt;</RetroButton
+          >
+          <RetroButton
+            size="small"
+            color="yellow"
+            @click="avatarSettings.mouth = mod(avatarSettings.mouth - 1, 2)"
+            >&lt;</RetroButton
+          >
+          <RetroButton
+            size="small"
+            color="yellow"
+            @click="avatarSettings.body = mod(avatarSettings.body - 1, 3)"
+            >&lt;</RetroButton
+          >
         </div>
         <div class="avatar-image">
           <Avatar :settings="avatarSettings" />
         </div>
 
         <div class="buttons">
-          <button @click="avatarSettings.eyes = mod(avatarSettings.eyes + 1, 4)">&gt;</button>
-          <button @click="avatarSettings.mouth = mod(avatarSettings.mouth + 1, 2)">&gt;</button>
-          <button @click="avatarSettings.body = mod(avatarSettings.body + 1, 3)">&gt;</button>
+          <RetroButton
+            size="small"
+            color="yellow"
+            @click="avatarSettings.eyes = mod(avatarSettings.eyes + 1, 4)"
+            >&gt;</RetroButton
+          >
+          <RetroButton
+            size="small"
+            color="yellow"
+            @click="avatarSettings.mouth = mod(avatarSettings.mouth + 1, 2)"
+            >&gt;</RetroButton
+          >
+          <RetroButton
+            size="small"
+            color="yellow"
+            @click="avatarSettings.body = mod(avatarSettings.body + 1, 3)"
+            >&gt;</RetroButton
+          >
         </div>
       </div>
       <div class="randomize-avatar">
-        <button @click="randomizeAvatar">Randomize</button>
+        <RetroButton size="small" @click="randomizeAvatar">Randomize</RetroButton>
       </div>
       <br />
-      <button :disabled="name.length == 0" @click="joinGame">Join game</button>
+      <RetroButton color="green" :disabled="name.length == 0" @click="joinGame"
+        >Join game</RetroButton
+      >
     </div>
   </div>
   <div v-if="lobbyAvailable === false">{{ unavailableReason }}</div>
@@ -38,10 +70,11 @@ import { GetRandomAvatar } from "@shared/AvatarHelper";
 import { mod } from "@shared/MathHelper";
 import Avatar from "../components/Avatar.vue";
 import { socket } from "../socket";
+import RetroButton from "@/components/RetroButton.vue";
 
 export default {
   name: "JoinView",
-  components: { Avatar },
+  components: { Avatar, RetroButton },
   data: function () {
     return {
       lobbyAvailable: undefined,
@@ -127,22 +160,6 @@ export default {
 .menu input:focus {
   border-color: #596a95;
 }
-.menu button {
-  background: #1ca2c6;
-  color: rgb(255, 255, 255);
-  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
-  border: none;
-  font: inherit;
-  padding: 1rem;
-}
-.menu button:hover {
-  background: #153f93;
-}
-
-.menu button:disabled {
-  background: #2c3b5f;
-  color: rgb(169, 169, 169);
-}
 
 .avatar-editor {
   display: flex;
@@ -158,12 +175,6 @@ export default {
   gap: 1rem;
 }
 .avatar-editor .buttons button {
-  background-color: rgba(255, 0, 0, 0.13);
-  cursor: pointer;
-  border-radius: 50%;
-  height: 3rem;
-  width: 3rem;
-  color: black;
 }
 
 .randomize-avatar {
