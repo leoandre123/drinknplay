@@ -5,7 +5,7 @@ export class ReactionGame extends Minigame {
         super();
         this.submissions = [];
         this.currentRound = 0;
-        this.maxRounds = 3; //ändra till 10
+        this.maxRounds = 10; //ändra till 10
         this.figureCount = 0;
         this.winner = null;
         this.figurePositions = [];
