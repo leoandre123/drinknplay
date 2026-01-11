@@ -1,14 +1,29 @@
 <template>
   <RetroContainer>
     <div class="info-button">
-      <RetroButton color="blue" size="small" @click="showRules = true"> ? </RetroButton>
+      <RetroButton color="blue" size="small" @click="$refs.infoPopup?.show()"> ? </RetroButton>
     </div>
-    <CreateLobbyInfo v-if="showRules" @close="showRules = false" />
+    <Popup title="Info" ref="infoPopup">
+      <div class="info-content">
+        <h3 class="howToWin">{{ $t("createlobbyinfo.h1") }}</h3>
+        <ul class="howToWinList">
+          <li>{{ $t("createlobbyinfo.p1") }}</li>
+          <li>{{ $t("createlobbyinfo.p2") }}</li>
+          <li>{{ $t("createlobbyinfo.p3") }}</li>
+        </ul>
+        <h3 class="drinkingInfo">{{ $t("createlobbyinfo.h2") }}</h3>
+        <ul class="drinkingInfoList">
+          <li>{{ $t("createlobbyinfo.p4") }}</li>
+          <li>{{ $t("createlobbyinfo.p5") }}</li>
+          <li>{{ $t("createlobbyinfo.p6") }}</li>
+        </ul>
+      </div>
+    </Popup>
     <div class="create-container">
       <h1>{{ $t("settings.settings") }}</h1>
       <SettingsPanel :settings="settings" class="settings" />
       <div style="display: flex; gap: 1rem">
-        <RetroButton color="red">{{ $t("settings.back") }}</RetroButton>
+        <RetroButton color="red" @click="goBack">{{ $t("settings.back") }}</RetroButton>
         <div>
           <RetroButton class="submitButton" @click="createGame" color="green">{{
             $t("settings.create")
@@ -24,8 +39,8 @@ import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
 import RetroContainer from "@/components/RetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
-import CreateLobbyInfo from "@/components/CreateLobbyInfo.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
+import Popup from "@/components/Popup.vue";
 
 export default {
   name: "CreateView",
@@ -38,8 +53,8 @@ export default {
   components: {
     RetroContainer,
     RetroButton,
-    CreateLobbyInfo,
     SettingsPanel,
+    Popup,
   },
   mounted() {
     socket.on("lobby:created", this.onGameCreated);
@@ -48,6 +63,11 @@ export default {
     socket.off("lobby:created");
   },
   methods: {
+    goBack() {
+      this.$router.push({
+        path: "/",
+      });
+    },
     createGame() {
       socket.emit("lobby:create", this.settings);
     },
@@ -85,5 +105,30 @@ export default {
   position: absolute;
   top: 1rem;
   left: 1rem;
+}
+
+.info-content {
+  text-align: start;
+  font-size: 1.5rem;
+}
+.howToWin {
+  text-align: center;
+  color: var(--Points_Info);
+  text-shadow: 2px 2px black;
+}
+
+.howToWinList {
+  color: var(--Points_Info);
+  text-shadow: 2px 2px black;
+}
+.drinkingInfo {
+  text-align: center;
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
+}
+
+.drinkingInfoList {
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
 }
 </style>
