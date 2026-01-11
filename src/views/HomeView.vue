@@ -12,7 +12,7 @@
         </RetroButton>
         <div>
           <h3>
-            If you want to host a game press <span class="create" @click="createGame">here</span>
+            {{  $t("game.hostQuestion") }} <span class="create" @click="createGame">{{$t('game.here')}}</span>
           </h3>
         </div>
       </div>

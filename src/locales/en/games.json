@@ -1,0 +1,50 @@
+{
+    "g1": {
+        "title": "Drink n' Drive",
+        "tips": {
+            "t1": "Try to win the race",
+            "t2": "Remember: Using the gas makes you faster than using the brakes"
+        }
+    },
+    "g2": {
+        "title": "Drink n' Guess",
+        "tips": {
+            "t1": "Try to answer the right question"
+        }
+    },
+    "g3": {
+        "title": "Drink n' Draw",
+        "tips": {
+            "t1": "Draw nice things",
+            "t2": "If you draw better than the other players, that is good!",
+            "t3": "The better you draw, the more points you get!"
+        }
+    },
+    "g4": {
+        "title": "Drink n' React",
+        "tips": {
+            "t1": "React as fast as you can when the game starts",
+            "t2": "The faster you react, the more points you get!"
+        }
+    },
+    "g5": {
+        "title": "Drink n' Find",
+        "tips": {
+            "t1": "Try to win"
+        }
+    },
+    "g6": {
+        "title": "Drink n' Maze",
+        "tips": {
+            "t1": "Switch to phone mode if playing on a smartphone",
+            "t2": "Tilt your phone to move the ball",
+            "t3": "The faster you reach the finish, the more points you get!"
+        }
+    },
+    "g7": {
+        "title": "Drink n' Bet",
+        "tips": {
+            "t1": "Fortune favors the gambler"
+        }
+    }
+}

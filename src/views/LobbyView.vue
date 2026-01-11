@@ -24,20 +24,20 @@
       </div>
       <div class="side-list settings-list">
         <h1>
-          Settings
+          {{$t('settings.settings')}}
           <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
         </h1>
         <p>
-          # Rounds: <span class="right">{{ context.state.settings.numberOfRounds }}</span>
+          # {{$t('settings.rounds')}}: <span class="right">{{ context.state.settings.numberOfRounds }}</span>
         </p>
         <p>
-          Drunknesss Level:
+          {{$t('settings.drunknessLevel')}}:
           <span class="right">
             {{ $t(`game.drunknessLevel[${context.state.settings.drunknessLevel}]`) }}
           </span>
         </p>
         <p>
-          Max players:
+          {{$t('settings.maxPlayers')}}:
           <span class="right">
             {{ context.state.settings.maxPlayers }}
           </span>

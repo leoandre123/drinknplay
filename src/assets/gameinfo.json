@@ -1,57 +1,37 @@
 [
     {
-        "title": "Drink n' Drive",
+        "titleKey": "games.g1.title",
         "imageUri": "game_backgrounds/racing.png",
-        "tips": [
-            "Try to win the race",
-            "Remember. Using the gas makes you faster than using the brakes"
-        ]
+        "tipsKeys": ["games.g1.tips.t1", "games.g1.tips.t2"]
     },
     {
-        "title": "Drink n' Guess",
+        "titleKey": "games.g2.title",
         "imageUri": "game_backgrounds/question.jpg",
-        "tips": [
-            "Try to to answer the right question"
-        ]
+        "tipsKeys": ["games.g2.tips.t1"]
     },
     {
-        "title": "Drink n' Draw",
+        "titleKey": "games.g3.title",
         "imageUri": "game_backgrounds/drawing_2.jpg",
-        "tips": [
-            "Draw nice things",
-            "If you draw better than the other players, that is good!",
-            "The better you draw, the more points you get!"
-        ]
+        "tipsKeys": ["games.g3.tips.t1", "games.g3.tips.t2", "games.g3.tips.t3"]
     },
     {
-        "title": "Drink n' React",
+        "titleKey": "games.g4.title",
         "imageUri": "game_backgrounds/reaction.webp",
-        "tips": [
-            "React as fast as you can when the game starts",
-            "The faster you react, the more points you get!"
-        ]
+        "tipsKeys": ["games.g4.tips.t1", "games.g4.tips.t2"]
     },
     {
-        "title": "Drink n' Find",
+        "titleKey": "games.g5.title",
         "imageUri": "game_backgrounds/closest.jpg",
-        "tips": [
-            "Try to win"
-        ]
+        "tipsKeys": ["games.g5.tips.t1"]
     },
     {
-        "title": "Drink n' Maze Game",
+        "titleKey": "games.g6.title",
         "imageUri": "game_backgrounds/MazeGame.jpg",
-        "tips": [
-            "Switch to phone mode if playing on a a smartphone",
-            "Tilt your phone to move the ball",
-            "The faster you reach the finish, the more points you get!"
-        ]
+        "tipsKeys": ["games.g6.tips.t1", "games.g6.tips.t2", "games.g6.tips.t3"]
     },
     {
-        "title": "Drink n' Bet",
+        "titleKey": "games.g7.title",
         "imageUri": "game_backgrounds/roulette.jpeg",
-        "tips": [
-            "Fortune favors the gambler"
-        ]
+        "tipsKeys": ["games.g7.tips.t1"]
     }
 ]
