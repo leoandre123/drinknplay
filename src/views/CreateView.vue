@@ -1,10 +1,9 @@
 <template>
   <RetroContainer>
     <div class="create-container">
-      <h1>{{$t('settings.settings')}</h1>
-      <br />
+      <h1>{{ $t("settings.settings") }}</h1>
       <div class="settingsbox">
-        <h2>{{$t('settings.minigameQ')}}</h2>
+        <h2>{{ $t("settings.minigameQ") }}</h2>
         <div class="button-group">
           <RetroButton
             v-for="x in numberOfRoundsInSettings"
@@ -16,7 +15,7 @@
             {{ x }}
           </RetroButton>
         </div>
-        <h2>{{$t('settings.maxPlayers')}</h2>
+        <h2>{{ $t("settings.maxPlayers") }}</h2>
         <div class="button-group">
           <RetroButton
             v-for="x in [2, 3, 4, 5, 6, 7, 8]"
@@ -28,7 +27,7 @@
             {{ x }}
           </RetroButton>
         </div>
-        <h2>{{$t('settings.drunknessQ')}</h2>
+        <h2>{{ $t("settings.drunknessQ") }}</h2>
         <div class="button-group">
           <RetroButton
             v-for="(_, i) in 4"
@@ -41,8 +40,11 @@
           </RetroButton>
         </div>
       </div>
-      <RetroButton class="submitButton" @click="createGame" color="green">$t("settings.create"</RetroButton>
+      <RetroButton class="submitButton" @click="createGame" color="green">{{
+        $t("settings.create")
+      }}</RetroButton>
     </div>
+  </RetroContainer>
 </template>
 
 <script>
