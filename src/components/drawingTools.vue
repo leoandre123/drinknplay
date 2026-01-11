@@ -4,6 +4,7 @@
       <button
         v-for="brushSize in this.brushSize"
         @click="options.brushSize = brushSize"
+        :disabled="options.mode === 'bucket'"
         :style="{
           backgroundColor: options.brushSize == brushSize ? '#ff8181' : 'gray',
         }"
@@ -33,7 +34,6 @@
         <img :src="`${mode}.png`" />
       </button>
       <button class="button" @click="saveRequest">Save</button>
-      <button class="button" @click="clearRequest">Clear</button>
     </div>
   </div>
 </template>
@@ -44,7 +44,7 @@ export default {
     direction: String,
     options: Object,
   },
-  emits: ["save-requested", "clearRequested"],
+  emits: ["save-requested"],
   data() {
     return {
       brushSize: [2, 10, 15, 25, 50],
@@ -75,10 +75,6 @@ export default {
   methods: {
     saveRequest() {
       this.$emit("save-requested");
-      console.log("Child component emitted save-requested event.");
-    },
-    clearRequest() {
-      this.$emit("clearRequested");
       console.log("Child component emitted save-requested event.");
     },
   },
