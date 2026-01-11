@@ -164,14 +164,13 @@ export class Lobby {
 
     this.currentGame.context = this.context;
 
-    //host joinar vid lobbyfasen, dvs innan gamefasen, o joinar inte vid minigamebyte
-    //Host aktiv i roulette,så host socketen behöver listeners från onHostJoined()
-    //inte bara i lobbyfasen
     for (let player of this.context.players) {
       this.currentGame?.onPlayerJoined(player);
       if (player.socket) this.currentGame.registerListeners(player.socket);
     }
-
+    //host joinar vid lobbyfasen, dvs innan gamefasen, o joinar inte vid minigamebyte
+    //Host aktiv i roulette,så host socketen behöver listeners från onHostJoined()
+    //inte bara i lobbyfasen
     this.context.io
       .in(this.context.lobbyId + "_HOST")
       .fetchSockets()

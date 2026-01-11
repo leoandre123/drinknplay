@@ -1,20 +1,27 @@
 <template>
   <NewRetroContainer>
     <div v-if="context.isHost" class="lobby-container">
+       <RetroButton class="info-button" color ="blue" @click="showRules = true">
+            {{$t("lobbyInfo.howToPlay")}}
+        </RetroButton> 
+        <LobbyInfo v-if="showRules" @close="showRules = false"/>  
       <div class="side-list player-list">
+
+    
+
         <h1>
           {{ $t("common.player.players") }} ({{ context.state.players.length }}/{{
             context.state.settings.maxPlayers
           }})
         </h1>
 
-        <div v-for="player in context.state.players" class="player">
-          <Avatar :settings="player.avatarSettings" />
-          <p>
-            {{ player.name }}
-          </p>
+          <div v-for="player in context.state.players" class="player">
+            <Avatar :settings="player.avatarSettings" />
+            <p>
+              {{ player.name }}
+            </p>
+          </div>
         </div>
-      </div>
       <div>
         <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
         <h3>{{ lobbyUri }}</h3>
@@ -68,13 +75,14 @@ import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { context } from "../context";
 import { socket } from "../socket";
 import { audioManager } from "@/AudioManager";
+import LobbyInfo from "@/components/lobbyInfo.vue";
 
 export default {
   name: "LobbyView",
   data: function () {
-    return { context, audioManager, lobbyUri: "" };
+    return { context, audioManager, lobbyUri: "" , showRules: false};
   },
-  components: { QrCode, NewRetroContainer, RetroButton, Avatar },
+  components: { QrCode, NewRetroContainer, RetroButton, Avatar, LobbyInfo },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
@@ -92,6 +100,14 @@ export default {
 </script>
 
 <style scoped>
+
+.info-button{
+  position: absolute;
+  top:-70px;
+  left:12px;
+  z-index: 50;
+  cursor: pointer;
+}  
 .lobby-container {
   width: 100%;
   color: white;
@@ -104,6 +120,7 @@ export default {
   font-size: 2rem;
   font-style: normal;
   grid-template-columns: 1fr 2fr 1fr;
+  position: relative;
 }
 
 .waiting {
