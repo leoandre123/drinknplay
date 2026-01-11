@@ -27,3 +27,16 @@ button {
 .flex-expander{
   flex-grow: 1;
 }
+
+.popup-container{
+  width: 100dvw;
+    height: 100dvh;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #00000020;
+    align-content: center;
+    justify-items: center;
+    z-index: 10000;
+}

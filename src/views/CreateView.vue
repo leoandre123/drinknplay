@@ -1,9 +1,9 @@
 <template>
   <RetroContainer>
-<button class="rules-button" @click="showRules = true">
-     {{ $t('createlobby.buttonInfo') }}
-    </button> 
-    <CreateLobbyInfo v-if="showRules" @close="showRules = false"/>
+    <div class="info-button">
+      <RetroButton color="blue" size="small" @click="showRules = true"> ? </RetroButton>
+    </div>
+    <CreateLobbyInfo v-if="showRules" @close="showRules = false" />
     <div class="create-container">
       <h1>{{ $t("settings.settings") }}</h1>
       <div class="settingsbox">
@@ -63,15 +63,15 @@ export default {
   data: function () {
     return {
       settings: DefaultSettings,
-      numberOfRoundsInSettings: [5,10,15,20,25,30],
+      numberOfRoundsInSettings: [5, 10, 15, 20, 25, 30],
       showRules: false,
     };
   },
-   components: {
-        RetroContainer,
-        RetroButton,
-        CreateLobbyInfo
-    },
+  components: {
+    RetroContainer,
+    RetroButton,
+    CreateLobbyInfo,
+  },
   mounted() {
     socket.on("lobby:created", this.onGameCreated);
   },
@@ -127,6 +127,11 @@ export default {
 
 .minigameButton {
   width: 3rem;
+}
+.info-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
 }
 
 .drunknessButton {

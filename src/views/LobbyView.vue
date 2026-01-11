@@ -1,27 +1,24 @@
 <template>
   <NewRetroContainer>
+    <div class="info-button">
+      <RetroButton color="blue" size="small" @click="showRules = true"> ? </RetroButton>
+    </div>
     <div v-if="context.isHost" class="lobby-container">
-       <RetroButton class="info-button" color ="blue" @click="showRules = true">
-            {{$t("lobbyInfo.howToPlay")}}
-        </RetroButton> 
-        <LobbyInfo v-if="showRules" @close="showRules = false"/>  
+      <LobbyInfo v-if="showRules" @close="showRules = false" />
       <div class="side-list player-list">
-
-    
-
         <h1>
           {{ $t("common.player.players") }} ({{ context.state.players.length }}/{{
             context.state.settings.maxPlayers
           }})
         </h1>
 
-          <div v-for="player in context.state.players" class="player">
-            <Avatar :settings="player.avatarSettings" />
-            <p>
-              {{ player.name }}
-            </p>
-          </div>
+        <div v-for="player in context.state.players" class="player">
+          <Avatar :settings="player.avatarSettings" />
+          <p>
+            {{ player.name }}
+          </p>
         </div>
+      </div>
       <div>
         <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
         <h3>{{ lobbyUri }}</h3>
@@ -31,20 +28,21 @@
       </div>
       <div class="side-list settings-list">
         <h1>
-          {{$t('settings.settings')}}
+          {{ $t("settings.settings") }}
           <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
         </h1>
         <p>
-          # {{$t('settings.rounds')}}: <span class="right">{{ context.state.settings.numberOfRounds }}</span>
+          # {{ $t("settings.rounds") }}:
+          <span class="right">{{ context.state.settings.numberOfRounds }}</span>
         </p>
         <p>
-          {{$t('settings.drunknessLevel')}}:
+          {{ $t("settings.drunknessLevel") }}:
           <span class="right">
             {{ $t(`game.drunknessLevel[${context.state.settings.drunknessLevel}]`) }}
           </span>
         </p>
         <p>
-          {{$t('settings.maxPlayers')}}:
+          {{ $t("settings.maxPlayers") }}:
           <span class="right">
             {{ context.state.settings.maxPlayers }}
           </span>
@@ -80,7 +78,7 @@ import LobbyInfo from "@/components/lobbyInfo.vue";
 export default {
   name: "LobbyView",
   data: function () {
-    return { context, audioManager, lobbyUri: "" , showRules: false};
+    return { context, audioManager, lobbyUri: "", showRules: false };
   },
   components: { QrCode, NewRetroContainer, RetroButton, Avatar, LobbyInfo },
   created: function () {
@@ -100,14 +98,11 @@ export default {
 </script>
 
 <style scoped>
-
-.info-button{
+.info-button {
   position: absolute;
-  top:-70px;
-  left:12px;
-  z-index: 50;
-  cursor: pointer;
-}  
+  top: 1rem;
+  left: 1rem;
+}
 .lobby-container {
   width: 100%;
   color: white;

@@ -1,5 +1,5 @@
 <template>
-  <div class="debug-container">
+  <div class="debug-container" v-if="!env.startsWith('prod')">
     <button @click="debug.showDebug = !debug.showDebug">
       {{ debug.showDebug ? "Hide debug" : "Show debug" }}
     </button>

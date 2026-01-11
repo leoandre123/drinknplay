@@ -54,6 +54,9 @@ export default {
 .green {
   background: #8cff8c;
 }
+.red {
+  background: #ff8c8c;
+}
 
 .small {
   font-size: 1rem;
