@@ -9,6 +9,8 @@
     "dev-host": "concurrently \"npm run dev:frontend -- --host\" \"npm run dev:backend\"",
     "build": "vite build",
     "preview": "vite preview",
+    "start:backend": "node server/index.js",
+    "preview:full": "concurrently \"npm run preview\" \"npm run start:backend\"",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {

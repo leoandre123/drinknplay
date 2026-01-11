@@ -10,7 +10,7 @@
       <div class="ready-container">
         <p v-if="context.isHost">
           {{ context.state.players.filter((x) => x.isReady).length }} of
-          {{ context.state.players.length / 2 }} required players ready
+          {{ Math.ceil(context.state.players.length / 2) }} required players ready
         </p>
         <button
           v-if="!context.isHost"
@@ -92,11 +92,12 @@ export default {
   background-color: rgba(42, 45, 48, 0.596);
   padding-inline: 2rem;
 
+  height: 5rem;
+  font-size: 3rem;
+  align-content: center;
+
   color: white;
-  font-family: "Audiowide", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: xx-large;
+
   text-transform: uppercase;
 }
 .info-box {
@@ -109,9 +110,7 @@ export default {
 
   background-color: rgba(42, 45, 48, 0.596);
   color: white;
-  font-family: "Audiowide", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+  font-size: 1.3rem;
 }
 
 .ready-container {

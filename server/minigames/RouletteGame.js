@@ -3,8 +3,6 @@ import { Minigame } from "../Minigame.js";
 export class RouletteGame extends Minigame {
     constructor() {
         super();
-        console.log("Roulette constructor running")
-        //lägg tll spin och resultat sen
         this.phase = "betting";
 
         this.betsByPlayer = {};
@@ -79,6 +77,9 @@ export class RouletteGame extends Minigame {
         this.phase = "betting"
         this.betsByPlayer = {};
         this.spinResult = null;
+        this.round = 1;
+        this.totalPerPlayer = {};
+        this.maxRounds = 3;
         this.broadcastRouletteState();
     }
     stop() {
@@ -175,8 +176,9 @@ export class RouletteGame extends Minigame {
             return;
 
         if (this.round >= this.maxRounds) {
-            this.phase = "distribute";
+
             this.broadcastRouletteState();
+            this.onFinished?.([]);
             return;
         }
         this.round += 1;

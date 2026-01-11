@@ -1,16 +1,16 @@
 <template>
     <div class="raiting-view-container">
         <div class="rating" v-if="!voted">
-            <header>Rate 1-10, select a number and press vote</header>
+            <header>{{ $t("draw.rate10") }}</header>
             <div class="rating-buttons">
                 <button class="rating-button" v-for="score in scores" @click="setRating(score)"
                     :class="{ 'selected': score === rating }">{{ score }}</button>
             </div>
-            <button class="save-button" @click="sendRating" :disabled="rating == null">VOTE</button>
+            <button class="save-button" @click="sendRating" :disabled="rating == null">{{ $t("draw.vote") }}</button>
         </div>
 
         <div v-else>
-            <h1 class="vote-confirmed">VOTE CONFIRMED! Rating: {{ rating }} </h1>
+            <h1 class="vote-confirmed">{{ $t("draw.voteConfirmed") }} {{ rating }} </h1>
         </div>
     </div>
 </template>

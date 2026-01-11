@@ -14,9 +14,14 @@
 
 :root {
     --Violet_Blue: RGB(59, 70, 164);
+    --Trans_Violet_Blue: RGB(59, 70, 164, 0.8);
     --French_Rose: RGB(250, 78, 147);
     --Metallic_Yellow: RGB(255, 216, 20);
     --Caribbean_Green: RGB(0, 191, 156);
+
+    --Drunkness_Info: RGB(59, 70, 164);
+    --Points_Info: RGB(0, 191, 156);
+    --Rules_Info: RGB(0, 191, 156);
 
     font-family: "Jersey 25", Helvetica, Arial, sans-serif;
     font-size: 17px;

@@ -1,0 +1,11 @@
+{   
+    "b1": "stäng",
+    "h1": "Antal spel",
+    "p1": "Bestäm hur länge spelet ska vara med hjälp av antalet spel",
+    "p2": "Varje spel varierar i längd men i genomsnitt varar de några minuter",
+    "p3": "Spelen väljs slumpmässigt av datorn",
+    "h2": "Berusningsnivå",
+    "p4": "Bestäm berusningsnivån genom att välja lämplig nivå",
+    "p5": "Högre nivåer ger spelare fler DRYCKESKREDITER att dela ut varje tur",
+    "p6": "Detta resulterar i att glasen fylls snabbare på högre nivåer"
+}

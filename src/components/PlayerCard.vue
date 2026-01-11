@@ -41,6 +41,7 @@ p {
   position: relative;
   display: flex;
   flex-direction: column;
+  max-height: 60vh;
   border: 3px, groove, var(--Caribbean_Green);
   background-color: var(--French_Rose);
   border-radius: 10px;
@@ -54,7 +55,7 @@ p {
 }
 
 .player-name {
-  font-size: 1.8rem;
+  font-size: 1.2rem;
   font-family: "Science Gothic", sans-serif;
   color: var(--Metallic_Yellow);
   text-shadow: 3px 3px black;
@@ -76,6 +77,8 @@ p {
 .drunkometer {
   aspect-ratio: 2/1;
   flex-grow: 1;
+  max-width: 80%;
+  align-content: end;
 }
 
 .drunkometer-title {
