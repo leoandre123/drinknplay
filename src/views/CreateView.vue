@@ -44,9 +44,14 @@
           </RetroButton>
         </div>
       </div>
-      <RetroButton class="submitButton" @click="createGame" color="green">{{
-        $t("settings.create")
-      }}</RetroButton>
+      <div style="display: flex; gap: 1rem">
+        <RetroButton color="red">{{ $t("settings.back") }}</RetroButton>
+        <div>
+          <RetroButton class="submitButton" @click="createGame" color="green">{{
+            $t("settings.create")
+          }}</RetroButton>
+        </div>
+      </div>
     </div>
   </RetroContainer>
 </template>
@@ -104,11 +109,14 @@ export default {
 
 <style scoped>
 .create-container {
-  justify-items: center;
-  align-content: center;
+  align-items: center;
+  justify-content: center;
   color: white;
   height: 100vh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .settingsbox {
   background: linear-gradient(90deg, #4b6bb744 30%, #1828485f 100%);

@@ -1,10 +1,10 @@
 {
-    "settings": "Inställningar",
-    "chooseSettings": "Välj dina inställningar",
-    "minigameQ": "Hur många minispel ska ditt spel innehålla?",
-    "rounds": "Rundor",
-    "drunknessQ": "Vad är din önskade fyllenivå?",
-    "drunknessLevel": "Fyllenivå",
-    "maxPlayers": "Max antal spelare",
-    "create": "SKAPA LOBBY"
+  "settings": "Inställningar",
+  "minigameQ": "Antal minispel",
+  "rounds": "Rundor",
+  "drunknessQ": "Önskad fyllenivå",
+  "drunknessLevel": "Fyllenivå",
+  "maxPlayers": "Max antal spelare",
+  "create": "SKAPA LOBBY",
+  "back": "Gå tillbaka"
 }

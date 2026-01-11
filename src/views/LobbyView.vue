@@ -19,11 +19,9 @@
           </p>
         </div>
       </div>
-      <div>
+      <div class="main">
         <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
-        <h3>{{ lobbyUri }}</h3>
         <QrCode :data="lobbyUri" background="FF89B4" color="000000" />
-        <br /><br />
         <RetroButton color="green" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
       </div>
       <div class="side-list settings-list">
@@ -133,6 +131,14 @@ p {
   padding: 1rem;
   border-radius: 0.25rem;
   box-shadow: 0px 0px 25px black;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .side-list {
