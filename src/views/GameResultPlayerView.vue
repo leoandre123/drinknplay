@@ -1,6 +1,6 @@
 <template>
   <div class="player-results">
-    <h1>You got the most points</h1>
+    <h1>RESULTS</h1>
     <h3>Drinking credits left: {{ creditsLeft }}</h3>
     <div class="player-selection-list">
       <div class="player-selection" v-for="(player, i) in context.state.players">

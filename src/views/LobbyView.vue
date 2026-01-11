@@ -1,19 +1,18 @@
 <template>
   <NewRetroContainer>
     <div v-if="context.isHost" class="lobby-container">
-      <div class="side-list">
+      <div class="side-list player-list">
         <h1>
           {{ $t("common.player.players") }} ({{ context.state.players.length }}/{{
             context.state.settings.maxPlayers
           }})
         </h1>
-        <div>
-          <div v-for="player in context.state.players" class="player">
-            <Avatar :settings="player.avatarSettings" />
-            <p>
-              {{ player.name }}
-            </p>
-          </div>
+
+        <div v-for="player in context.state.players" class="player">
+          <Avatar :settings="player.avatarSettings" />
+          <p>
+            {{ player.name }}
+          </p>
         </div>
       </div>
       <div>
@@ -21,9 +20,9 @@
         <h3>{{ lobbyUri }}</h3>
         <QrCode :data="lobbyUri" background="FF89B4" color="000000" />
         <br /><br />
-        <RetroButton color="pink" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
+        <RetroButton color="green" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
       </div>
-      <div class="side-list">
+      <div class="side-list settings-list">
         <h1>
           Settings
           <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
@@ -106,18 +105,7 @@ export default {
   font-style: normal;
   grid-template-columns: 1fr 2fr 1fr;
 }
-.lobby-container button {
-  border: none;
-  background-color: rgb(47, 183, 183);
-  font-size: 2rem;
-  color: white;
-  padding: 1rem;
-  cursor: pointer;
-  border-radius: 0.25rem;
-}
-.lobby-container button:hover {
-  background-color: rgb(25, 101, 101);
-}
+
 .waiting {
   color: white;
   font-size: 3rem;
@@ -142,6 +130,8 @@ p {
   background-color: rgba(50, 50, 50, 0.5);
   border-radius: 0.25rem;
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .side-list h1 {
@@ -165,10 +155,17 @@ p {
   float: right;
 }
 
+.player-list {
+  gap: 1rem;
+}
+.settings-list {
+  gap: 1rem;
+}
+
 .player {
   display: flex;
   align-items: center;
-  height: 4rem;
+  height: 2rem;
 }
 
 .player-avatar {

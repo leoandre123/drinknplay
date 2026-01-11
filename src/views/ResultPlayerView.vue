@@ -1,10 +1,10 @@
 <template>
   <div class="results">
     <div class="flex-expander"></div>
-    <div v-if="glassesToDrink != 0">
+    <div v-if="context.getCurrentPlayer().glassesToDrink">
       <h1>
         Ditt glas har blivit fyllt och du måste nu dricka
-        <span class="highlight">{{ glassesToDrink }}</span> glas
+        <span class="highlight">{{ context.getCurrentPlayer().glassesToDrink }}</span> glas
       </h1>
       <h3>Tryck sedan på knappen för att bekräfta att du druckit upp!</h3>
     </div>
@@ -12,9 +12,13 @@
       <h3>Väntar på värd...</h3>
     </div>
     <div class="flex-expander"></div>
-    <RetroButton v-if="glassesToDrink" color="green" @click="confirm" :disabled="drinkConfirmed">{{
-      drinkConfirmed ? "Väntar.." : "Bekräfta"
-    }}</RetroButton>
+    <RetroButton
+      v-if="context.getCurrentPlayer().glassesToDrink"
+      color="green"
+      @click="confirm"
+      :disabled="drinkConfirmed"
+      >{{ drinkConfirmed ? "Väntar.." : "Bekräfta" }}</RetroButton
+    >
   </div>
 </template>
 
@@ -30,7 +34,6 @@ export default {
   data: function () {
     return {
       context,
-      glassesToDrink: 0,
       drinkConfirmed: false,
     };
   },

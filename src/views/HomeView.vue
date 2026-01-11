@@ -5,13 +5,11 @@
       <RetroText>DRINK N' PLAY</RetroText>
       <div class="menu">
         <h2>{{ $t("lobby.lobbyCode") }}</h2>
-        <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" />
+        <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" maxlength="3" />
         <p v-if="errorMsg" class="error-msg">{{ $t(`lobby.lobbyUnavailable.${errorMsg}`) }}</p>
-        <br />
-        <br />
-        <button @click="tryJoinGame" :disabled="lobbyCode.length == 0">
+        <RetroButton color="green" @click="tryJoinGame" :disabled="lobbyCode.length != 3">
           {{ $t("game.joinGame") }}
-        </button>
+        </RetroButton>
         <div>
           <h3>
             If you want to host a game press <span class="create" @click="createGame">here</span>
@@ -27,9 +25,10 @@ import RetroContainer from "../components/RetroContainer.vue";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
 import RetroText from "../components/RetroText.vue";
 import { socket } from "../socket";
+import RetroButton from "@/components/RetroButton.vue";
 export default {
   name: "HomeView",
-  components: { RetroContainer, RetroText, NewRetroContainer },
+  components: { RetroContainer, RetroText, NewRetroContainer, RetroButton },
   data: function () {
     return {
       isConnected: false,
@@ -89,6 +88,7 @@ export default {
   font-weight: bold;
   min-width: 15rem;
   max-width: 25rem;
+  gap: 1.5rem;
 }
 
 .error-msg {
@@ -112,22 +112,6 @@ export default {
 }
 .menu input:focus {
   border-color: #596a95;
-}
-.menu button {
-  background: #1ca2c6;
-  color: rgb(255, 255, 255);
-  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
-  border: none;
-  font: inherit;
-  padding: 1rem;
-}
-.menu button:hover {
-  background: #153f93;
-}
-
-.menu button:disabled {
-  background: #2c3b5f;
-  color: rgb(169, 169, 169);
 }
 
 .create {

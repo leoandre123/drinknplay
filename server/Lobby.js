@@ -1,9 +1,16 @@
 import { Player } from "./models/Player.js";
 import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { DefaultSettings } from "../shared/GameSettings.js";
-import { GenerateID, sleep } from "./Utils.js";
+import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils.js";
 import { ALL_GAMES } from "./GamesRegistry.js";
-import { Logger } from "./logger.js";
+import { Logger } from "./Logger.js";
+import {
+  CREDITS_PER_GLASS,
+  CREDITS_PER_ROUND,
+  DISCONNECT_TIMEOUT,
+  PLAYER_ID_LENGTH,
+  TOTAL_SCORE_PER_GAME,
+} from "./Constants.js";
 
 export class Lobby {
   constructor(io, lobbyId, settings = DefaultSettings) {
@@ -14,18 +21,18 @@ export class Lobby {
 
     this.givenCredits = new Map();
     this.gameScores = new Map();
-    this.drinksToDrink = new Map();
 
+    this.isAdvancing = false;
     this.logger = new Logger(`LOBBY: ${lobbyId}`);
   }
 
   onNewPlayerConnection(socket, playerId, name, avatarSettings) {
-    console.log(`Join: ${socket.id}, playerId: ${playerId}, name: ${name}`);
+    this.logger.info(`New connection: ${socket.id}, playerId: ${playerId}, name: ${name}`);
     let player = this.getPlayer(playerId);
     const isNewPlayer = player == undefined;
 
     if (isNewPlayer) {
-      playerId = GenerateID(5);
+      playerId = GenerateID(PLAYER_ID_LENGTH);
       player = new Player(name, playerId, socket, avatarSettings);
     } else {
       player.socket = socket;
@@ -36,12 +43,12 @@ export class Lobby {
 
   onPlayerJoined(player, isNewPlayer) {
     if (!isNewPlayer) {
-      console.log(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
+      this.logger.info(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
       player.connected = true;
       player.disconnectedAt = null;
       clearTimeout(player.disconnectTimer);
     } else {
-      console.log(`${player.name} joined lobby '${this.context.lobbyId}'`);
+      this.logger.info(`${player.name} joined lobby '${this.context.lobbyId}'`);
       this.context.players.push(player);
     }
 
@@ -75,7 +82,7 @@ export class Lobby {
     socket.join(this.context.lobbyId + "_HOST");
     socket.data.lobbyId = this.context.lobbyId;
 
-    socket.on("lobby:start", () => this.start());
+    socket.on("lobby:start", () => this.startGameSelection());
     socket.on("lobby:advancePhase", () => this.advancePhase());
 
     socket.emit("lobby:joinHostResponse", this.context.lobbyId);
@@ -86,6 +93,7 @@ export class Lobby {
     }
   }
 
+  //Anropas när en spelare har tappats kontakten med
   onPlayerDisconnected(playerId) {
     const player = this.getPlayer(playerId);
     if (!player) return;
@@ -96,16 +104,17 @@ export class Lobby {
 
     player.disconnectTimer = setTimeout(() => {
       this.onPlayerLeft(playerId);
-    }, 5000);
+    }, DISCONNECT_TIMEOUT);
   }
 
+  //Anropas efter att en spelare har varit bortkopplad i x antal sekunder
   onPlayerLeft(playerId) {
     const playerIndex = this.context.players.findIndex((x) => x.id == playerId);
     if (playerIndex == -1) return;
     const playersToRemove = this.context.players.splice(playerIndex, 1);
 
     if (playersToRemove.length != 0) {
-      console.log(`${playersToRemove[0].name} left the lobby '${this.context.lobbyId}'`);
+      this.logger.info(`${playersToRemove[0].name} left the lobby '${this.context.lobbyId}'`);
       this.broadcastLobbyState();
       if (this.phase == "game") {
         this.currentGame?.onPlayerDisconnected(playersToRemove[0]);
@@ -113,59 +122,34 @@ export class Lobby {
           this.currentGame?.unregisterListeners(playersToRemove[0].socket);
       }
     }
+
+    this.tryAdvance(0);
   }
 
-  start() {
-    this.startRound();
-  }
-
-  startRound() {
-    this.startGameSelection();
-  }
-
-  advancePhase() {
-    switch (this.phase) {
-      case "slot":
-        this.startLoadingScreen();
-        break;
-      case "loading":
-        this.startMinigame();
-        break;
-      case "game":
-        this.currentGame?.stop();
-        this.startResultScreen();
-        break;
-      case "result":
-        this.startScoreboardScreen();
-        break;
-      case "scoreboard":
-        this.startGameSelection();
-        break;
-    }
-  }
-
-  startGameSelection() {
+  /*
+   * FASER
+   */
+  startGameSelection(gameIndex = -1) {
     this.phase = "slot";
     this.broadcastLobbyState();
 
-    setTimeout(() => this.startSpin(), 3000);
+    setTimeout(() => {
+      if (gameIndex == -1) gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
 
-    setTimeout(() => this.advancePhase(), 10000);
-  }
+      this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
+      this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
 
-  startSpin() {
-    const gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
+      this.logger.debug(`Selecting game: ${gameIndex}`);
+      this.gameIndex = gameIndex;
+      const game = ALL_GAMES[gameIndex];
+      if (game) {
+        this.currentGame = new game();
+      } else {
+        this.logger.error(`No game with index ${gameIndex}`);
+      }
+    }, 3000);
 
-    this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
-    this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
-
-    this.selectGame(gameIndex);
-  }
-
-  selectGame(gameIndex) {
-    this.logger.debug(`Selecting game: ${gameIndex}`);
-    this.gameIndex = gameIndex;
-    this.currentGame = new ALL_GAMES[gameIndex]();
+    this.tryAdvance(10000);
   }
 
   startLoadingScreen() {
@@ -185,7 +169,7 @@ export class Lobby {
     //inte bara i lobbyfasen
     for (let player of this.context.players) {
       this.currentGame?.onPlayerJoined(player);
-      this.currentGame.registerListeners(player.socket);
+      if (player.socket) this.currentGame.registerListeners(player.socket);
     }
 
     this.context.io
@@ -204,35 +188,53 @@ export class Lobby {
   finishGame(results) {
     this.logger.info("Game Finished!");
     this.logger.debug(results);
+
+    for (let player of this.context.players) {
+      if (player.socket) this.currentGame.unregisterListeners(player.socket);
+    }
+
     this.context.players.forEach((p) => {
       p.isReady = false;
       p.gameScore = 0;
     });
     this.givenCredits.clear();
-    this.drinksToDrink.clear();
     this.gameScores.clear();
 
-    if (results?.type == "credits") {
-      for (let res of results.data) {
-        const player = this.getPlayer(res.playerId);
-        player.credits = res.credits;
-      }
-    } else if (results?.type == "scores") {
-      const creditsPerGame = 10;
+    let credits = [];
+    let scores = [];
 
-      for (let res of results.data) {
-        this.gameScores.set(res.playerId, res.score);
-        const player = this.getPlayer(res.playerId);
-        player.gameScore = res.score;
-      }
-      const credits = this.distributeCredits(results.data, creditsPerGame);
-      console.log(credits);
-      for (let res of credits) {
-        const player = this.getPlayer(res.playerId);
+    if (results?.type == "credits") {
+      credits = results.data ?? [];
+    } else if (results?.type == "scores") {
+      const creditsPerGame = CREDITS_PER_ROUND[this.settings.drunknessLevel];
+      credits = distributeCredits(results.data, creditsPerGame);
+      scores = results.data ?? [];
+    }
+
+    for (let res of credits) {
+      const player = this.getPlayer(res.playerId);
+      if (res.credits < 0) {
+        this.givenCredits.set(res.playerId, Math.abs(res.credits));
+      } else {
         player.credits = res.credits;
       }
     }
+
+    scores = distributeScores(scores, TOTAL_SCORE_PER_GAME);
+
+    for (let res of scores) {
+      this.gameScores.set(res.playerId, res.score);
+      const player = this.getPlayer(res.playerId);
+      player.gameScore = res.score;
+    }
+
+    this.logger.debug(this.context.players);
     this.startResultScreen();
+  }
+
+  startResultScreen() {
+    this.phase = "result";
+    this.broadcastLobbyState();
   }
 
   async startScoreboardScreen() {
@@ -242,8 +244,9 @@ export class Lobby {
     //1. Uppdatera scores
     this.logger.debug("UPDATING SCORES");
     await sleep(1000);
-    for (const [playerId, score] of this.gameScores) {
-      this.getPlayer(playerId).score += score;
+    for (const player of this.context.players) {
+      player.score += player.gameScore;
+      player.gameScore = 0;
     }
     this.broadcastLobbyState();
     this.context.io.to(this.context.lobbyId + "_HOST").emit("scoreboard:update");
@@ -258,25 +261,27 @@ export class Lobby {
           .emit("scoreboard:creditsReceived", playerId, credits);
 
         const player = this.getPlayer(playerId);
-        const currentGlassCount = Math.floor(player.glassLevel);
-        player.glassLevel += credits * 0.2;
-        const glassesToDrink = Math.floor(player.glassLevel) - currentGlassCount;
+        if (!player) continue;
 
-        this.drinksToDrink.set(playerId, glassesToDrink);
+        this.logger.debug(`${player.name} received ${credits} credits`);
+        const currentGlassCount = Math.floor(player.glassLevel);
+        player.glassLevel += credits / CREDITS_PER_GLASS;
+        const glassesToDrink = Math.floor(player.glassLevel) - currentGlassCount;
+        player.glassesToDrink = glassesToDrink;
 
         this.broadcastLobbyState();
         await sleep(2000);
         this.context.io.to(this.context.lobbyId + "_HOST").emit("scoreboard:update");
-        this.getPlayer(playerId).socket.emit("scoreboard:glassesToDrink", glassesToDrink);
         await sleep(5000);
       }
     }
+
+    this.tryAdvance(5000);
   }
 
-  startResultScreen() {
-    this.phase = "result";
-    this.broadcastLobbyState();
-  }
+  /*
+   * CALLBACKS
+   */
 
   onCreditsReceived(id, credits) {
     const player = this.getPlayer(id);
@@ -288,40 +293,81 @@ export class Lobby {
       this.givenCredits.set(c.playerId, current + c.credits);
     }
 
-    if (this.context.players.every((p) => p.isReady || !p.credits)) {
-      setTimeout(() => {
-        this.advancePhase();
-      }, 2000);
-    }
+    this.tryAdvance(2000);
   }
 
   onDrinkConfirmed(playerId) {
     const player = this.getPlayer(playerId);
-    const drinks = this.drinksToDrink.get(playerId);
-    if (drinks) {
-      player.drunkness += drinks;
-      this.drinksToDrink.delete(playerId);
+    if (player.glassesToDrink) {
+      player.drunkness += player.glassesToDrink;
+      player.glassesToDrink = 0;
     }
     this.broadcastLobbyState();
     this.context.io.to(this.context.lobbyId + "_HOST").emit("scoreboard:update");
 
-    if (this.drinksToDrink.size == 0) {
-      setTimeout(() => {
-        this.advancePhase();
-      }, 5000);
-    }
+    this.tryAdvance(5000);
   }
 
   onPlayerReady(id, isReady) {
     if (this.phase != "loading") return;
     const player = this.context.players.find((x) => x.id == id);
     player.isReady = isReady;
+    this.broadcastLobbyState();
 
-    if (this.context.players.filter((p) => p.isReady).length >= this.context.players.length / 2) {
-      this.advancePhase();
-    } else {
-      this.broadcastLobbyState();
+    this.tryAdvance();
+  }
+
+  /*
+   * HELPERS
+   */
+
+  //Går vidare till nästa fas
+  advancePhase() {
+    switch (this.phase) {
+      case "slot":
+        this.startLoadingScreen();
+        break;
+      case "loading":
+        this.startMinigame();
+        break;
+      case "game":
+        this.currentGame?.stop();
+        this.finishGame({ type: "", data: [] });
+        this.startResultScreen();
+        break;
+      case "result":
+        this.startScoreboardScreen();
+        break;
+      case "scoreboard":
+        this.startGameSelection();
+        break;
     }
+  }
+
+  //Kollar ifall något hindrar och går annars till nästa fas
+  tryAdvance(delay = 0) {
+    if (this.isAdvancing) return;
+    if (this.context.players.length == 0) return;
+
+    this.logger.debug(`Trying to advance from ${this.phase}`);
+
+    if (this.phase == "loading") {
+      if (this.context.players.filter((p) => p.isReady).length < this.context.players.length / 2)
+        return;
+    } else if (this.phase == "result") {
+      if (this.context.players.some((p) => !p.isReady && p.credits > 0)) return;
+    } else if (this.phase == "scoreboard") {
+      if (this.context.players.some((p) => p.glassesToDrink)) return;
+    }
+
+    this.logger.debug(`Success! Advancing in ${delay} ms...`);
+
+    this.isAdvancing = true;
+
+    setTimeout(() => {
+      this.isAdvancing = false;
+      this.advancePhase();
+    }, delay);
   }
 
   broadcastLobbyState() {
@@ -334,36 +380,6 @@ export class Lobby {
     };
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("lobby:updateState", state);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("lobby:updateState", state);
-  }
-
-  distributeCredits(players, totalCredits) {
-    const totalPoints = players.reduce((s, p) => s + p.score, 0);
-
-    // Step 1: ideal allocation
-    const allocations = players.map((p) => {
-      const exact = (totalCredits * p.score) / totalPoints;
-      return {
-        ...p,
-        exact,
-        base: Math.floor(exact),
-        remainder: exact - Math.floor(exact),
-      };
-    });
-
-    // Step 2: distribute remaining credits
-    let remaining = totalCredits - allocations.reduce((s, p) => s + p.base, 0);
-
-    allocations.sort((a, b) => b.remainder - a.remainder);
-
-    for (let i = 0; i < remaining; i++) {
-      allocations[i].base += 1;
-    }
-
-    // Step 3: return result
-    return allocations.map((p) => ({
-      playerId: p.playerId,
-      credits: p.base,
-    }));
   }
 
   getPlayer(playerId) {

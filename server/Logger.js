@@ -3,22 +3,30 @@ export class Logger {
     this.name = name;
   }
 
-  fmt(level, msg) {
+  logFormatted(level, msg) {
     const time = new Date().toLocaleTimeString();
-    return `[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`;
+
+    if (typeof msg === "object" && msg !== null) {
+      console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]:`);
+      console.log(msg);
+    } else {
+      console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`);
+    }
+
+    //return `[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`;
   }
 
   debug(msg) {
-    if (shouldLog("debug")) console.debug(this.fmt("debug", msg));
+    if (shouldLog("debug")) this.logFormatted("debug", msg);
   }
-  info(msg, meta) {
-    if (shouldLog("info")) console.info(this.fmt("info", msg, meta));
+  info(msg) {
+    if (shouldLog("info")) this.logFormatted("info", msg);
   }
-  warn(msg, meta) {
-    if (shouldLog("warn")) console.warn(this.fmt("warn", msg, meta));
+  warn(msg) {
+    if (shouldLog("warn")) this.logFormatted("warn", msg);
   }
-  error(msg, meta) {
-    if (shouldLog("error")) console.error(this.fmt("error", msg, meta));
+  error(msg) {
+    if (shouldLog("error")) this.logFormatted("error", msg);
   }
 }
 const LEVELS = { debug: 10, info: 20, warn: 30, error: 40 };

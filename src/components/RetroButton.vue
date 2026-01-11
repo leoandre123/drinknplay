@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <button class="pixel-btn" :class="[color, size]" :disabled="disabled" @click="$emit('click')">
-      <slot></slot>
-    </button>
-  </div>
+  <button class="pixel-btn" :class="[color, size]" :disabled="disabled" @click="$emit('click')">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
@@ -75,10 +73,20 @@ export default {
 .pixel-btn::before {
   content: "";
   position: absolute;
-  top: 4px;
-  left: 6px;
+  top: 0.3rem;
+  left: 0.3rem;
   width: 60%;
-  height: 6px;
+  height: 0.3rem;
+  background: rgba(255, 255, 255, 0.8);
+  image-rendering: pixelated;
+}
+
+.pixel-btn.small::before {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: 60%;
+  height: 0.1rem;
   background: rgba(255, 255, 255, 0.8);
   image-rendering: pixelated;
 }

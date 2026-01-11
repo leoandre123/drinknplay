@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
-import { Logger } from "./logger.js";
+import { Logger } from "./Logger.js";
 
 const logger = new Logger("SERVER");
 

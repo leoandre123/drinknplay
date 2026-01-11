@@ -15,5 +15,6 @@ export class Player {
     this.score = 0;
 
     this.isReady = false;
+    this.gameScore = 0;
   }
 }
