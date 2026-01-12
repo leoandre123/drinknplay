@@ -33,7 +33,7 @@ import { context } from "../context";
 import { socket } from "../socket";
 
 export default {
-  name: "ResultView",
+  name: "ScoreboardView",
   components: { PlayerCard },
 
   data: function () {

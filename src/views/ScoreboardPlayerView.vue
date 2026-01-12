@@ -3,13 +3,14 @@
     <div class="flex-expander"></div>
     <div v-if="context.getCurrentPlayer().glassesToDrink">
       <h1>
-        {{$t('common.drinkText')}}
-        <span class="highlight">{{ context.getCurrentPlayer().glassesToDrink }}</span> {{ $t('common.glass') }}
+        {{ $t("common.drinkText") }}
+        <span class="highlight">{{ context.getCurrentPlayer().glassesToDrink }}</span>
+        {{ $t("common.glass") }}
       </h1>
-      <h3>{{$t('common.drinkConfirmation')}}</h3>
+      <h3>{{ $t("common.drinkConfirmation") }}</h3>
     </div>
     <div v-else>
-      <h3>{{$t('common.waitingForHost')}}</h3>
+      <h3>{{ $t("common.waitingForHost") }}</h3>
     </div>
     <div class="flex-expander"></div>
     <RetroButton
@@ -28,7 +29,7 @@ import { socket } from "../socket";
 import RetroButton from "@/components/RetroButton.vue";
 
 export default {
-  name: "ResultView",
+  name: "ScoreboardPlayerView",
   components: { RetroButton },
 
   data: function () {

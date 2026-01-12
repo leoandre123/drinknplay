@@ -25,6 +25,8 @@ export class Lobby {
 
     this.isAdvancing = false;
     this.logger = new Logger(`LOBBY: ${lobbyId}`);
+
+    this.currentRound = 0;
   }
 
   onNewPlayerConnection(socket, playerId, name, avatarSettings) {
@@ -33,6 +35,7 @@ export class Lobby {
     const isNewPlayer = player == undefined;
 
     if (isNewPlayer) {
+      if (this.context.players.length >= this.settings.maxPlayers) return;
       playerId = GenerateID(PLAYER_ID_LENGTH);
       player = new Player(name, playerId, socket, avatarSettings);
     } else {
@@ -173,6 +176,7 @@ export class Lobby {
   }
 
   startMinigame() {
+    this.currentRound++;
     this.phase = "game";
     this.broadcastLobbyState();
 
@@ -227,6 +231,9 @@ export class Lobby {
       );
       scores = results.data ?? [];
     }
+
+    this.logger.debug(credits);
+    this.logger.debug(scores);
 
     for (let res of credits) {
       const player = this.getPlayer(res.playerId);
@@ -298,6 +305,11 @@ export class Lobby {
     this.tryAdvance(5000);
   }
 
+  startFinalResultScreen() {
+    this.phase = "end";
+    this.broadcastLobbyState();
+  }
+
   /*
    * CALLBACKS
    */
@@ -364,7 +376,12 @@ export class Lobby {
         this.startScoreboardScreen();
         break;
       case "scoreboard":
-        this.startGameSelection();
+        if (this.currentRound >= this.settings.numberOfRounds) {
+          this.startFinalResultScreen();
+        } else {
+          this.startGameSelection();
+        }
+
         break;
     }
   }
@@ -398,7 +415,7 @@ export class Lobby {
   broadcastLobbyState() {
     const state = {
       lobbyId: this.context.lobbyId,
-      players: this.context.players.map(({ socket, ...rest }) => rest),
+      players: this.context.players.map((p) => p.toDto()),
       settings: this.settings,
       phase: this.phase,
       gameIndex: this.gameIndex,

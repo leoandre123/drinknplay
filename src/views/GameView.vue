@@ -29,9 +29,6 @@
     </div>
   </div>
 
-  <!--   <div class="mascot-container">
-    <Mascot />
-  </div> -->
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
@@ -71,9 +68,10 @@
       <GameResultPlayerView v-else />
     </template>
     <template v-if="context.state?.phase == 'scoreboard'">
-      <ResultView v-if="context.isHost" />
-      <ResultPlayerView v-else />
+      <ScoreboardView v-if="context.isHost" />
+      <ScoreboardPlayerView v-else />
     </template>
+    <FinalResultsView v-if="context.state?.phase == 'end'" />
   </div>
 </template>
 
@@ -81,7 +79,8 @@
 import LoadingView from "./LoadingView.vue";
 import MinigameView from "./MinigameView.vue";
 import SlotView from "./SlotView.vue";
-import ResultView from "./ResultView.vue";
+import ScoreboardView from "./ScoreboardView.vue";
+import ScoreboardPlayerView from "./ScoreboardPlayerView.vue";
 import LobbyView from "./LobbyView.vue";
 import { socket } from "../socket";
 import { context } from "../context";
@@ -92,7 +91,7 @@ import GameResultPlayerView from "./GameResultPlayerView.vue";
 import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
 import { audioManager } from "@/AudioManager";
-import ResultPlayerView from "./ResultPlayerView.vue";
+import FinalResultsView from "./FinalResultsView.vue";
 
 export default {
   name: "GameView",
@@ -124,13 +123,14 @@ export default {
     MinigameView,
     LoadingView,
     SlotView,
-    ResultView,
+    ScoreboardView,
     GameResultPlayerView,
     LobbyView,
     Flag,
     Mascot,
     GameResultsView,
-    ResultPlayerView,
+    ScoreboardPlayerView,
+    FinalResultsView,
   },
   mounted() {
     socket.on("lobby:joinResponse", (response) => {

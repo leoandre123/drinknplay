@@ -1,13 +1,11 @@
 import { KAHOOT_QUESTIONS_PER_GAME } from "../Constants.js";
 import { Minigame } from "../Minigame.js";
 import { shuffle } from "../Utils.js";
-import { readFileSync } from "fs";
+import  allQuestions  from "../data/kahoot-questions.json" with { type: 'json' };
 
 export class KahootGame extends Minigame {
   constructor(neverEnd = false) {
     super();
-
-    const allQuestions = JSON.parse(readFileSync("./Server/data/kahoot-questions.json"));
     this.questions = shuffle(allQuestions).splice(0, KAHOOT_QUESTIONS_PER_GAME);
 
     this.currentQuestionIndex = 0;

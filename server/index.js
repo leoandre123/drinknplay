@@ -35,6 +35,7 @@ io.on("connection", function (socket) {
 });
 
 const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, "0.0.0.0", () => {
-  logger.info("Socket.io server running on http://0.0.0.0:" + PORT);
+const HOST = process.env.HOST || (process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0");
+httpServer.listen(PORT, HOST, () => {
+  logger.info(`Socket.io server running on http://${HOST}:${PORT}`);
 });

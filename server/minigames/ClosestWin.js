@@ -1,12 +1,12 @@
 import { geoDistance } from "../../shared/MathHelper.js";
 import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "../Constants.js";
 import { Minigame } from "../Minigame.js";
-import { readFileSync } from "fs";
+import  allLocations  from "../data/closest-locations.json" with { type: 'json' };
 
 export class ClosestWin extends Minigame {
   constructor() {
     super();
-    this.locations = JSON.parse(readFileSync("./server/data/closest-locations.json"));
+    this.locations = allLocations;
 
     this.roundCount = CLOSEST_ROUNDS_PER_GAME;
     this.currentRound = 0;

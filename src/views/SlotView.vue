@@ -9,7 +9,7 @@
         @spin-finished="onSpinFinished"
       />
     </div>
-    <div v-if="!context.isHost">{{$t('common.slotMessage')}}</div>
+    <div v-if="!context.isHost" class="slot">{{$t('common.slotMessage')}}</div>
   </NewRetroContainer>
 </template>
 
@@ -79,5 +79,9 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
+}
+
+.slot {
+  font-size: 4vw;
 }
 </style>

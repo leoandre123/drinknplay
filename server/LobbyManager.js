@@ -9,9 +9,12 @@ export class LobbyManager {
     const resultLobby = new Lobby(io, "result");
     resultLobby.startResultScreen();
 
+    const endResult = new Lobby(io, "final");
+    endResult.startFinalResultScreen();
+
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [lobby, resultLobby];
+    this.lobbies = [lobby, resultLobby, endResult];
 
     this.#addDebugLobby("race", 0);
     this.#addDebugLobby("kahoot", 1);

@@ -18,7 +18,9 @@
         <RetroButton color="green" size="large" @click="add">+</RetroButton>
 
         <div class="done-button-container">
-          <RetroButton color="purple" size="large" @click="submit" :disabled="submitDisabled"> {{ $t("reaction.done") }} </RetroButton>
+          <RetroButton color="purple" size="large" @click="submit" :disabled="submitDisabled">
+            {{ $t("reaction.done") }}
+          </RetroButton>
         </div>
       </div>
     </div>
@@ -42,7 +44,6 @@ export default {
       showRoundResult: false,
       submitDisabled: true,
       myPlayerId: null,
-
     };
   },
 
@@ -65,7 +66,7 @@ export default {
     socket.on("player:yourId", (id) => {
       this.myPlayerId = id;
       console.log("My playerId:", id);
-    })
+    });
   },
 
   computed: {
@@ -123,7 +124,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .reaction-game-player-container {
   display: grid;
   min-height: 100dvh;
@@ -131,17 +132,18 @@ export default {
   height: 100dvh;
   justify-items: center;
   align-content: center;
-  background-image: radial-gradient(circle farthest-corner at 10% 20%,
-      rgb(102, 0, 32) 0%,
-      rgb(116, 18, 92) 49.5%,
-      rgb(164, 34, 144) 90%);
+  background-image: radial-gradient(
+    circle farthest-corner at 10% 20%,
+    rgb(102, 0, 32) 0%,
+    rgb(116, 18, 92) 49.5%,
+    rgb(164, 34, 144) 90%
+  );
   color: white;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 16px;
   box-sizing: border-box;
   padding-bottom: 100px;
-
 }
 
 .amount-display {
@@ -170,5 +172,4 @@ export default {
   transform: translateX(-50%);
   width: min(92vw, 320px);
 }
-
 </style>

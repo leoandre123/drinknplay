@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import CreateView from "../views/CreateView.vue";
-import ResultView from "../views/ResultView.vue";
-import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
-import AdminView from "../views/AdminView.vue";
-import RouletteView from "../views/minigames/roulette/RouletteView.vue";
-import RoulettePlayerView from "@/views/minigames/roulette/RoulettePlayerView.vue";
+import HomeView from "@/views/HomeView.vue";
+import CreateView from "@/views/CreateView.vue";
+import AdminView from "@/views/AdminView.vue";
+import JoinView from "@/views/JoinView.vue";
+import LobbyView from "@/views/LobbyView.vue";
+import GameView from "@/views/GameView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,19 +19,9 @@ const router = createRouter({
       redirect: "/",
     },
     {
-      path: "/canvas",
-      name: "Canvas",
-      component: PlayerDrawingView,
-    },
-    {
       path: "/create",
       name: "Create",
       component: CreateView,
-    },
-    {
-      path: "/result",
-      name: "Result",
-      component: ResultView,
     },
     {
       path: "/admin",
@@ -40,35 +29,23 @@ const router = createRouter({
       component: AdminView,
     },
     {
-      path: "/roulette",
-      name: "Roulette",
-      component: RouletteView,
-    },
-
-    {
-      path: "/roulette/player",
-      name: "RoulettePlayer",
-      component: RoulettePlayerView,
-    },
-    {
-      path: "/test",
-      name: "Test",
-      component: () => import("../views/TestView.vue"),
-    },
-    {
       path: "/join/:id",
       name: "JoinView",
-      component: () => import("../views/JoinView.vue"),
+      component: JoinView,
     },
     {
       path: "/lobby/:id",
       name: "LobbyView",
-      component: () => import("../views/LobbyView.vue"),
+      component: LobbyView,
     },
     {
       path: "/game",
       name: "GameView",
-      component: () => import("../views/GameView.vue"),
+      component: GameView,
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      redirect: "/",
     },
   ],
 });

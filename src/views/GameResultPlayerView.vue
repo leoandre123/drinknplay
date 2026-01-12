@@ -1,7 +1,7 @@
 <template>
   <div class="player-results">
-    <h1>{{$t('common.results')}}</h1>
-    <h3>{{$t('common.drinkingCreditsLeft')}}: {{ creditsLeft }}</h3>
+    <h1>{{ $t("common.results") }}</h1>
+    <h3>{{ $t("common.drinkingCreditsLeft") }}: {{ creditsLeft }}</h3>
     <div class="player-selection-list">
       <div class="player-selection" v-for="(player, i) in context.state.players">
         <p>{{ player.name }}</p>
@@ -15,7 +15,13 @@
     </div>
     <div class="flex-expander"></div>
     <RetroButton color="green" :disabled="isConfirmed || creditsLeft != 0" @click="confirmPoints">
-      {{ isConfirmed ? "Waiting..." : creditsLeft == 0 ? "Confirm" : "Use all credits" }}
+      {{
+        isConfirmed
+          ? $t("common.waiting")
+          : creditsLeft == 0
+          ? $t("common.confirm")
+          : $t("results.use_all_credits")
+      }}
     </RetroButton>
   </div>
 </template>

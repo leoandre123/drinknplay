@@ -2,6 +2,7 @@
   <RouterView />
   <div class="language-switcher">
     <div
+      v-if="!context.state?.phase || context.state?.phase == 'lobby'"
       :class="['flag', audioManager.muted || !audioManager.unlocked ? 'muted' : 'audio']"
       @click="audioManager.toggleMute()"
     ></div>

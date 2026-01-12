@@ -42,72 +42,69 @@ export default {
     justify-content: center;
     flex-wrap: wrap;
     flex-direction: column;
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
+    background-color: var(--Violet_Blue);
     padding: 1rem;
     gap: 1rem;
-
 }
 
 .rating header {
     font-family: "Science Gothic", sans-serif;
-    font-size: 2rem;
-    color: whitesmoke;
-    border-bottom: 10px solid black;
+    font-size: 4vw;
+    color: var(--Metallic_Yellow);
+    border-bottom: 0.5vw solid var(--Metallic_Yellow);
 }
 
 .rating-buttons {
     display: grid;
     grid-template-rows: repeat(2, 1fr);
     grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
+    gap: 1vw;
 }
 
 .rating-button {
     font-family: "Science Gothic", sans-serif;
-    height: 10rem;
+    height: 10vw;
     width: auto;
-    font-size: 3rem;
+    font-size: 5vw;
     background-color: beige;
 }
 
 .rating-button.selected {
-    font-family: "Science Gothic", sans-serif;
-    height: 10rem;
+   font-family: "Science Gothic", sans-serif;
+    height: 10vw;
     width: auto;
-    font-size: 3rem;
-    background-color: green;
+    font-size: 5vw;
+    background-color: green
 }
 
 .save-button {
     font-family: "Science Gothic", sans-serif;
-    height: 10rem;
+    height: 10vw;
     width: auto;
-    font-size: 3rem;
+    font-size: 5vw;
     background-color: beige;
 }
 
 .vote-confirmed {
-    color: whitesmoke;
+    color: var(--Metallic_Yellow);
     font-size: 8vw;
     font-family: "Science Gothic", sans-serif;
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);;
     height: 100%;
     width: 100%;
 }
 
 .rating-view-container{
+    font-family: "Science Gothic", sans-serif;
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);;
+    padding: 0;
+    margin: 0;
+    background-color: var(--Violet_Blue);
+    border: 0;
+    min-height: 100dvh;
 }
+   
+   
+
 </style>

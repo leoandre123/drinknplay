@@ -19,6 +19,12 @@
         </ul>
       </div>
     </Popup>
+    <Popup title="Error" ref="soberPopup">
+      <br />
+      <h3>Invalid mode: Sober????</h3>
+      <h4>Try again</h4>
+      <br />
+    </Popup>
     <div class="create-container">
       <h1>{{ $t("settings.settings") }}</h1>
       <SettingsPanel :settings="settings" class="settings" />
@@ -69,7 +75,11 @@ export default {
       });
     },
     createGame() {
-      socket.emit("lobby:create", this.settings);
+      if (this.settings.drunknessLevel == 0) {
+        this.$refs.soberPopup.show();
+      } else {
+        socket.emit("lobby:create", this.settings);
+      }
     },
     onGameCreated(lobbyId) {
       this.$router.push({
