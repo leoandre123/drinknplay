@@ -101,7 +101,7 @@ export default {
 .player-selection {
   background: #ff0d86;
   color: white;
-  font-size: 2rem;
+  font-size: 1.5rem;
   padding: 1rem;
   border-radius: 0.25rem;
   display: flex;
@@ -118,16 +118,20 @@ export default {
 .spinner {
   display: flex;
   gap: 0.25rem;
+  align-items: center;
 }
 .spinner-button {
   background-color: rgba(160, 47, 47, 0.422);
   width: 2rem;
   height: 2rem;
+  padding: 0;
   border-radius: 50%;
   cursor: pointer;
+  align-content: center;
 }
 .spinner-display {
   width: 2rem;
+  padding: 0;
 }
 .spinner-button:active {
   transform: scale(1.15);
