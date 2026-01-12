@@ -222,8 +222,10 @@ export class Lobby {
 
     for (let res of credits) {
       const player = this.getPlayer(res.playerId);
+      if (!player) continue;
       if (res.credits < 0) {
         this.givenCredits.set(res.playerId, Math.abs(res.credits));
+        player.credits = 0;
       } else {
         player.credits = res.credits;
       }

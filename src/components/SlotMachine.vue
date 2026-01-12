@@ -1,6 +1,6 @@
 <template>
   <div class="slot-machine-container">
-    <h1 class="glow">MINIGAMES</h1>
+    <h1 class="glow">{{ title }}</h1>
     <div class="reels-container">
       <div class="reels">
         <svg class="reel-arrow reel-arrow-left" viewBox="0 0 100 100" width="100%" height="100%">
@@ -25,7 +25,7 @@ export default {
   components: {
     SlotReel,
   },
-  props: { text: String, symbols: Array, reelCount: { type: Number, default: 3 } },
+  props: { text: String, title: String, symbols: Array, reelCount: { type: Number, default: 3 } },
   data() {
     return {};
   },
