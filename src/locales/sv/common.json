@@ -29,5 +29,7 @@
     "drinkText": "Ditt glas har blivit fyllt och du måste nu dricka",
     "glass": "Glas",
     "drinkConfirmation": "Tryck på knappen för att bekräfta att du druckit",
-    "waitingForHost": "Väntar på värd"
+    "waitingForHost": "Väntar på värd",
+    "confirm": "Bekräfta",
+    "waiting": "Väntar..."
 }

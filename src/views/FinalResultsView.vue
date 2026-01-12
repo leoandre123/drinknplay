@@ -1,7 +1,7 @@
 <template>
   <div class="results">
     <template v-if="context.isHost">
-      <h1 class="title">FINAL RESULTS</h1>
+      <h1 class="title">{{ $t("results.final_results") }}</h1>
       <div class="player-cards" :style="playerGridStyle">
         <PlayerCard
           v-for="(player, i) in sortedPlayers"
@@ -14,7 +14,7 @@
         />
       </div>
     </template>
-    <RetroButton @click="finishGame">Finish game</RetroButton>
+    <RetroButton @click="finishGame">{{ $t("results.finish_game") }}</RetroButton>
   </div>
 </template>
 

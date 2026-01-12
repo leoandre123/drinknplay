@@ -63,12 +63,6 @@
             {{ context.state.settings.maxPlayers }}
           </span>
         </p>
-        <p>
-          Events:
-          <span class="right">
-            {{ $t(context.state.settings.doEvents ? "common.on" : "common.off") }}
-          </span>
-        </p>
       </div>
     </div>
     <div v-if="!context.isHost" class="waiting">

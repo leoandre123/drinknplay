@@ -29,5 +29,7 @@
     "drinkText": "Your glass has been filled and you have to drink",
     "glass": "Glas",
     "drinkConfirmation": "Press the button to confirm that you have drunk",
-    "waitingForHost": "Waiting for host"
+    "waitingForHost": "Waiting for host",
+    "confirm": "Confirm",
+    "waiting": "Waiting..."
 }

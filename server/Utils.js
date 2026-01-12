@@ -15,7 +15,7 @@ export function distributeScores(scores, totalScore) {
 
   return scores.map((s) => ({
     playerId: s.playerId,
-    score: (s.score / sumScores) * totalScore,
+    score: Math.round((s.score / sumScores) * totalScore),
   }));
 }
 export function distributeCredits(players, totalCredits) {

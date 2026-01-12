@@ -29,9 +29,6 @@
     </div>
   </div>
 
-  <!--   <div class="mascot-container">
-    <Mascot />
-  </div> -->
   <div v-if="!context.isConnected">
     <div class="connection-warning">
       <div>
