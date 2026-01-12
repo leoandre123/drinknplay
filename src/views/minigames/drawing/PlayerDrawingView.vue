@@ -4,7 +4,6 @@
     <h1 v-if="!subjectSubmitted">{{ $t("draw.typeSubject") }}</h1>
     <h1 v-if="subjectSubmitted">{{ subject }} {{ $t("draw.submitted") }}</h1>
     <input v-model="subject" :disabled="subjectSubmitted" @input="subject = subject.toUpperCase()" :placeholder='$t("draw.drawA")'/>
-    <hr></hr>
     <RetroButton
     color="yellow"
     class="subject-button" 
@@ -30,14 +29,19 @@
       />
     </div>
 
-    <div class="rating" v-if="gamePhase == 'voting'">
       <RatingTool
-        v-if="canVote"
+        class="rating"
+        v-if="canVote && gamePhase == 'voting'"
         :key="currentDrawingToVote.playerId"
         @rating-submitted="playerRated"
       >
       </RatingTool>
-    </div>
+      <div class="waiting"
+      v-if="gamePhase == 'voting' && !canVote"> You can not vote on your own picture...</div>
+      
+      <div class="waiting" v-if="gamePhase == 'results'">
+         Waiting for next round...</div>
+  
   </div>
 </template>
 
@@ -147,6 +151,10 @@ input {
   border: 0.15rem solid #2c3b5f;
   text-transform: uppercase;
 }
+.rating{
+  height: 100%;
+  width: 100%;
+}
 .drawing-canvas {
   position: relative;
   background: linear-gradient(
@@ -193,11 +201,25 @@ input {
 
 
 .submit-subject{
+  gap: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: var(--Metallic_Yellow);
   height: 100%;
   justify-content: center;
+}
+
+.waiting{
+height: 100%;
+width: 100;
+font-size: 3rem;
+font-family: "Science Gothic", sans-serif;
+color: white;
+background-color: var(--Metallic_Yellow);
+display: flex;
+justify-content: center;
+align-items: center; 
+
 }
 </style>

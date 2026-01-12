@@ -1,5 +1,5 @@
 {
-    "draw": "DRAW A",
+    "draw": "DRAW",
     "time": "Time left:",
     "title": "Drink n' Draw",
     "save": "SAVE",
@@ -11,8 +11,9 @@
     "bestDrawing": "BEST DRAWING",
     "points": "points",
     "scoreboard": "SCOREBOARD",
-    "drawA": "Draw a...",
+    "drawA": "Draw...",
     "rate10":"Rate 1-10, select a number and press vote",
     "vote":"VOTE",
-    "voteConfirmed":"VOTE CONFIRMED! Rating:"
+    "voteConfirmed":"VOTE CONFIRMED! Rating:",
+    "waiting": "Waiting for players to submit subjects..."
 }

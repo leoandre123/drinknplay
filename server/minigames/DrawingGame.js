@@ -97,7 +97,7 @@ export class DrawingGame extends Minigame {
 
   initiateDrawing() {
     console.log(this.subjects);
-    this.setTimer(120);
+    this.setTimer(15);
     this.changeSubject();
     this.allDrawings = [];
     this.broadcastHosts("clearPaintings");
