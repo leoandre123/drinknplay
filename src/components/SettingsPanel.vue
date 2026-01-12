@@ -3,7 +3,7 @@
     <h2>{{ $t("settings.minigameQ") }}</h2>
     <div class="button-group">
       <RetroButton
-        v-for="x in [5, 10, 15, 20, 25, 30]"
+        v-for="x in [1, 5, 10, 15, 20, 25, 30]"
         :color="x == settings.numberOfRounds ? 'purple' : 'pink'"
         size="small"
         class="minigameButton"

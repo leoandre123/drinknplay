@@ -3,6 +3,7 @@
     "lobbyCode": "Spelkod",
     "lobbyUnavailable": {
         "no_lobby": "Lobby hittades inte",
-        "started": "Spelet har redan startat"
+        "started": "Spelet har redan startat",
+        "lobby_full": "Spelet är fullt"
     }
 }

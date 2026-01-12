@@ -25,6 +25,8 @@ export class Lobby {
 
     this.isAdvancing = false;
     this.logger = new Logger(`LOBBY: ${lobbyId}`);
+
+    this.currentRound = 0;
   }
 
   onNewPlayerConnection(socket, playerId, name, avatarSettings) {
@@ -174,6 +176,7 @@ export class Lobby {
   }
 
   startMinigame() {
+    this.currentRound++;
     this.phase = "game";
     this.broadcastLobbyState();
 
@@ -299,6 +302,11 @@ export class Lobby {
     this.tryAdvance(5000);
   }
 
+  startFinalResultScreen() {
+    this.phase = "end";
+    this.broadcastLobbyState();
+  }
+
   /*
    * CALLBACKS
    */
@@ -365,7 +373,12 @@ export class Lobby {
         this.startScoreboardScreen();
         break;
       case "scoreboard":
-        this.startGameSelection();
+        if (this.currentRound >= this.settings.numberOfRounds) {
+          this.startFinalResultScreen();
+        } else {
+          this.startGameSelection();
+        }
+
         break;
     }
   }

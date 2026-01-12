@@ -74,6 +74,7 @@
       <ScoreboardView v-if="context.isHost" />
       <ScoreboardPlayerView v-else />
     </template>
+    <FinalResultsView v-if="context.state?.phase == 'end'" />
   </div>
 </template>
 
@@ -93,6 +94,7 @@ import GameResultPlayerView from "./GameResultPlayerView.vue";
 import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
 import { audioManager } from "@/AudioManager";
+import FinalResultsView from "./FinalResultsView.vue";
 
 export default {
   name: "GameView",
@@ -131,6 +133,7 @@ export default {
     Mascot,
     GameResultsView,
     ScoreboardPlayerView,
+    FinalResultsView,
   },
   mounted() {
     socket.on("lobby:joinResponse", (response) => {

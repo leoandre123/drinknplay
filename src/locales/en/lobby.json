@@ -3,6 +3,7 @@
     "lobbyCode": "Lobby Code",
     "lobbyUnavailable": {
         "no_lobby": "Lobby could not be found",
-        "started": "Game has already started"
+        "started": "Game has already started",
+        "lobby_full": "Game is full"
     }
 }

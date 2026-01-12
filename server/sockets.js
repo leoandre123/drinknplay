@@ -64,6 +64,7 @@ function sockets(io, socket, lobbyManager) {
 
   socket.on("debug:addBot", function (name) {
     const lobby = lobbyManager.getLobby(socket.data.lobbyId);
+    if (!lobby) return;
     lobby.onPlayerJoined(new PlayerBot(name), true);
   });
 

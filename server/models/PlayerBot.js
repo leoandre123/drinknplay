@@ -8,6 +8,7 @@ export class PlayerBot extends Player {
         console.log("BOT EMIT: " + msg + " - " + ev);
       },
       on(msg, handler) {},
+      removeAllListeners(msg) {},
       join(room) {},
       data: {},
     };
