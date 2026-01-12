@@ -1,9 +1,8 @@
 <template>
   <div class="canvasWrapper" :class="{ 'column-layout': !isLandscape }">
-
     <div v-if="isLandscape" class="sidebar landscape">
       <button @click="toggleMode">{{ $t("common.switchMode") }}</button>
-      <p class="modeText">{{ $t("common.modeDescription") }}<br>{{ mode }}</p>
+      <p class="modeText">{{ $t("common.modeDescription") }}<br />{{ mode }}</p>
     </div>
 
     <div v-else class="sidebar portrait">
@@ -14,30 +13,32 @@
 
     <div v-if="showResultModal" class="win-modal">
       <div class="modal-content">
-        <h2 v-if="winnerId === myId">🏆 {{ $t('mazegame.winText') }} 🏆</h2>
-        <h2 v-else>{{ winnerName }} {{ $t('mazegame.won') }}</h2>
-        <p v-if="winnerId === myId">{{ $t('mazegame.greatJob') }}</p>
-        <p v-else>{{ $t('mazegame.encourage') }}</p>
+        <h2 v-if="winnerId === myId">🏆 {{ $t("mazegame.winText") }} 🏆</h2>
+        <h2 v-else>{{ winnerName }} {{ $t("mazegame.won") }}</h2>
+        <p v-if="winnerId === myId">{{ $t("mazegame.greatJob") }}</p>
+        <p v-else>{{ $t("mazegame.encourage") }}</p>
       </div>
     </div>
 
     <div v-else-if="slopeFinished" class="win-modal">
       <div class="modal-content">
-        <h2>{{ $t('mazegame.finish') }}</h2>
-        <p>{{ $t('mazegame.waiting') }}</p>
+        <h2>{{ $t("mazegame.finish") }}</h2>
+        <p>{{ $t("mazegame.waiting") }}</p>
       </div>
     </div>
 
-    <p v-if="!isLandscape" class="modeText">{{ $t("common.modeDescription") }}<br>{{ mode }}</p>
+    <p v-if="!isLandscape" class="modeText">{{ $t("common.modeDescription") }}<br />{{ mode }}</p>
   </div>
 </template>
 
 <script>
-import { socket } from '../../../socket';
-import { context } from '../../../context';
-import { useDevice } from '@/UseDevice';
-import { COLUMNS_OF_MAZE } from "../Constants.js";
-import { MAZE_FINISH_INDEX } from  "../Constants.js";
+import { socket } from "../../../socket";
+import { context } from "../../../context";
+import { useDevice } from "@/UseDevice";
+
+export const COLUMNS_OF_MAZE = 8;
+export const MAZE_FINISH_INDEX = 4;
+
 export default {
   name: "PlayerMazeGameView",
 
@@ -60,7 +61,7 @@ export default {
         vy: 0,
         acx: 0,
         acy: 0,
-        friction: 0.99
+        friction: 0.99,
       },
       lastTime: 0,
       rafId: null,
@@ -68,11 +69,11 @@ export default {
       gameActive: true,
       winnerId: null,
       winnerName: null,
-      showResultModal: false
+      showResultModal: false,
     };
   },
 
-    setup() {
+  setup() {
     const { isMobile } = useDevice();
 
     return { isMobile };
@@ -81,14 +82,14 @@ export default {
   computed: {
     myId() {
       return context.playerId;
-    }
+    },
   },
 
-created() {
+  created() {
     socket.on("maze:roundResult", ({ winnerId, winnerName, scores }) => {
       this.gameActive = false;
-      
-      this.winnerId = winnerId; 
+
+      this.winnerId = winnerId;
       this.winnerName = winnerName;
       this.showResultModal = true;
 
@@ -117,15 +118,71 @@ created() {
     this.tileSize = this.c.width / this.columns;
 
     this.maze = [
-      true, false, true, true, false, false, false, false,
-      true, false, false, false, true, true, false, true,
-      true, true, true, false, true, false, false, false,
-      true, false, false, false, true, true, true, false,
-      true, false, true, false, true, false, true, false,
-      false, false, true, false, false, false, true, false,
-      true, false, true, true, true, true, true, false,
-      true, false, false, false, false, false, false, false
-    ]
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ];
     this.finishIndex = MAZE_FINISH_INDEX;
 
     this.ctx = this.c.getContext("2d");
@@ -156,12 +213,12 @@ created() {
 
   methods: {
     toggleMode() {
-      this.mode = this.mode === 'computerMode' ? 'mobileMode' : 'computerMode';
+      this.mode = this.mode === "computerMode" ? "mobileMode" : "computerMode";
       this.requestSensorPermission();
     },
     loop(now) {
       if (!this.gameActive) return;
-      const dt = (now - this.lastTime) / 1000; 
+      const dt = (now - this.lastTime) / 1000;
       this.lastTime = now;
 
       this.update(dt);
@@ -225,12 +282,19 @@ created() {
       const leftCol = this.col(b.x - b.r);
       const rightCol = this.col(b.x + b.r);
 
-      if (leftCol >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + leftCol])) {
+      if (
+        leftCol >= 0 &&
+        (this.maze[topRow * this.columns + leftCol] ||
+          this.maze[bottomRow * this.columns + leftCol])
+      ) {
         b.vx *= -0.5;
         b.x = (leftCol + 1) * this.tileSize + b.r;
         this.playBounceSound();
-      }
-      else if (rightCol < this.columns && (this.maze[topRow * this.columns + rightCol] || this.maze[bottomRow * this.columns + rightCol])) {
+      } else if (
+        rightCol < this.columns &&
+        (this.maze[topRow * this.columns + rightCol] ||
+          this.maze[bottomRow * this.columns + rightCol])
+      ) {
         b.vx *= -0.5;
         b.x = rightCol * this.tileSize - b.r;
         this.playBounceSound();
@@ -246,12 +310,18 @@ created() {
       const bottomRow = this.row(b.y + b.r);
       const maxRows = this.maze.length / this.columns;
 
-      if (topRow >= 0 && (this.maze[topRow * this.columns + leftCol] || this.maze[topRow * this.columns + rightCol])) {
+      if (
+        topRow >= 0 &&
+        (this.maze[topRow * this.columns + leftCol] || this.maze[topRow * this.columns + rightCol])
+      ) {
         b.vy *= -0.5;
         b.y = (topRow + 1) * this.tileSize + b.r;
         this.playBounceSound();
-      }
-      else if (bottomRow < maxRows && (this.maze[bottomRow * this.columns + leftCol] || this.maze[bottomRow * this.columns + rightCol])) {
+      } else if (
+        bottomRow < maxRows &&
+        (this.maze[bottomRow * this.columns + leftCol] ||
+          this.maze[bottomRow * this.columns + rightCol])
+      ) {
         b.vy *= -0.5;
         b.y = bottomRow * this.tileSize - b.r;
         this.playBounceSound();
@@ -259,7 +329,8 @@ created() {
     },
     checkSlopeFinished() {
       const b = this.ball;
-      if (this.gameActive &&
+      if (
+        this.gameActive &&
         !this.slopeFinished &&
         this.tileSize * 4 < b.x + b.r &&
         b.x + b.r < this.tileSize * 5 &&
@@ -281,7 +352,7 @@ created() {
     },
 
     onKeyDown(e) {
-      if (this.mode !== 'computerMode') return;
+      if (this.mode !== "computerMode") return;
       e.preventDefault();
       const speed = this.tileSize * 10;
 
@@ -326,7 +397,7 @@ created() {
       }
     },
     handleRotation(e) {
-      if (this.mode !== 'mobileMode') return;
+      if (this.mode !== "mobileMode") return;
 
       const sensitivity = 5;
       this.ball.acx = e.gamma * sensitivity;
@@ -354,22 +425,13 @@ created() {
           ctx.textAlign = "center";
           ctx.font = `${this.tileSize / 4}px Arial`;
           ctx.textBaseline = "middle";
-          ctx.fillText(
-            this.$t("common.finish"),
-            x + this.tileSize / 2,
-            y + this.tileSize / 2
-          );
+          ctx.fillText(this.$t("common.finish"), x + this.tileSize / 2, y + this.tileSize / 2);
         }
       }
       const rows = this.maze.length / this.columns;
       ctx.strokeStyle = "black";
       ctx.lineWidth = 4;
-      ctx.strokeRect(
-        0,
-        0,
-        this.columns * this.tileSize,
-        rows * this.tileSize
-      );
+      ctx.strokeRect(0, 0, this.columns * this.tileSize, rows * this.tileSize);
     },
     drawSquare(ctx, x, y, tileSize, color) {
       ctx.fillStyle = color;
@@ -387,10 +449,10 @@ created() {
       ctx.stroke();
     },
     playBounceSound() {
-      const audio = new Audio('/sounds/rubberballbouncing.mp3');
+      const audio = new Audio("/sounds/rubberballbouncing.mp3");
       audio.play();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -408,10 +470,12 @@ created() {
   width: 100vw;
   height: 100vh;
   gap: 20px;
-  background-image: radial-gradient(circle farthest-corner at 10% 20%,
-      rgb(102, 0, 32) 0%,
-      rgb(116, 18, 92) 49.5%,
-      rgb(164, 34, 144) 90%);
+  background-image: radial-gradient(
+    circle farthest-corner at 10% 20%,
+    rgb(102, 0, 32) 0%,
+    rgb(116, 18, 92) 49.5%,
+    rgb(164, 34, 144) 90%
+  );
   gap: 20px;
 }
 
