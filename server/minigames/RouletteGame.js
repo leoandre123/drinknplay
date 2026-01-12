@@ -14,7 +14,7 @@ export class RouletteGame extends Minigame {
     }
 
     onPlayerJoined(player) {
-        console.log("player joined")
+
         if (this.totalPerPlayer[player.id] == null) {
             this.totalPerPlayer[player.id] = 0;
         }
@@ -137,10 +137,7 @@ export class RouletteGame extends Minigame {
         this.broadcastRouletteState();
     }
     onSpinResult(number) {
-        console.log("[SERVER] onSpinResult called", {
-            number,
-            phase: this.phase,
-        });
+
 
         if (this.phase !== "spinning") {
             return;
@@ -250,7 +247,7 @@ export class RouletteGame extends Minigame {
     broadcastRouletteState() {
         const state = this.getPublicState();
         this.broadcast("roulette:update", state);
-        console.log("roulette update", state);
+
 
     }
 
