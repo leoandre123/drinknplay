@@ -1,5 +1,5 @@
 <template>
-  <div class="debug-container">
+  <div class="debug-container" v-if="!env.startsWith('prod')">
     <button @click="debug.showDebug = !debug.showDebug">
       {{ debug.showDebug ? "Hide debug" : "Show debug" }}
     </button>
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <div v-if="!audioManager.unlocked" class="popup">
+  <div v-if="false" class="popup">
     <div class="enable-audio">
       <p>Sound is not enabled</p>
       <button @click="audioManager.unlock()">Grant access to play sounds</button>
@@ -68,9 +68,12 @@
     <MinigameView v-if="context.state?.phase == 'game'" />
     <template v-if="context.state?.phase == 'result'">
       <GameResultsView v-if="context.isHost" />
-      <ResultPlayerView v-if="!context.isHost" />
+      <GameResultPlayerView v-else />
     </template>
-    <ResultView v-if="context.state?.phase == 'scoreboard'" />
+    <template v-if="context.state?.phase == 'scoreboard'">
+      <ResultView v-if="context.isHost" />
+      <ResultPlayerView v-else />
+    </template>
   </div>
 </template>
 
@@ -85,10 +88,11 @@ import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
 import Mascot from "../components/Mascot.vue";
 import { useDevice } from "../UseDevice.js";
-import ResultPlayerView from "./ResultPlayerView.vue";
+import GameResultPlayerView from "./GameResultPlayerView.vue";
 import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
 import { audioManager } from "@/AudioManager";
+import ResultPlayerView from "./ResultPlayerView.vue";
 
 export default {
   name: "GameView",
@@ -121,11 +125,12 @@ export default {
     LoadingView,
     SlotView,
     ResultView,
-    ResultPlayerView,
+    GameResultPlayerView,
     LobbyView,
     Flag,
     Mascot,
     GameResultsView,
+    ResultPlayerView,
   },
   mounted() {
     socket.on("lobby:joinResponse", (response) => {

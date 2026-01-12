@@ -132,7 +132,7 @@ export class RacingGame extends Minigame {
 
     let order = this.cars
       .map((c, i) => {
-        return { index: i, distance: c.distance };
+        return { index: i, finishTime: c.finishTime, distance: c.distance };
       })
       .toSorted((a, b) => a.finishTime - b.finishTime || b.distance - a.distance);
 
@@ -143,7 +143,17 @@ export class RacingGame extends Minigame {
     if (!this.noWinCheck)
       if (this.cars.every((x) => x.isFinshed)) {
         this.stop();
-        setTimeout(this.onFinished, 3000);
+
+        const results = {
+          type: "ranking",
+          data: this.cars
+            .toSorted((a, b) => a.finishTime - b.finishTime)
+            .map((c) => ({ playerId: c.id })),
+        };
+
+        setTimeout(() => {
+          this.onFinished?.(results);
+        }, 3000);
       }
   }
   calculateDistance(car) {

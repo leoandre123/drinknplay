@@ -1,4 +1,5 @@
 {
+    "howToPlay": "How to play",
     "bets": "Bets",
     "result": "Result",
     "spin": "Spin",
@@ -19,9 +20,21 @@
     "sips": "sips",
     "red": "RED",
     "black": "BLACK",
-    "addAmountBet": "Add the amount of sips you want to bet",
+    "addAmountBet": "Add the amount of drinking credits you want to bet",
     "choose": "Choose",
     "placeBet": "Place bet",
     "yourBet": "Your bet",
-    "clearBet": "Clear bet"
+    "clearBet": "Clear bet",
+    "drinkCredits": " Drinking credits",
+    "close": "Close",
+    "noPoints": "This game will not result in any points! Only drinking!",
+    "betCredits": "Bet drinking credits on number and/or color",
+    "ifWin": "If you win, the winning amount will be added in the standings table",
+    "ifLose": "If you lose, the betting amount will be subtracted in the standings table",
+    "correctColor": "Correct color: Win = + bet amount",
+    "correctNumber": "Correct number: Win = 36 x bet amount",
+    "wrongNumberOrColor": "Wrong number/color: Lose = - bet amount",
+    "after3Rounds": "After 3 rounds",
+    "positiveScore": "Postive score = give out drinking credits",
+    "negativeScore": "Negative score - your glass will be filled"
 }

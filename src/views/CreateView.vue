@@ -1,30 +1,37 @@
 <template>
-  <div class="create-container">
-    <h1>{{$t("settings.chooseSettings")}}</h1>
-    <div class="settingsbox">
-      <h2>{{$t('settings.settings')}}</h2>
-      <hr />
-      <h3>{{$t('settings.minigameQ')}}</h3>
-      <button
-        v-for="x in numberOfRoundsInSettings"
-        class="minigameButton"
-        :class="{ selected: settings.numberOfRounds === x }"
-        @click="selectAmountOfMinigames(x)"
-      >
-        {{ x }}
-      </button>
-      <h3>{{$t('settings.drunknessQ')}}</h3>
-      <button
-        v-for="(_, i) in 4"
-        class="drunknessButton"
-        :class="{ selected: settings.drunknessLevel === i }"
-        @click="selectDrunknessLevel(i)"
-      >
-        {{ $t(`game.drunknessLevel[${i}]`) }}
-      </button>
+  <RetroContainer>
+    <div class="info-button">
+      <RetroButton color="blue" size="small" @click="$refs.infoPopup?.show()"> ? </RetroButton>
     </div>
-    <button class="submitButton" @click="createGame">{{ $t("settings.create") }}</button>
-  </div>
+    <Popup title="Info" ref="infoPopup">
+      <div class="info-content">
+        <h3 class="howToWin">{{ $t("createlobbyinfo.h1") }}</h3>
+        <ul class="howToWinList">
+          <li>{{ $t("createlobbyinfo.p1") }}</li>
+          <li>{{ $t("createlobbyinfo.p2") }}</li>
+          <li>{{ $t("createlobbyinfo.p3") }}</li>
+        </ul>
+        <h3 class="drinkingInfo">{{ $t("createlobbyinfo.h2") }}</h3>
+        <ul class="drinkingInfoList">
+          <li>{{ $t("createlobbyinfo.p4") }}</li>
+          <li>{{ $t("createlobbyinfo.p5") }}</li>
+          <li>{{ $t("createlobbyinfo.p6") }}</li>
+        </ul>
+      </div>
+    </Popup>
+    <div class="create-container">
+      <h1>{{ $t("settings.settings") }}</h1>
+      <SettingsPanel :settings="settings" class="settings" />
+      <div style="display: flex; gap: 1rem">
+        <RetroButton color="red" @click="goBack">{{ $t("settings.back") }}</RetroButton>
+        <div>
+          <RetroButton class="submitButton" @click="createGame" color="green">{{
+            $t("settings.create")
+          }}</RetroButton>
+        </div>
+      </div>
+    </div>
+  </RetroContainer>
 </template>
 
 <script>
@@ -32,19 +39,23 @@ import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
 import RetroContainer from "@/components/RetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
+import SettingsPanel from "@/components/SettingsPanel.vue";
+import Popup from "@/components/Popup.vue";
 
 export default {
   name: "CreateView",
   data: function () {
     return {
       settings: DefaultSettings,
-      numberOfRoundsInSettings: [5,10,15,20,25,30]
+      showRules: false,
     };
   },
-   components: {
-        RetroContainer,
-        RetroButton
-    },
+  components: {
+    RetroContainer,
+    RetroButton,
+    SettingsPanel,
+    Popup,
+  },
   mounted() {
     socket.on("lobby:created", this.onGameCreated);
   },
@@ -52,11 +63,10 @@ export default {
     socket.off("lobby:created");
   },
   methods: {
-    selectAmountOfMinigames(amount) {
-      this.settings.numberOfRounds = amount;
-    },
-    selectDrunknessLevel(level) {
-      this.settings.drunknessLevel = level;
+    goBack() {
+      this.$router.push({
+        path: "/",
+      });
     },
     createGame() {
       socket.emit("lobby:create", this.settings);
@@ -76,40 +86,49 @@ export default {
 
 <style scoped>
 .create-container {
-  justify-items: center;
-  align-content: center;
+  align-items: center;
+  justify-content: center;
   color: white;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-.settingsbox {
+
+.settings {
   background: linear-gradient(90deg, #4b6bb744 30%, #1828485f 100%);
-  border: 2px outset black;
+  border-radius: 0.25rem;
 }
-.minigameButton {
-  width: 50px;
+
+.info-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
 }
-button {
-  width: 120px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 10px;
-  font-weight: bold;
-  font-size: 15px;
-  background-color: pink;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+
+.info-content {
+  text-align: start;
+  font-size: 1.5rem;
 }
-.drunknessButton {
-  width: 140px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 10px;
-  font-weight: bold;
-  font-size: 15px;
-  
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+.howToWin {
+  text-align: center;
+  color: var(--Points_Info);
+  text-shadow: 2px 2px black;
 }
-.selected {
-  background-color: #701050;
-  color: white;
-  font-weight: bolder;
+
+.howToWinList {
+  color: var(--Points_Info);
+  text-shadow: 2px 2px black;
+}
+.drinkingInfo {
+  text-align: center;
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
+}
+
+.drinkingInfoList {
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
 }
 </style>

@@ -63,7 +63,7 @@
                             ? (b.value.toUpperCase())
                             : ('Number: '+ b.value)
                         }}
-                       - {{ b.amount }} {{$t("roulette.sips")}}
+                       - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                     </span>
                     <button class="remove-bet" @click="removeBet(i)">x</button>
                 </li>
@@ -109,7 +109,7 @@ data(){
        ],
        selectedColor: null,
        selectedNumber: null,
-       stake: 3,
+       stake: 1,
        placedBets: [],
 
     };
@@ -178,9 +178,7 @@ data(){
             this.selectedNumber = null;
             this.placedBets = [];
         },
-        /*removeBet(index){
-            this.placedBets.splice(index,1);
-        },*/
+    
         selectNumber(n){
             if(this.selectedNumber === n){
                 this.selectedNumber = null;
@@ -248,8 +246,6 @@ data(){
   .betting-board{ transform: scale(0.7); }
   
 }
-
-
 
 .square{
     border:1px solid rgba(255, 255, 255, 0.65);
