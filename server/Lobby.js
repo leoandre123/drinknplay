@@ -225,6 +225,7 @@ export class Lobby {
       if (!player) continue;
       if (res.credits < 0) {
         this.givenCredits.set(res.playerId, Math.abs(res.credits));
+        player.credits = 0;
       } else {
         player.credits = res.credits;
       }
