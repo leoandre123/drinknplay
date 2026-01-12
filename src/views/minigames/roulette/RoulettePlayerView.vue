@@ -65,7 +65,7 @@
                         }}
                        - {{ b.amount }} {{$t("roulette.drinkCredits")}}
                     </span>
-                    <button class="remove-bet" @click="removeBet(i)">x</button>
+                   
                 </li>
             </ul>
         </div>
@@ -392,15 +392,6 @@ data(){
     align-items: center;
     gap: 10px;
 }
-.remove-bet{
-    width: 25px;
-    height: 25px;
-    font-size: 14px;
-    border-radius: 7px;
-    border: 1px solid rgba(250, 250, 250,0.75);
-    background: rgba(0,0,0,0.3);
-    color: white;
-    cursor: pointer;   
-}
+
 
 </style>

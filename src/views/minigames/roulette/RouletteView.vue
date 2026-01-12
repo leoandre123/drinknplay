@@ -212,7 +212,6 @@ export default {
         },
         nextRound(){
             
-
             socket.emit("roulette:nextRound");
         }
     }
@@ -313,6 +312,6 @@ export default {
     top: 12px;
     left:12px;
     z-index: 50;
-    cursor: pointer;
+    
 }
 </style>
