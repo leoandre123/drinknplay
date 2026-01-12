@@ -381,7 +381,7 @@ created() {
     drawBall(x, y, r) {
       const ctx = this.ctx;
       const radius = r;
-      ctx.fillStyle = "grey";
+      ctx.fillStyle = "rgb(250, 78, 147)";
       ctx.strokeStyle = "black";
       ctx.lineWidth = 3;
       ctx.beginPath();
