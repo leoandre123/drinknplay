@@ -3,13 +3,13 @@
     <div class="flex-expander"></div>
     <div v-if="context.getCurrentPlayer().glassesToDrink">
       <h1>
-        Ditt glas har blivit fyllt och du måste nu dricka
-        <span class="highlight">{{ context.getCurrentPlayer().glassesToDrink }}</span> glas
+        {{$t('common.drinkText')}}
+        <span class="highlight">{{ context.getCurrentPlayer().glassesToDrink }}</span> {{ $t('common.glass') }}
       </h1>
-      <h3>Tryck sedan på knappen för att bekräfta att du druckit upp!</h3>
+      <h3>{{$t('common.drinkConfirmation')}}</h3>
     </div>
     <div v-else>
-      <h3>Väntar på värd...</h3>
+      <h3>{{$t('common.waitingForHost')}}</h3>
     </div>
     <div class="flex-expander"></div>
     <RetroButton

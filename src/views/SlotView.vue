@@ -9,7 +9,7 @@
         @spin-finished="onSpinFinished"
       />
     </div>
-    <div v-if="!context.isHost">Look at the screen</div>
+    <div v-if="!context.isHost">{{$t('common.slotMessage')}}</div>
   </NewRetroContainer>
 </template>
 

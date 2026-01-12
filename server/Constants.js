@@ -14,3 +14,7 @@ export const KAHOOT_QUESTIONS_PER_GAME = 5;
 //CLOSEST
 export const CLOSEST_ROUNDS_PER_GAME = 5;
 export const CLOSEST_ROUND_TIMER = 30_000;
+
+//MAZEGAME
+export const COLUMNS_OF_MAZE = 8;
+export const MAZE_FINISH_INDEX = 4;
