@@ -232,6 +232,9 @@ export class Lobby {
       scores = results.data ?? [];
     }
 
+    this.logger.debug(credits);
+    this.logger.debug(scores);
+
     for (let res of credits) {
       const player = this.getPlayer(res.playerId);
       if (!player) continue;

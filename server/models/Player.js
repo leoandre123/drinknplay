@@ -16,6 +16,8 @@ export class Player {
 
     this.isReady = false;
     this.gameScore = 0;
+
+    this.credits = 0;
   }
 
   toDto() {
@@ -34,6 +36,8 @@ export class Player {
 
       isReady: this.isReady,
       gameScore: this.gameScore,
+
+      credits: this.credits,
     };
   }
 }
