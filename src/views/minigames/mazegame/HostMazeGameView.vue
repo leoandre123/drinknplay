@@ -11,14 +11,14 @@
     </div>
 
     <div class="center-content">
-      <h1>MAZE GAME</h1>
+      <h1>{{ $t('games.g6.title') }}</h1>
       
       <div v-if="!winnerId" class="game-info">
-        <p class="status-text">First to the finish line wins!</p>
+        <p class="status-text">{{$t('mazegame.description')}}</p>
         <div class="spinner"></div> </div>
 
       <div v-else class="winner-display">
-        <h2>WINNER:</h2>
+        <h2>{{ $t('mazegame.winner') }}:</h2>
         <h1 class="winner-name">{{ winnerName }}</h1>
       </div>
     </div>
