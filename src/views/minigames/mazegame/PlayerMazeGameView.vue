@@ -14,17 +14,17 @@
 
     <div v-if="showResultModal" class="win-modal">
       <div class="modal-content">
-        <h2 v-if="winnerId === myId">🏆 DU VANN! 🏆</h2>
-        <h2 v-else>{{ winnerName }} vann!</h2>
-        <p v-if="winnerId === myId">Snyggt jobbat!</p>
-        <p v-else>Bättre lycka nästa gång.</p>
+        <h2 v-if="winnerId === myId">🏆 {{ $t('mazegame.winText') }} 🏆</h2>
+        <h2 v-else>{{ winnerName }} {{ $t('mazegame.won') }}</h2>
+        <p v-if="winnerId === myId">{{ $t('mazegame.greatJob') }}</p>
+        <p v-else>{{ $t('mazegame.encourage') }}</p>
       </div>
     </div>
 
     <div v-else-if="slopeFinished" class="win-modal">
       <div class="modal-content">
-        <h2>Mål!</h2>
-        <p>Väntar på resultat...</p>
+        <h2>{{ $t('mazegame.finish') }}</h2>
+        <p>{{ $t('mazegame.waiting') }}</p>
       </div>
     </div>
 
@@ -69,6 +69,12 @@ export default {
     };
   },
 
+    setup() {
+    const { isMobile } = useDevice();
+
+    return { isMobile };
+  },
+
   computed: {
     myId() {
       return context.playerId;
@@ -106,16 +112,6 @@ created() {
 
     this.columns = 8;
     this.tileSize = this.c.width / this.columns;
-
-    /*
-    //Min lätta testbana
-    this.maze = [
-      true, false, true, true, false,
-      false, false, true, true, false,
-      false, true, false, false, false,
-      false, true, false, true, true,
-      false, false, false, true, true
-    ];*/
 
     this.maze = [
       true, false, true, true, false, false, false, false,
@@ -161,16 +157,14 @@ created() {
       this.requestSensorPermission();
     },
     loop(now) {
-      if (!this.gameActive && !this.showResultModal) return;
-      const dt = (now - this.lastTime) / 1000; // sekunder
+      if (!this.gameActive) return;
+      const dt = (now - this.lastTime) / 1000; 
       this.lastTime = now;
 
       this.update(dt);
       this.render();
 
       this.rafId = requestAnimationFrame(this.loop);
-
-      console.log(this.ball);
     },
 
     update(dt) {
