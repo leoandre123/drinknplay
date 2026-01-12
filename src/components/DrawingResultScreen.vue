@@ -54,7 +54,6 @@ export default {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-template-areas: 
     "leaderboard drawing" ;
-    font-family: "Science Gothic", sans-serif;
     gap: 20px;
     font-size: 2rem;
     box-sizing: border-box;
@@ -64,7 +63,6 @@ export default {
     color: #fff;
     margin: 2vw;
     font-size: 3vw;
-    font-family: "Science Gothic", sans-serif;
     background-color: rgb(183, 127, 189);    
     border: 1px outset rgb(183, 127, 189);
 }
@@ -84,7 +82,6 @@ export default {
 
 .best-drawing {
     flex: 1;
-    font-family: "Science Gothic", sans-serif;
     color: whitesmoke;
     text-shadow: 1px 1px black;
     display: flex;
@@ -94,7 +91,6 @@ export default {
 }
 
 .scoreboard {
-    font-family: "Science Gothic", sans-serif;
     color: whitesmoke;
     text-shadow: 1px 1px black;
     display: flex;

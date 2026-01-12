@@ -102,7 +102,6 @@ export default {
 
 <style scoped>
 .host-view-container {
-    font-family: "Science Gothic", sans-serif;
     display: flex;
     flex-direction: column;
     height: 100vh;

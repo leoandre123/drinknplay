@@ -174,7 +174,6 @@ input {
 
 .drawing-title {
   font-size: 3rem;
-  font-family: "Science Gothic", sans-serif;
   color: white;
   text-shadow: 3px 3px black;
   border-bottom: 1px solid white;
