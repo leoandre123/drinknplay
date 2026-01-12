@@ -3,6 +3,13 @@
     <div v-if="context.isHost" class="slot-container">
       <SlotMachine ref="slotRef" :symbols="availableGames.map((x) => x.symbol)" :text="text"
         @spin-finished="onSpinFinished" />
+      <SlotMachine
+        ref="slotRef"
+        :symbols="availableGames.map((x) => x.symbol)"
+        :title="$t('common.spin.title')"
+        :text="text"
+        @spin-finished="onSpinFinished"
+      />
     </div>
     <div v-if="!context.isHost">Look at the screen</div>
   </NewRetroContainer>
@@ -15,7 +22,6 @@ import { context } from "../context";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { audioManager } from "@/AudioManager";
 import gameinfo from "@/assets/gameinfo.json";
-
 
 export default {
   name: "SlotView",

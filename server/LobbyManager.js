@@ -6,49 +6,27 @@ export class LobbyManager {
   constructor(io) {
     this.io = io;
 
-    const raceLobby = new Lobby(io, "race");
-    raceLobby.currentGame = new RacingGame(true);
-    raceLobby.gameIndex = 0;
-    raceLobby.startMinigame();
-
-    const kahootLobby = new Lobby(io, "kahoot");
-    kahootLobby.selectGame(1);
-    kahootLobby.startMinigame();
-
-    const drawLobby = new Lobby(io, "draw");
-    drawLobby.selectGame(2);
-    drawLobby.startMinigame();
-
-    const reactionLobby = new Lobby(io, "reaction");
-    reactionLobby.selectGame(3);
-    reactionLobby.startMinigame();
-
-    const closestLobby = new Lobby(io, "closest");
-    closestLobby.selectGame(4);
-    closestLobby.startMinigame();
-    const mazeGameLobby = new Lobby(io, "maze");
-    mazeGameLobby.selectGame(4);
-    mazeGameLobby.startMinigame();
-
-    const rouletteLobby = new Lobby(io, "roulette");
-    rouletteLobby.selectGame(6);
-    rouletteLobby.startMinigame();
-
     const resultLobby = new Lobby(io, "result");
     resultLobby.startResultScreen();
 
     const lobby = new Lobby(io, "lobby");
 
-    this.lobbies = [
-      lobby,
-      raceLobby,
-      kahootLobby,
-      resultLobby,
-      drawLobby,
-      reactionLobby,
-      closestLobby,
-      rouletteLobby,
-    ];
+    this.lobbies = [lobby, resultLobby];
+
+    this.#addDebugLobby("race", 0);
+    this.#addDebugLobby("kahoot", 1);
+    this.#addDebugLobby("draw", 2);
+    this.#addDebugLobby("reaction", 3);
+    this.#addDebugLobby("closest", 4);
+    this.#addDebugLobby("maze", 5);
+    this.#addDebugLobby("roulette", 6);
+  }
+
+  #addDebugLobby(id, gameIndex) {
+    const lobby = new Lobby(this.io, id);
+    lobby.selectGame(gameIndex);
+    lobby.startLoadingScreen();
+    this.lobbies.push(lobby);
   }
 
   createLobby(gameSettings) {

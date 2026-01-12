@@ -1,116 +1,80 @@
 <template>
-  <div class="player-results">
-    <template v-if="!isWinner">
-      <h1>Waiting for host...</h1>
-    </template>
-    <template v-if="isWinner">
-      <h1 class="glow">{{ $t("results.winner") }}</h1>
-      <h1>You got the most points</h1>
-      <h3>Whos glass do you want to fill?</h3>
-      <div class="player-selection-list">
-        <button
-          class="player-selection"
-          :disabled="selectedPlayerIndex != -1"
-          :class="{ notselected: i != selectedPlayerIndex && selectedPlayerIndex != -1 }"
-          v-for="(player, i) in context.state.players"
-          @click="() => selectPlayer(i, player.id)"
-        >
-          <p>{{ player.name }}</p>
-        </button>
-      </div>
-    </template>
+  <div class="results">
+    <div class="flex-expander"></div>
+    <div v-if="context.getCurrentPlayer().glassesToDrink">
+      <h1>
+        Ditt glas har blivit fyllt och du måste nu dricka
+        <span class="highlight">{{ context.getCurrentPlayer().glassesToDrink }}</span> glas
+      </h1>
+      <h3>Tryck sedan på knappen för att bekräfta att du druckit upp!</h3>
+    </div>
+    <div v-else>
+      <h3>Väntar på värd...</h3>
+    </div>
+    <div class="flex-expander"></div>
+    <RetroButton
+      v-if="context.getCurrentPlayer().glassesToDrink"
+      color="green"
+      @click="confirm"
+      :disabled="drinkConfirmed"
+      >{{ drinkConfirmed ? "Väntar.." : "Bekräfta" }}</RetroButton
+    >
   </div>
 </template>
 
 <script>
 import { context } from "../context";
 import { socket } from "../socket";
+import RetroButton from "@/components/RetroButton.vue";
 
 export default {
-  name: "PlayerResultView",
-  data() {
+  name: "ResultView",
+  components: { RetroButton },
+
+  data: function () {
     return {
       context,
-      selectedPlayerIndex: -1,
-      isWinner: true,
-      orientation: screen.orientation.type,
+      drinkConfirmed: false,
     };
   },
-  mounted() {},
-  beforeUnmount() {},
+  mounted() {
+    socket.on("scoreboard:glassesToDrink", (glasses) => (this.glassesToDrink = glasses));
+  },
+  beforeUnmount() {
+    socket.off("scoreboard:glassesToDrink");
+  },
   methods: {
-    selectPlayer(index, playerId) {
-      console.log;
-      this.selectedPlayerIndex = index;
-      socket.emit("results:fillGlass", playerId);
+    confirm() {
+      socket.emit("scoredboard:confirmDrink");
+      this.drinkConfirmed = true;
     },
   },
 };
 </script>
 
 <style scoped>
-.glow {
-  letter-spacing: 10px;
-  color: #fff;
-  font-family: "LimeLight Display";
-  -webkit-animation: glow 1s ease-in-out infinite alternate;
-  -moz-animation: glow 1s ease-in-out infinite alternate;
-  animation: glow 1s ease-in-out infinite alternate;
-  background-color: darkmagenta;
-  margin: 1rem;
-  border: 0.2rem solid #fff;
-  border-radius: 2rem;
-  padding: 20px;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
-}
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073,
-      0 0 60px #e60073, 0 0 70px #e60073;
-  }
-
-  to {
-    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6,
-      0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
-  }
-}
-
-.player-results {
-  background: linear-gradient(90deg, rgb(76, 23, 112) 0%, rgb(11, 8, 19) 87%);
+.results {
   width: 100dvw;
   height: 100dvh;
-  color: beige;
-  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+  padding: 2rem;
   box-sizing: border-box;
+  background: linear-gradient(90deg, #44195f 0%, #0a0d36 100%);
   display: flex;
   flex-direction: column;
-}
-
-.player-selection-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-  background-color: #bb13fe41;
-  overflow: scroll;
-}
-
-.player-selection {
-  background: #ff0d86;
+  gap: 3rem;
+  align-items: center;
+  background-repeat: repeat;
   color: white;
-  aspect-ratio: 1;
-  font-size: 2rem;
-  border: 0.5rem outset #b20b5f;
-  align-content: center;
-  overflow-wrap: anywhere;
 }
-.player-selection:active {
-  border-style: inset;
+
+h1 {
+  text-shadow: 0 0 1rem black;
 }
-.notselected {
-  background: #3b0621;
-  border: 0.5rem inset #640d39;
+
+.highlight {
+  color: magenta;
+  text-shadow: 0.1rem 0.1rem red, 0.2rem 0.2rem blue;
 }
 </style>

@@ -8,10 +8,9 @@
           <Avatar :settings="player.avatarSettings" />
         </div>
         <p>{{ player.name }}</p>
-        <p class="score">{{ player.score }}</p>
+        <p class="score">{{ player.gameScore ?? "-" }}</p>
       </div>
     </div>
-    <button class="continue-button">Continue</button>
   </div>
 </template>
 <script>
@@ -39,8 +38,12 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  justify-items: center;
+  align-items: center;
   color: beige;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  overflow: hidden;
 }
 .player-list {
   background-color: rgba(255, 255, 255, 0.189);
@@ -50,6 +53,7 @@ export default {
   flex-direction: column;
   gap: 0.25rem;
   width: 60%;
+  overflow: auto;
 }
 
 .player {
@@ -67,21 +71,5 @@ export default {
 }
 .score {
   margin-left: auto;
-}
-.continue-button {
-  border: none;
-  font-family: inherit;
-  padding: 1rem;
-  font-size: 2rem;
-  color: beige;
-  background-color: rgb(124, 184, 64);
-  position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  cursor: pointer;
-}
-.continue-button:hover {
-  background-color: rgb(139, 188, 90);
-  transform: scale(1.05);
 }
 </style>

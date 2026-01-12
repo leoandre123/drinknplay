@@ -1,10 +1,10 @@
 {
-    "settings": "Settings",
-    "chooseSettings": "Choose your settings",
-    "minigameQ": "How many minigames should your game contain?",
-    "rounds": "Rounds",
-    "drunknessQ": "What is your desired drunkness?",
-    "drunknessLevel": "Drunkness level",
-    "maxPlayers": "Max players",
-    "create": "CREATE LOBBY"
+  "settings": "Settings",
+  "minigameQ": "Number of minigames",
+  "rounds": "Rounds",
+  "drunknessQ": "Desired drunkness",
+  "drunknessLevel": "Drunkness level",
+  "maxPlayers": "Max players",
+  "create": "CREATE LOBBY",
+  "back": "Go back"
 }

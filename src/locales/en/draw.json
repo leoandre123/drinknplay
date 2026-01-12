@@ -1,0 +1,18 @@
+{
+    "draw": "DRAW A",
+    "time": "Time left:",
+    "title": "Drink n' Draw",
+    "save": "SAVE",
+    "submitHost": "Welcome! Please submit a subject on your device.",
+    "rate":"Rate picture on your device",
+    "typeSubject": "Please type a subject to draw",
+    "submitted":"submitted, waiting for other players",
+    "submitSubject": "Submit Subject",
+    "bestDrawing": "BEST DRAWING",
+    "points": "points",
+    "scoreboard": "SCOREBOARD",
+    "drawA": "Draw a...",
+    "rate10":"Rate 1-10, select a number and press vote",
+    "vote":"VOTE",
+    "voteConfirmed":"VOTE CONFIRMED! Rating:"
+}

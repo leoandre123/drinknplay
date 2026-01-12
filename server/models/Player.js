@@ -10,10 +10,11 @@ export class Player {
 
     this.avatarSettings = avatarSettings;
 
-    this.glassFillLevel = 0;
+    this.glassLevel = 0;
     this.drunkness = 0;
     this.score = 0;
 
     this.isReady = false;
+    this.gameScore = 0;
   }
 }

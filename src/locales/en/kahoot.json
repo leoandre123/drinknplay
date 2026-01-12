@@ -1,87 +1,77 @@
 {
-    "q1": {
-        "title": "What is 5 × 5?",
-        "a1": "20",
-        "a2": "25",
-        "a3": "15",
-        "a4": "35"
-    },
-    "q2": {
-        "title": "What is the world's largest ocean?",
-        "a1": "Atlantic Ocean",
-        "a2": "Arctic Ocean",
-        "a3": "Pacific Ocean",
-        "a4": "Indian Ocean"
-    },
-    "q3": {
-        "title": "Which statement is true?",
-        "a1": "Leo is the best",
-        "a2": "Leo is the worst",
-        "a3": "Leo is 22 years old",
-        "a4": "Leo is 23 years old"
-    },
-    "q4": {
-        "title": "How old are you?",
-        "a1": "0–15",
-        "a2": "15–25",
-        "a3": "25–35",
-        "a4": "35+"
-    },
-    "q5": {
-        "title": "Which language runs in the browser?",
-        "a1": "Python",
-        "a2": "JavaScript",
-        "a3": "Java",
-        "a4": "C++"
-    },
-    "q6": {
-        "title": "What does HTML stand for?",
-        "a1": "HyperText Markup Language",
-        "a2": "HighText Machine Language",
-        "a3": "Hyper Transfer Main Language",
-        "a4": "Home Tool Markup Language"
-    },
-    "q7": {
-        "title": "What is 1 × 5?",
-        "a1": "1",
-        "a2": "3",
-        "a3": "5",
-        "a4": "10"
-    },
-    "q8": {
-        "title": "Who was the first man on the moon?",
-        "a1": "Michael collins",
-        "a2": "Yuri Gagarin",
-        "a3": "Buzz Aldrin",
-        "a4": "Niel Armstrong"
-    },
-    "q9": {
-        "title": "What is the chemical symbol for gold?",
-        "a1": "Ag",
-        "a2": "Fe",
-        "a3": "Pb",
-        "a4": "Au"
-    },
-    "q10": {
-        "title": "Who painted the Mona Lisa??",
-        "a1": "Michelangelo",
-        "a2": "Leonardo da Vinci",
-        "a3": "Pablo Picasso",
-        "a4": "Vincent van Gogh"
-    },
-    "q11": {
-        "title": "What is the fastest land animal?",
-        "a1": "Lion",
-        "a2": "Horse",
-        "a3": "Antelope",
-        "a4": "Cheetah"
-    },
-    "q12": {
-        "title": "What is the capital of Japan?",
-        "a1": "Tokyo",
-        "a2": "Kyoto",
-        "a3": "Seoul",
-        "a4": "Osaka"
-    },
-    "instruction": "Waiting for players to answer"
+    "instruction": "Waiting for players to answer",
+    "questions": {
+        "q_largest_ocean": {
+            "title": "What is the world's largest ocean?",
+            "answers": {
+                "a_atlantic": "Atlantic Ocean",
+                "a_arctic": "Arctic Ocean",
+                "a_pacific": "Pacific Ocean",
+                "a_indian": "Indian Ocean"
+            }
+        },
+        "q_browser_language": {
+            "title": "Which language runs in the browser?",
+            "answers": {
+                "a_python": "Python",
+                "a_javascript": "JavaScript",
+                "a_java": "Java",
+                "a_cpp": "C++"
+            }
+        },
+        "q_html": {
+            "title": "What does HTML stand for?",
+            "answers": {
+                "a_hypertext": "HyperText Markup Language",
+                "a_hightext": "HighText Machine Language",
+                "a_hypertransfer": "Hyper Transfer Main Language",
+                "a_hometool": "Home Tool Markup Language"
+            }
+        },
+        "q_first_man_on_moon": {
+            "title": "Who was the first man on the moon?",
+            "answers": {
+                "a_micheal_collins": "Michael Collins",
+                "a_yuri_gagarin": "Yuri Gagarin",
+                "a_buzz_aldrin": "Buzz Aldrin",
+                "a_niel_armstrong": "Niel Armstrong"
+            }
+        },
+        "q_gold_symbol": {
+            "title": "What is the chemical symbol for gold?",
+            "answers": {
+                "a_ag": "Ag",
+                "a_fe": "Fe",
+                "a_pb": "Pb",
+                "a_au": "Au"
+            }
+        },
+        "q_mona_lisa_painter": {
+            "title": "Who painted the Mona Lisa??",
+            "answers": {
+                "a_michelangelo": "Michelangelo",
+                "a_davinci": "Leonardo da Vinci",
+                "a_picasso": "Pablo Picasso",
+                "a_vangogh": "Vincent van Gogh"
+            }
+        },
+        "q_fastest_animal": {
+            "title": "What is the fastest land animal?",
+            "answers": {
+                "a_lion": "Lion",
+                "a_horse": "Horse",
+                "a_antelope": "Antelope",
+                "a_cheetah": "Cheetah"
+            }
+        },
+        "q_capital_japan": {
+            "title": "What is the capital of Japan?",
+            "answers": {
+                "a_tokyo": "Tokyo",
+                "a_kyoto": "Kyoto",
+                "a_seoul": "Seoul",
+                "a_osaka": "Osaka"
+            }
+        }
+    }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="cancon">
     <canvas
       ref="myCanvas"
       @mousedown="startPosition"
@@ -211,11 +211,17 @@ export default {
 </script>
 
 <style scoped>
+.cancon {
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+}
 canvas {
   background-color: white;
   display: block;
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
+  border: 3px solid black;
 }
 </style>

@@ -18,7 +18,9 @@
            /> 
             <div class="wheel-inner-rim"></div>
             <div class="pocket-rim"></div>
-            <div class="ball" v-bind:style="{transform: 'translate(-50%,-50%) rotate(' + (ballRotation)+'deg) translateY(-' + ballRadius +'px)'}"></div>
+            <div class="ball" 
+                :class="{ snap: ballSnap }"
+                v-bind:style="{transform: 'translate(-50%,-50%) rotate(' + (ballRotation)+'deg) translateY(-' + ballRadius +'px)'}"></div>
            <div class="wheel-inner"></div>
            <div class="wheel-middle"></div>
            <div class="wheel-inner-middle"></div>
@@ -50,6 +52,7 @@ export default{
             rotation: 0,
             ballRotation: 0,
             isSpinning: false,
+            ballSnap: false,
         };
     },
     
@@ -99,20 +102,39 @@ export default{
             this.ballRotation = ballEndRotation;
 
             setTimeout(()=>{ 
+                const indexCentered = this.getPocketIndexCentered(this.ballRotation);
+                const snappedAngle = this.getPocketAngle(indexCentered);
+                //hitta vinkel efter alla varv
+                const rotationBaseDeg = this.ballRotation - this.normalizeAngle(this.ballRotation);
+                const snappedRotation = rotationBaseDeg + snappedAngle;
+                this.ballSnap = true;
+                this.ballRotation = snappedRotation;
+                
                 const finalNumber = this.calculateFinalNumber();
                 this.isSpinning = false;
                 this.$emit("spinFinished", finalNumber);//säg till RouletteVIew
+                setTimeout(()=> (this.ballSnap = false), 180);
             },5000); //delayar med 5s
         },
         calculateFinalNumber(){
-        const TOTAL = this.numbers.length;
-        const DEG = 360 / TOTAL;
+            const indexCentered = this.getPocketIndexCentered(this.ballRotation);
+            return this.numbers[indexCentered];
+        },
 
-         let a = ((this.ballRotation) % 360 + 360) % 360;
-         a = (a + DEG / 2 + 360) % 360; //tillbaka halvt fack
-        const idx = Math.floor(a / DEG);
-
-        return this.numbers[idx];
+        normalizeAngle(deg){
+            return ((deg % 360) + 360) % 360;
+        },
+        getPocketIndexCentered(angleDeg){
+            const TOTAL = this.numbers.length;
+            const DEG = 360 / TOTAL;
+            const a = this.normalizeAngle(angleDeg);
+            const aCentered = this.normalizeAngle(a + DEG / 2 );
+            return Math.floor(aCentered / DEG);
+        },
+        getPocketAngle(index){
+            const TOTAL = this.numbers.length;
+            const DEG = 360 / TOTAL;
+            return index * DEG;
         }
     }
 }
@@ -243,6 +265,9 @@ export default{
         z-index: 7;
         box-shadow: 0 0 4px rgba(0,0,0,0.6);
         transition: transform 5s cubic-bezier(0.2, 0.3, 0.2,1);
+    }
+    .ball.snap{
+        transition: transform 120ms ease-out;
     }
 
 </style>

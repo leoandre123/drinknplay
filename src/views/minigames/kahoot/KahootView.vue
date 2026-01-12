@@ -2,7 +2,9 @@
   <div class="kahoot-container">
     <div class="title">
       <h1>Q {{ currentQuestionIndex + 1 }}/{{ questionCount }}</h1>
-<h1>{{ currentQuestion.titleKey ? $t(currentQuestion.titleKey) : "" }}</h1>
+      <h1>
+        {{ $t(`kahoot.questions.${currentQuestion.id}.title`) }}
+      </h1>
       <p>A: {{ answerCount }}/{{ playerCount }}</p>
     </div>
     <div class="body">{{ $t("kahoot.instruction") }}</div>
@@ -16,7 +18,7 @@
           { wrong: reveal && !currentQuestion.answers[i].correct },
         ]"
       >
-{{ timer == 0 ? (answer.textKey ? $t(answer.textKey) : "") : "-" }}
+        {{ timer == 0 ? $t(`kahoot.questions.${currentQuestion.id}.answers.${answer.id}`) : "-" }}
       </div>
       <div v-if="timer" class="timer-container">
         <div class="timer" :key="timer">{{ timer }}</div>
@@ -61,6 +63,7 @@ export default {
   },
   methods: {
     onStartQuestion(q) {
+      console.log("START QUESTION", q);
       this.reveal = false;
       this.currentQuestion = q;
 

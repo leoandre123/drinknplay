@@ -2,15 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
 import ResultView from "../views/ResultView.vue";
-
-import PlayerMazeGameView from "../views/minigames/mazegame/PlayerMazeGameView.vue";
-import HostMazeGameView from "../views/minigames/mazegame/HostMazeGameView.vue";
-
 import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
-import HostDrawingView from "../views/minigames/drawing/HostDrawingView.vue";
-
 import AdminView from "../views/AdminView.vue";
-
 import RouletteView from "../views/minigames/roulette/RouletteView.vue";
 import RoulettePlayerView from "@/views/minigames/roulette/RoulettePlayerView.vue";
 
@@ -50,7 +43,6 @@ const router = createRouter({
       path: "/roulette",
       name: "Roulette",
       component: RouletteView,
-
     },
 
     {
@@ -62,11 +54,6 @@ const router = createRouter({
       path: "/test",
       name: "Test",
       component: () => import("../views/TestView.vue"),
-    },
-    {
-      path: "/editor",
-      name: "MapEditor",
-      component: () => import("../views/MapEditorView.vue"),
     },
     {
       path: "/join/:id",

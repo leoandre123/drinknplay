@@ -137,7 +137,14 @@ export class ReactionGame extends Minigame {
       return;
     } else {
       console.log("GAME FINISHED");
-      this.onFinished?.([]);
+      const results = {
+        type: "scores",
+        data: [...this.scores].map(([playerId, score]) => ({
+          playerId,
+          score,
+        })),
+      };
+      this.onFinished?.(results);
     }
   }
 }
