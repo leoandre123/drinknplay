@@ -106,7 +106,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    border: 5px ridge yellow;
+    border: 5px ridge black;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -121,8 +121,11 @@ export default {
 }
 
 .subject {
-    background-color: var(--Caribbean_Green);
-    color: var(--Metallic_Yellow);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
+    color: whitesmoke;
     font-size: 5vw;
     margin: 0;
     text-shadow: 1px 1px black;
@@ -153,8 +156,11 @@ export default {
 
 .time {
     flex-shrink: 0;
-    background-color: var(--Caribbean_Green);
-    color: var(--Metallic_Yellow);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
+    color: white;
     font-size: 3rem;
     text-align: center;
     margin-top: auto;
@@ -162,15 +168,21 @@ export default {
 
 
 .voting-container {
-    background-color: var(--Caribbean_Green);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
 .vote-title {
-    background-color: var(--Caribbean_Green);
-    color: var(--Metallic_Yellow);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
+    color: whitesmoke;
     font-size: 3rem;
 }
 
