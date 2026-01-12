@@ -46,7 +46,10 @@ export default {
     overflow:hidden;
     height: 100%;
     min-height: 0;
-    background-color: var(--Caribbean_Green);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-template-areas: 
@@ -62,8 +65,8 @@ export default {
     margin: 2vw;
     font-size: 3vw;
     font-family: "Science Gothic", sans-serif;
-    background-color: var(--Metallic_Yellow);    
-    border: 1px outset black;
+    background-color: rgb(183, 127, 189);    
+    border: 1px outset rgb(183, 127, 189);
 }
     
 
@@ -71,13 +74,16 @@ export default {
     border: 3px outset black;
     display: block;
     margin:2%;
-    
+    min-height: 0;
+    object-fit: contain;
+    background-color: rgb(183, 127, 189);
+    padding: 2%
 
 }
 
 .best-drawing {
     font-family: "Science Gothic", sans-serif;
-    color: var(--French_Rose);
+    color: whitesmoke;
     text-shadow: 1px 1px black;
     display: flex;
     flex-direction: column;
@@ -87,29 +93,28 @@ export default {
 
 .scoreboard {
     font-family: "Science Gothic", sans-serif;
-    color: var(--Metallic_Yellow);
+    color: whitesmoke;
     text-shadow: 1px 1px black;
     display: flex;
     flex-direction: column;
-    border-right: 5px solid yellow;
+    border-right: 5px solid black;
     grid-area: leaderboard;
     overflow: scroll;
 }
 
 .player-in-leaderboard{
-    color: var(--French_Rose);
-    border-bottom: 5px solid yellow;
-    margin-bottom: 5px;
-    
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+    margin: 5px;
 }
 
 .best-drawing-title{
     margin: 2vw;
     color: var(--French_Rose);
     font-size: 3vw;
-    background-color: var(--Metallic_Yellow);
+    background-color: rgb(183, 127, 189);
     animation: glow 1s ease-in-out infinite alternate;
-    border: 1px outset gray;
+    border: 1px outset rgb(210, 142, 201);
 }
 
 

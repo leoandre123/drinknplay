@@ -157,12 +157,10 @@ input {
 }
 .drawing-canvas {
   position: relative;
-  background: linear-gradient(
-    90deg,
-    rgba(131, 58, 180, 1) 0%,
-    rgba(253, 29, 29, 1) 50%,
-    rgba(252, 176, 69, 1) 87%
-  );
+  background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -185,16 +183,16 @@ input {
 .drawing-title {
   font-size: 3rem;
   font-family: "Science Gothic", sans-serif;
-  color: var(--Metallic_Yellow);
+  color: white;
   text-shadow: 3px 3px black;
-  border-bottom: 1px solid var(--Metallic_Yellow);
+  border-bottom: 1px solid white;
   width: 70%;
   margin-bottom: 1rem;
 }
 
 .tools-container {
   display: flex;
-  background-color: gray;
+  background-color: rgb(192, 187, 187);
   height: 4rem;
   border: 5px outset black;
 }
