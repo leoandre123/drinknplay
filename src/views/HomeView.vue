@@ -2,7 +2,7 @@
   <NewRetroContainer>
     <div v-if="!isConnected">Not connected to server</div>
     <div v-if="isConnected" class="home-container">
-      <RetroText>DRINK N' PLAY</RetroText>
+      <RetroText>{{ $t('common.name') }}</RetroText>
       <div class="menu">
         <h2>{{ $t("lobby.lobbyCode") }}</h2>
         <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" maxlength="3" />

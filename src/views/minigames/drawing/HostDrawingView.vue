@@ -12,7 +12,9 @@
 
         <div v-if="phase === 'voting'" class="voting-container">
             <div class="vote-title">{{ $t("draw.rate") }}</div>
-            <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
+            
+            <img class="drawing-to-vote" :src="currentDrawingToVote.png"></img>
+        
         </div>
 
         <DrawingResultScreen v-if="phase === 'results'" :score="scores"/>
@@ -20,7 +22,9 @@
         <div v-if="phase === 'start'" class = "start">
             {{ $t("draw.submitHost") }}
         </div>
-        <div v-if="phase !== 'results'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
+        <div v-if="phase !== 'start'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
+        <div v-else class="time">{{ $t("draw.waiting") }}</div>
+
     </div>
 </template>
 
@@ -106,7 +110,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    border: 5px ridge yellow;
+    border: 5px ridge black;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -121,8 +125,11 @@ export default {
 }
 
 .subject {
-    background-color: var(--Caribbean_Green);
-    color: var(--Metallic_Yellow);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
+    color: whitesmoke;
     font-size: 5vw;
     margin: 0;
     text-shadow: 1px 1px black;
@@ -153,36 +160,45 @@ export default {
 
 .time {
     flex-shrink: 0;
-    background-color: var(--Caribbean_Green);
-    color: var(--Metallic_Yellow);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
+    color: white;
     font-size: 3rem;
     text-align: center;
     margin-top: auto;
+    border-top: 5px solid yellow;
+    
 }
 
 
 .voting-container {
-    background-color: var(--Caribbean_Green);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 100%;
 }
 
 .vote-title {
-    background-color: var(--Caribbean_Green);
-    color: var(--Metallic_Yellow);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
+    color: whitesmoke;
     font-size: 3rem;
 }
 
 .drawing-to-vote {
-    flex: 1;
-    object-fit: contain;
-    display: block;
     min-height: 0;
-    padding: 10px;
-    border: 5px double black;
-    background-color: gray;
-    margin: 10px;
+    display: block;
+    margin:2%;
+    object-fit: contain;
+
 }
 
 .start {

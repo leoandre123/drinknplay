@@ -4,7 +4,6 @@
     <h1 v-if="!subjectSubmitted">{{ $t("draw.typeSubject") }}</h1>
     <h1 v-if="subjectSubmitted">{{ subject }} {{ $t("draw.submitted") }}</h1>
     <input v-model="subject" :disabled="subjectSubmitted" @input="subject = subject.toUpperCase()" :placeholder='$t("draw.drawA")'/>
-    <hr></hr>
     <RetroButton
     color="yellow"
     class="subject-button" 
@@ -30,14 +29,19 @@
       />
     </div>
 
-    <div class="rating" v-if="gamePhase == 'voting'">
       <RatingTool
-        v-if="canVote"
+        class="rating"
+        v-if="canVote && gamePhase == 'voting'"
         :key="currentDrawingToVote.playerId"
         @rating-submitted="playerRated"
       >
       </RatingTool>
-    </div>
+      <div class="waiting"
+      v-if="gamePhase == 'voting' && !canVote"> You can not vote on your own picture...</div>
+      
+      <div class="waiting" v-if="gamePhase == 'results'">
+         Waiting for next round...</div>
+  
   </div>
 </template>
 
@@ -147,14 +151,16 @@ input {
   border: 0.15rem solid #2c3b5f;
   text-transform: uppercase;
 }
+.rating{
+  height: 100%;
+  width: 100%;
+}
 .drawing-canvas {
   position: relative;
-  background: linear-gradient(
-    90deg,
-    rgba(131, 58, 180, 1) 0%,
-    rgba(253, 29, 29, 1) 50%,
-    rgba(252, 176, 69, 1) 87%
-  );
+  background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -177,27 +183,41 @@ input {
 .drawing-title {
   font-size: 3rem;
   font-family: "Science Gothic", sans-serif;
-  color: var(--Metallic_Yellow);
+  color: white;
   text-shadow: 3px 3px black;
-  border-bottom: 1px solid var(--Metallic_Yellow);
+  border-bottom: 1px solid white;
   width: 70%;
   margin-bottom: 1rem;
 }
 
 .tools-container {
   display: flex;
-  background-color: gray;
+  background-color: rgb(192, 187, 187);
   height: 4rem;
   border: 5px outset black;
 }
 
 
 .submit-subject{
+  gap: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: var(--Metallic_Yellow);
   height: 100%;
   justify-content: center;
+}
+
+.waiting{
+height: 100%;
+width: 100;
+font-size: 3rem;
+font-family: "Science Gothic", sans-serif;
+color: white;
+background-color: var(--Metallic_Yellow);
+display: flex;
+justify-content: center;
+align-items: center; 
+
 }
 </style>

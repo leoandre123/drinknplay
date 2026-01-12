@@ -44,7 +44,6 @@ export default {
   async created() {},
   methods: {
     toggleReady() {
-      navigator.vibrate(200);
       socket.emit("ready", !context.getCurrentPlayer().isReady);
     },
   },

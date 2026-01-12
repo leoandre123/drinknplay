@@ -15,9 +15,19 @@
     "modeDescription": "Current mode: ",
     "slopeFinished": "Slope finished",
     "finishDescription": "Great job!",
+    "slotMessage": "Look at the screen",
+    "results": "RESULTS",
+    "drinkingCreditsLeft": "Dryckeskrediter kvar",
+    "loading": "Loading",
+    "joinGame": "Join game",
+    "personName": "Name",
     "spin": {
         "title": "MINIGAMES",
         "spin": "SPIN",
         "spinning": "SPINNING..."
-    }
+    },
+    "drinkText": "Your glass has been filled and you have to drink",
+    "glass": "Glas",
+    "drinkConfirmation": "Press the button to confirm that you have drunk",
+    "waitingForHost": "Waiting for host"
 }

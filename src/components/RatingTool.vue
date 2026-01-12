@@ -1,5 +1,5 @@
 <template>
-    <div class="raiting-view-container">
+    <div class="rating-view-container">
         <div class="rating" v-if="!voted">
             <header>{{ $t("draw.rate10") }}</header>
             <div class="rating-buttons">
@@ -42,7 +42,10 @@ export default {
     justify-content: center;
     flex-wrap: wrap;
     flex-direction: column;
-    background-color: var(--Caribbean_Green);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);
     padding: 1rem;
     gap: 1rem;
 
@@ -51,8 +54,8 @@ export default {
 .rating header {
     font-family: "Science Gothic", sans-serif;
     font-size: 2rem;
-    color: var(--Metallic_Yellow);
-    border-bottom: 10px solid var(--Metallic_Yellow);
+    color: whitesmoke;
+    border-bottom: 10px solid black;
 }
 
 .rating-buttons {
@@ -87,10 +90,13 @@ export default {
 }
 
 .vote-confirmed {
-    color: var(--Metallic_Yellow);
+    color: whitesmoke;
     font-size: 8vw;
     font-family: "Science Gothic", sans-serif;
-    background-color: var(--Caribbean_Green);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);;
     height: 100%;
     width: 100%;
 }
@@ -99,6 +105,9 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: var(--Caribbean_Green);
+    background-image: radial-gradient(circle farthest-corner at 10% 20%,
+            rgb(102, 0, 32) 0%,
+            rgb(116, 18, 92) 49.5%,
+            rgb(164, 34, 144) 90%);;
 }
 </style>

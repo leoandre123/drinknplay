@@ -1,8 +1,13 @@
 <template>
   <div class="game-results-container">
-    <h1>RESULTS</h1>
+    <h1>{{$t('common.results')}}</h1>
     <div class="player-list">
-      <div v-for="(player, i) in context?.state.players" class="player">
+      <div
+        v-for="(player, i) in context?.state.players.toSorted(
+          (a, b) => (a.gameScore ?? 0) - (b.gameScore ?? 0)
+        )"
+        class="player"
+      >
         <p>{{ i + 1 }}</p>
         <div class="avatar">
           <Avatar :settings="player.avatarSettings" />

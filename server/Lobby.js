@@ -6,7 +6,7 @@ import { ALL_GAMES } from "./GamesRegistry.js";
 import { Logger } from "./Logger.js";
 import {
   CREDITS_PER_GLASS,
-  CREDITS_PER_ROUND,
+  CREDITS_PER_ROUNDPLAYER,
   DISCONNECT_TIMEOUT,
   PLAYER_ID_LENGTH,
   TOTAL_SCORE_PER_GAME,
@@ -215,8 +215,16 @@ export class Lobby {
     if (results?.type == "credits") {
       credits = results.data ?? [];
     } else if (results?.type == "scores") {
-      const creditsPerGame = CREDITS_PER_ROUND[this.settings.drunknessLevel];
-      credits = distributeCredits(results.data, creditsPerGame);
+      credits = distributeCredits(
+        results.data,
+        CREDITS_PER_ROUNDPLAYER[this.settings.drunknessLevel] * results.data.length
+      );
+      scores = results.data ?? [];
+    } else if (results?.type == "ranking") {
+      credits = distributeCredits(
+        results.data.map((x, i) => ({ playerId: x.id, score: results.data.length - i })),
+        CREDITS_PER_ROUNDPLAYER[this.settings.drunknessLevel] * results.data.length
+      );
       scores = results.data ?? [];
     }
 

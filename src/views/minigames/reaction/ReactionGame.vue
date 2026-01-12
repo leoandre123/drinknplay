@@ -11,13 +11,13 @@
                 <p>{{ countdownText }}</p>
             </div>
 
-            <div v-if="roundActive && !showRoundResult" class="picture-container">
+            <div v-else-if="roundActive && !showRoundResult" class="picture-container">
                 <img v-for="(pos, i) in positions" :key="i" :src="mascot" class=" figure" :style="{
                     left: pos.leftVh + 'vh',
                     top: pos.topVh + 'vh'
                 }" />
             </div>
-            <div v-else class="round-result">
+            <div v-else-if="showRoundResult" class="round-result">
                 <h2 v-if="winnerName">{{ $t("reaction.winner") }} : {{ winnerName }}</h2>
                 <h2 v-if="showRoundResult && !winnerName">{{ $t("reaction.no_winner") }}</h2>
             </div>
@@ -174,7 +174,7 @@ export default {
                 const audio = new Audio('/sounds/winner.mp3');
                 audio.play();
             }
-            else if (this.winner === false && this.showRoundResult) {
+            else if (this.winner === null && this.showRoundResult) {
                 const audio = new Audio('/sounds/nowinner.mp3');
                 audio.play();
             }
@@ -215,6 +215,8 @@ export default {
     justify-items: top;
     align-items: top;
 
+    padding: 10px; 
+    
     background: rgba(0, 0, 0, 0.6);
     color: rgb(175, 87, 226);
     font-size: 1rem;
@@ -235,15 +237,8 @@ export default {
     height: auto;
     transform: translate(-50%, -50%);
 }
-
-.start-button {
-    width: 300px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin: 10px;
-    font-weight: bold;
-    font-size: 16;
-    background-color: pink;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+p {
+    padding: 15px;
 }
+
 </style>

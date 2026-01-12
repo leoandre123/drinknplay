@@ -55,18 +55,17 @@ p {
 }
 
 .player-name {
-  font-size: 1.2rem;
-  font-family: "Science Gothic", sans-serif;
+  font-size: 3rem;
   color: var(--Metallic_Yellow);
-  text-shadow: 3px 3px black;
-  border-bottom: 1px solid var(--Metallic_Yellow);
+  text-shadow: 0.2rem 0.2rem black;
+  border-bottom: 0.15rem solid var(--Metallic_Yellow);
   width: 70%;
 }
 
 .player-score {
-  font-size: 1rem;
-  font-family: "Honk";
-  letter-spacing: 5px;
+  font-size: 2.5rem;
+  color: var(--Metallic_Yellow);
+  text-shadow: 0.2rem 0.2rem black;
 }
 
 .drinking-glass {

@@ -27,7 +27,7 @@ export class DrawingGame extends Minigame {
 
   //runs the game phase switching with timer
   setTimer(seconds) {
-    //this.stopTimer();
+    this.stopTimer();
     this.timer = seconds;
     this.broadcast("timerTick", this.timer);
     this.timerID = setInterval(() => {
@@ -97,7 +97,7 @@ export class DrawingGame extends Minigame {
 
   initiateDrawing() {
     console.log(this.subjects);
-    this.setTimer(120);
+    this.setTimer(90);
     this.changeSubject();
     this.allDrawings = [];
     this.broadcastHosts("clearPaintings");
@@ -113,7 +113,7 @@ export class DrawingGame extends Minigame {
   //Handles voting
   initiateVoteing() {
     if (this.allDrawings.length > 0) {
-      this.setTimer(10);
+      this.setTimer(15);
       this.currentDrawingIndex = 0;
       this.broadcastVoting();
       console.log("INITIATE VOITNG");
@@ -130,7 +130,7 @@ export class DrawingGame extends Minigame {
     this.currentDrawingIndex++;
     if (this.currentDrawingIndex < this.allDrawings.length) {
       this.broadcastVoting();
-      this.setTimer(10);
+      this.setTimer(15);
     } else {
       this.changeGamePhase();
     }
@@ -138,7 +138,7 @@ export class DrawingGame extends Minigame {
 
   //Sends score to Host to display in result vue, both player total score & drawing scores
   initiateResults() {
-    this.setTimer(20);
+    this.setTimer(10);
     this.sortResults();
     this.broadcastHosts("results", {
       players: this.drawingPlayers,

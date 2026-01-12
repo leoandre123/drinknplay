@@ -1,4 +1,3 @@
-
 <template>
   <div class="mini-card">
     <span class="place">{{ place + 1 }}</span>
@@ -14,7 +13,7 @@ export default {
   props: {
     player: { type: Object, required: true },
     place: { type: Number, required: true }
-    }
+  }
 };
 </script>
 
@@ -25,6 +24,7 @@ export default {
   align-items: center;
   padding: 0.4rem 0.6rem;
   width: 13rem;
+  height: 2.7rem;
   background: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
   color: white;
@@ -33,20 +33,21 @@ export default {
 
 .place {
   font-weight: bold;
-  text-align: center;
   color: bisque;
+  font-size: 20px;
 }
 
 .name {
   overflow: hidden;
   color: rgb(183, 131, 232);
   white-space: nowrap;
+  font-size: 19px;
   text-overflow: ellipsis;
 }
 
 .amount {
   text-align: right;
-  font-size: 10px;
+  font-size: 20px;
   font-weight: bold;
   color: rgb(209, 156, 233);
 }
