@@ -171,14 +171,28 @@ export default {
       }
     }
 
+    window.addEventListener("error", this.onError);
+    window.addEventListener("unhandledrejection", this.onUnhandledRejection);
+
     this.setupDebug();
   },
   beforeUnmount() {
     socket.off("lobby:joinResponse");
     socket.off("lobby:joinHostResponse");
     socket.off("lobby:updateState");
+    window.removeEventListener("error", this.onError);
+    window.removeEventListener("unhandledrejection", this.onUnhandledRejection);
   },
   methods: {
+    onError(e) {
+      console.error("Unhandled error FUFAUF", e.reason);
+      alert(`Error: ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`);
+    },
+
+    onUnhandledRejection(e) {
+      console.error("Unhandled promise:", e.reason);
+    },
+
     setupDebug() {
       socket.on("debug:allLobbies", (lobbies) => {
         console.log(lobbies);
