@@ -1,17 +1,17 @@
 import { Minigame } from "../Minigame.js";
 
 export class DrawingGame extends Minigame {
-    constructor() {
-        super();
-        this.drawingPlayers = [];
-        this.allDrawings = [];
-        this.phase = "start";
-        this.currentSubject = "";
-        this.subjects = [];
-        this.timer = null;
-        this.timerID = null;
-        this.currentDrawingIndex = 0;
-    }
+  constructor() {
+    super();
+    this.drawingPlayers = [];
+    this.allDrawings = [];
+    this.phase = "start";
+    this.currentSubject = "";
+    this.subjects = [];
+    this.timer = null;
+    this.timerID = null;
+    this.currentDrawingIndex = 0;
+  }
 
   onPlayerJoined(player) {
     this.broadcastPlayers("gamePhase", this.phase);
@@ -87,7 +87,7 @@ export class DrawingGame extends Minigame {
     const results = {
       type: "scores",
       data: this.drawingPlayers.map((dp) => ({
-        id: dp.playerId,
+        playerId: dp.playerId,
         score: dp.score ?? 0,
       })),
     };
@@ -202,16 +202,14 @@ export class DrawingGame extends Minigame {
     });
   }
 
+  unregisterListeners(socket) {
+    socket?.removeAllListeners("submitSubject");
+    socket?.removeAllListeners("updateCanvas");
+    socket?.removeAllListeners("playerVote");
+  }
 
-    unregisterListeners(socket) {
-        socket?.removeAllListeners("submitSubject");
-        socket?.removeAllListeners("updateCanvas");
-        socket?.removeAllListeners("playerVote");
-    }
-
-    start() {
-    }
-    stop() {
-        this.stopTimer();
-    }
+  start() {}
+  stop() {
+    this.stopTimer();
+  }
 }

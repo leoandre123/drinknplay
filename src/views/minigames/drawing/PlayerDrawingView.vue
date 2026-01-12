@@ -161,6 +161,7 @@ input {
   background-repeat: repeat;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .canvas-container {
@@ -170,6 +171,7 @@ input {
   min-width: 0;
   max-width: 90%;
   max-height: 90%;
+  justify-items: center;
 }
 
 .drawing-title {
