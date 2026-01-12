@@ -35,6 +35,9 @@
 <script>
 import { socket } from '../../../socket';
 import { context } from '../../../context';
+import { useDevice } from '@/UseDevice';
+import { COLUMNS_OF_MAZE } from "../Constants.js";
+import { MAZE_FINISH_INDEX } from  "../Constants.js";
 export default {
   name: "PlayerMazeGameView",
 
@@ -110,7 +113,7 @@ created() {
       this.c.height = window.innerWidth;
     }
 
-    this.columns = 8;
+    this.columns = COLUMNS_OF_MAZE;
     this.tileSize = this.c.width / this.columns;
 
     this.maze = [
@@ -123,7 +126,7 @@ created() {
       true, false, true, true, true, true, true, false,
       true, false, false, false, false, false, false, false
     ]
-    this.finishIndex = 4;
+    this.finishIndex = MAZE_FINISH_INDEX;
 
     this.ctx = this.c.getContext("2d");
 

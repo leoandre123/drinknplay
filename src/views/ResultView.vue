@@ -1,7 +1,7 @@
 <template>
   <div class="results">
     <template v-if="context.isHost">
-      <h1 class="glow large">Scoreboard</h1>
+      <h1 class="glow large">{{$t('draw.scorebard')}}</h1>
       <div class="player-cards" :style="playerGridStyle">
         <TransitionGroup name="list">
           <PlayerCard

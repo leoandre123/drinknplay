@@ -1,9 +1,9 @@
 <template>
-  <div v-if="lobbyAvailable === undefined">Loading...</div>
+  <div v-if="lobbyAvailable === undefined">{{$t('common.loading')}}...</div>
   <div v-if="lobbyAvailable === true" class="join-container">
     <div class="menu">
-      <h1>Join game</h1>
-      <p>Name</p>
+      <h1>{{ $t('common.joinGame') }}</h1>
+      <p>{{$t('common.personName')}}</p>
       <input v-model="name" @input="name = $event.target.value" />
       <br />
       <br />
@@ -173,8 +173,6 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-.avatar-editor .buttons button {
 }
 
 .randomize-avatar {

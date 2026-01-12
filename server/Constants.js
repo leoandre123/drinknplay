@@ -18,3 +18,6 @@ export const CLOSEST_ROUND_TIMER = 30_000;
 //REACTION
 export const MAX_REACTION_ROUNDS = 10;
 export const FIGURE_COUNT_PER_ROUND = 7;
+//MAZEGAME
+export const COLUMNS_OF_MAZE = 8;
+export const MAZE_FINISH_INDEX = 4;
