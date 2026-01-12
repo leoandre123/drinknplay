@@ -1,8 +1,8 @@
 <template>
   <NewRetroContainer>
-    <div v-if="!isConnected">Not connected to server</div>
+    <div v-if="!isConnected" class="connection-warning">Not connected to server...</div>
     <div v-if="isConnected" class="home-container">
-      <RetroText>{{ $t('common.name') }}</RetroText>
+      <RetroText>{{ $t("common.name") }}</RetroText>
       <div class="menu">
         <h2>{{ $t("lobby.lobbyCode") }}</h2>
         <input v-model="lobbyCode" @input="lobbyCode = $event.target.value" maxlength="3" />
@@ -12,7 +12,8 @@
         </RetroButton>
         <div>
           <h3>
-            {{  $t("game.hostQuestion") }} <span class="create" @click="createGame">{{$t('game.here')}}</span>
+            {{ $t("game.hostQuestion") }}
+            <span class="create" @click="createGame">{{ $t("game.here") }}</span>
           </h3>
         </div>
       </div>
@@ -120,5 +121,11 @@ export default {
 }
 .create:hover {
   color: rgb(126, 35, 35);
+}
+
+.connection-warning {
+  height: 100dvh;
+  align-content: center;
+  font-size: 3rem;
 }
 </style>

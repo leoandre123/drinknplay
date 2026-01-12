@@ -524,6 +524,7 @@ button:active {
 
 .modal-content {
   background: white;
+  color: black;
   padding: 40px;
   border-radius: 20px;
   text-align: center;

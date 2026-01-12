@@ -1,6 +1,6 @@
-import { readFileSync } from "fs";
 import { Minigame } from "../Minigame.js";
 import { isWall, isOnTrack } from "../../shared/RacingGameHelper.js";
+import  allTracks  from "../data/tracks.json" with { type: 'json' };
 
 const MAX_SPEED = 1;
 const MAX_SPEED_GRASS = 0.2;
@@ -15,7 +15,7 @@ const ROAD_WIDTH = 64;
 export class RacingGame extends Minigame {
   constructor(noWinCheck = false) {
     super();
-    this.tracks = JSON.parse(readFileSync("./server/data/tracks.json"));
+    this.tracks = allTracks;
     this.track = this.tracks[0];
     this.cars = [];
     this.startTime = 0;
