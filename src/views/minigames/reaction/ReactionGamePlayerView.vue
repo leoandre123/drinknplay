@@ -43,7 +43,6 @@ export default {
       submitDisabled: true,
       myPlayerId: null,
 
-
     };
   },
 
@@ -159,33 +158,10 @@ export default {
   justify-content: center;
 }
 
-.remove-button,
-.add-button {
-  width: clamp(150px, 26vw, 200px);
-  height: clamp(200px, 26vw, 200px);
-  font-size: clamp(28px, 7vw, 50px);
-  font-weight: bold;
-  touch-action: manipulation;
-  border: black solid 6px;
-  border-radius: 25px;
-  box-shadow: 10px 8px 15px rgba(0, 0, 0, 0.4);
-  color: black;
-}
-
-.add-button {
-  background-color: #40bf44;
-
-}
-
 .submit-button:disabled {
   opacity: 0.4;
   pointer-events: none;
   cursor: not-allowed;
-}
-
-.remove-button {
-  background-color: #d54339;
-
 }
 
 .done-button-container {
@@ -196,15 +172,4 @@ export default {
   width: min(92vw, 320px);
 }
 
-.submit-button {
-  width: 100%;
-  padding: 14px 16px;
-  font-weight: bold;
-  font-size: clamp(16px, 4.5vw, 22px);
-  background-color: rgb(239, 215, 244);
-  border: 3px solid;
-  color: black;
-  border-radius: 16px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-}
 </style>
