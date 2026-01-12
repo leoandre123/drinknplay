@@ -202,13 +202,12 @@ data(){
     gap:5px;
     width: 100%;
     max-width: 100%;
-    font-family: Arial, Helvetica, sans-serif;
 }
 .title{
     color: rgb(219, 52, 202);
     margin:0;
     font-size: 50px;
-    font-family: "Science Gothic", sans-serif;
+   
     
 }
 .board-wrap{

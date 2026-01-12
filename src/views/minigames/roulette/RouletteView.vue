@@ -207,11 +207,11 @@ export default {
             this.$refs.wheel.spin(); //spin() från RouletteWheelviewen
         },
         onSpinFinished(number){
-            console.log("spin finished listened number=", number, "phase=", this.phase);
+         
             socket.emit("roulette:spinResult", { number });
         },
         nextRound(){
-            console.log("nextRound clicked", Date.now(), "round=", this.round, "phase=", this.phase);
+            
 
             socket.emit("roulette:nextRound");
         }
