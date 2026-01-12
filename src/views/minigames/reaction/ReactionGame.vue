@@ -174,7 +174,7 @@ export default {
                 const audio = new Audio('/sounds/winner.mp3');
                 audio.play();
             }
-            else if (this.winner === false && this.showRoundResult) {
+            else if (this.winner === null && this.showRoundResult) {
                 const audio = new Audio('/sounds/nowinner.mp3');
                 audio.play();
             }

@@ -74,6 +74,7 @@ export default {
   beforeUnmount() {
     socket.off("reaction:roundResult");
     socket.off("reaction:startRound");
+    socket.off("player:yourId");
   },
 
   methods: {

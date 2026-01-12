@@ -11,13 +11,14 @@ export class ReactionGame extends Minigame {
         this.figurePositions = [];
         this.winnerName = null;
         this.scores = new Map();
-        this.roundActive = false;
     }
 
     onPlayerJoined(player) {
         if (!this.scores.has(player.id)) {
             this.scores.set(player.id, 0);
         }
+        socket.emit("player:yourId", socket.data.playerId);
+
     }
 
     onPlayerDisconnected(player) {
@@ -28,8 +29,6 @@ export class ReactionGame extends Minigame {
         socket.on("reaction:submit", ({ amount, time }) => {
             this.onSubmit(socket.data.playerId, amount, time);
         });
-          socket.emit("player:yourId", socket.data.playerId);
-
     }
 
     unregisterListeners(socket) {
@@ -75,8 +74,7 @@ export class ReactionGame extends Minigame {
         this.broadcast("reaction:resetAmounts");
     }
 
-    stop() {
-        this.roundActive = false;
+    stop() { //vad gör denna?
     }
 
     onSubmit(playerId, amount, submitTime) {
@@ -126,21 +124,21 @@ export class ReactionGame extends Minigame {
         console.log("ROUND FINISHED");
         this.currentRound++;
 
-    if (this.currentRound < this.maxRounds) {
-      this.submissions = [];
-      setTimeout(() => this.startRound(), 1500);
-      console.log("STARTING NEW ROUND");
-      return;
-    } else {
-      console.log("GAME FINISHED");
-      const results = {
-        type: "scores",
-        data: [...this.scores].map(([playerId, score]) => ({
-          playerId,
-          score,
-        })),
-      };
-      this.onFinished?.(results);
+        if (this.currentRound < this.maxRounds) {
+            this.submissions = [];
+            setTimeout(() => this.startRound(), 1500);
+            console.log("STARTING NEW ROUND");
+            return;
+        } else {
+            console.log("GAME FINISHED");
+            const results = {
+                type: "scores",
+                data: [...this.scores].map(([playerId, score]) => ({
+                    playerId,
+                    score,
+                })),
+            };
+            this.onFinished?.(results);
+        }
     }
-  }
 }
