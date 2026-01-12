@@ -1,4 +1,13 @@
 {
     "close": "Stäng",
-    "info1": "Spelet består av ett flertal korta spel"
+    "howToPlay": "Hur man spelar",
+    "howToWin": "Hur man vinner",
+    "drinking": "Dryckesregler",
+    "info1": "Drink n' Play innehåller flera minispel",
+    "info2": "I varje minispel (förutom roulette) kommer spelare att få poäng",
+    "info3": "Spelaren med flest poäng i slutet vinner spelet",
+    "info4": "Vinnaren av varje minispel tilldelas ett antal DRINKING CREDITS",
+    "info5": "DRINKING CREDITS kan sedan användas för att fylla upp dina medspelares glas",
+    "info6": "Om ditt glas blir fyllt, måste du dricka upp ditt glas!",
+    "info7": "Din DRUNKOMETER kommer ha koll på din fyllenivå"
 }
