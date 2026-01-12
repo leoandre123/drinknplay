@@ -142,7 +142,6 @@ export default {
   box-sizing: border-box;
   padding-bottom: 100px;
 
-
 }
 
 .amount-display {
