@@ -22,8 +22,8 @@
         <div v-if="phase === 'start'" class = "start">
             {{ $t("draw.submitHost") }}
         </div>
-        <div v-if="phase !== 'start'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
-        <div v-else class="time">{{ $t("draw.waiting") }}</div>
+        <div v-if="phase  == 'drawing'  || phase == 'voting'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
+        <div v-if="phase == 'start'" class="time">{{ $t("draw.waiting") }}</div>
 
     </div>
 </template>
@@ -110,7 +110,6 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    border: 5px ridge black;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -125,14 +124,10 @@ export default {
 }
 
 .subject {
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
-    color: whitesmoke;
-    font-size: 5vw;
+    background-color: var(--Violet_Blue);
+    color: var(--Metallic_Yellow);
+    font-size: 4rem; 
     margin: 0;
-    text-shadow: 1px 1px black;
 }
 
 .displayPictures {
@@ -141,7 +136,7 @@ export default {
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 1rem;
     padding: 20px;
-    border: 1px solid black;
+    border-top: 3px solid black;
     overflow: auto;
     justify-content: center;
     
@@ -154,30 +149,23 @@ export default {
     height: auto;
     display: block;
     box-sizing: border-box;
-    border: 3px outset gray;
+    border: 3px outset black;
 }
 
 
 .time {
-    flex-shrink: 0;
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
-    color: white;
+    background-color: var(--Violet_Blue);
+    color: var(--Metallic_Yellow);
     font-size: 3rem;
     text-align: center;
     margin-top: auto;
-    border-top: 5px solid yellow;
+
     
 }
 
 
 .voting-container {
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
+    background-color: var(--Violet_Blue);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -185,11 +173,7 @@ export default {
 }
 
 .vote-title {
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
-    color: whitesmoke;
+    color: var(--Metallic_Yellow);
     font-size: 3rem;
 }
 

@@ -155,12 +155,10 @@ input {
   height: 100%;
   width: 100%;
 }
+
 .drawing-canvas {
   position: relative;
-  background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
+  background-color: var(--Violet_Blue);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -181,12 +179,12 @@ input {
 }
 
 .drawing-title {
-  font-size: 3rem;
+  font-size: 4rem;
   font-family: "Science Gothic", sans-serif;
-  color: white;
+  color: var(--Metallic_Yellow);
   text-shadow: 3px 3px black;
-  border-bottom: 1px solid white;
-  width: 70%;
+  border-bottom: 1px solid var(--Metallic_Yellow);
+  width: auto;
   margin-bottom: 1rem;
 }
 
@@ -195,6 +193,7 @@ input {
   background-color: rgb(192, 187, 187);
   height: 4rem;
   border: 5px outset black;
+  
 }
 
 
@@ -211,10 +210,10 @@ input {
 .waiting{
 height: 100%;
 width: 100;
-font-size: 3rem;
+font-size: 2vw;
 font-family: "Science Gothic", sans-serif;
 color: white;
-background-color: var(--Metallic_Yellow);
+background-color: var(--Violet_Blue);
 display: flex;
 justify-content: center;
 align-items: center; 

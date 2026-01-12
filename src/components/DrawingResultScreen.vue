@@ -43,48 +43,46 @@ export default {
 <style scoped>
  
 .results-container {
+    color: whitesmoke;
     overflow:hidden;
     height: 100%;
     min-height: 0;
-    background-image: radial-gradient(circle farthest-corner at 10% 20%,
-            rgb(102, 0, 32) 0%,
-            rgb(116, 18, 92) 49.5%,
-            rgb(164, 34, 144) 90%);
+    background-color: var(--Violet_Blue);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-template-areas: 
     "leaderboard drawing" ;
     font-family: "Science Gothic", sans-serif;
-    gap: 20px;
-    font-size: 2rem;
+    gap: 2vw;
     box-sizing: border-box;
     
 }
 .results-title {
-    color: var(--French_Rose);
+    color: var();
     margin: 2vw;
     font-size: 3vw;
-    font-family: "Science Gothic", sans-serif;
-    background-color: rgb(183, 127, 189);    
-    border: 1px outset rgb(183, 127, 189);
+    background-color: var(--Violet_Blue);    
+    border: 0.1vw solid white;
+    box-shadow: var(--Neon_Glow);
 }
     
 
 .best-drawing img {
-    border: 3px outset black;
     display: block;
-    margin:2%;
     min-height: 0;
     object-fit: contain;
-    background-color: rgb(183, 127, 189);
-    padding: 2%
+
+    
 
 }
 
 .best-drawing {
-    font-family: "Science Gothic", sans-serif;
+    margin: 1vw;
+    font-size: 3vw;
+    background: linear-gradient(90deg, #44195f 0%, #0a0d36 100%);
+    border: 4px solid black;
     color: whitesmoke;
-    text-shadow: 1px 1px black;
+    text-shadow: 0.2vw 0.2vw var(--Violet_Blue);
     display: flex;
     flex-direction: column;
     gap: 1vw;
@@ -92,29 +90,32 @@ export default {
 }
 
 .scoreboard {
-    font-family: "Science Gothic", sans-serif;
-    color: whitesmoke;
-    text-shadow: 1px 1px black;
+    margin: 1vw;
+    background: linear-gradient(90deg, #44195f 100%, #0a0d36 0%);
     display: flex;
     flex-direction: column;
-    border-right: 5px solid black;
+    border: 4px solid black;
     grid-area: leaderboard;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .player-in-leaderboard{
-    border-bottom: 2px solid black;
-    border-top: 2px solid black;
     margin: 5px;
+    text-shadow: 0.2rem 0.2rem var(--Violet_Blue);
+    font-size: 2vw;
+    border-bottom: 3px solid white;
+    width: auto;
 }
 
 .best-drawing-title{
     margin: 2vw;
-    color: var(--French_Rose);
+    border: 0.1vw solid white;
     font-size: 3vw;
-    background-color: rgb(183, 127, 189);
-    animation: glow 1s ease-in-out infinite alternate;
-    border: 1px outset rgb(210, 142, 201);
+    background-color: var(--Violet_Blue);
+    box-shadow: var(--Neon_Glow);
+    
+   
+    
 }
 
 
