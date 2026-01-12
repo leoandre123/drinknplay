@@ -1,118 +1,15 @@
+import { KAHOOT_QUESTIONS_PER_GAME } from "../Constants.js";
 import { Minigame } from "../Minigame.js";
+import { shuffle } from "../Utils.js";
+import { readFileSync } from "fs";
 
 export class KahootGame extends Minigame {
   constructor(neverEnd = false) {
     super();
-    this.questions = [
-      {
-        titleKey: "kahoot.q1.title",
-        answers: [
-          { textKey: "kahoot.q1.a1", correct: false },
-          { textKey: "kahoot.q1.a2", correct: true },
-          { textKey: "kahoot.q1.a3", correct: false },
-          { textKey: "kahoot.q1.a4", correct: false },
-        ],
-      },
-      {
-        titleKey: "kahoot.q2.title",
-        answers: [
-          { textKey: "kahoot.q2.a1", correct: false },
-          { textKey: "kahoot.q2.a2", correct: false },
-          { textKey: "kahoot.q2.a3", correct: true },
-          { textKey: "kahoot.q2.a4", correct: false },
-        ],
-      },
-      {
-        titleKey: "kahoot.q3.title",
-        answers: [
-          { textKey: "kahoot.q3.a1", correct: true },
-          { textKey: "kahoot.q3.a2", correct: false },
-          { textKey: "kahoot.q3.a3", correct: false },
-          { textKey: "kahoot.q3.a4", correct: true },
-        ],
-      },
-      {
-        titleKey: "kahoot.q4.title",
-        answers: [
-          { textKey: "kahoot.q4.a1", correct: true },
-          { textKey: "kahoot.q4.a2", correct: true },
-          { textKey: "kahoot.q4.a3", correct: true },
-          { textKey: "kahoot.q4.a4", correct: true },
-        ],
-      },
-      {
-        titleKey: "kahoot.q5.title",
-        answers: [
-          { textKey: "kahoot.q5.a1", correct: false },
-          { textKey: "kahoot.q5.a2", correct: true },
-          { textKey: "kahoot.q5.a3", correct: false },
-          { textKey: "kahoot.q5.a4", correct: false },
-        ],
-      },
-      {
-        titleKey: "kahoot.q6.title",
-        answers: [
-          { textKey: "kahoot.q6.a1", correct: true },
-          { textKey: "kahoot.q6.a2", correct: false },
-          { textKey: "kahoot.q6.a3", correct: false },
-          { textKey: "kahoot.q6.a4", correct: false },
-        ],
-      },
-      {
-        titleKey: "kahoot.q7.title",
-        answers: [
-          { textKey: "kahoot.q7.a1", correct: false },
-          { textKey: "kahoot.q7.a2", correct: false },
-          { textKey: "kahoot.q7.a3", correct: true },
-          { textKey: "kahoot.q7.a4", correct: false },
-        ],
-      },
-      {
-        titleKey: "kahoot.q8.title",
-        answers: [
-          { textKey: "kahoot.q8.a1", correct: false },
-          { textKey: "kahoot.q8.a2", correct: false },
-          { textKey: "kahoot.q8.a3", correct: false },
-          { textKey: "kahoot.q8.a4", correct: true },
-        ],
-      },
-      {
-        titleKey: "kahoot.q9.title",
-        answers: [
-          { textKey: "kahoot.q9.a1", correct: false },
-          { textKey: "kahoot.q9.a2", correct: false },
-          { textKey: "kahoot.q9.a3", correct: false },
-          { textKey: "kahoot.q9.a4", correct: true },
-        ],
-      },
-      {
-        titleKey: "kahoot.q10.title",
-        answers: [
-          { textKey: "kahoot.q10.a1", correct: false },
-          { textKey: "kahoot.q10.a2", correct: true },
-          { textKey: "kahoot.q10.a3", correct: false },
-          { textKey: "kahoot.q10.a4", correct: false },
-        ],
-      },
-      {
-        titleKey: "kahoot.q11.title",
-        answers: [
-          { textKey: "kahoot.q11.a1", correct: false },
-          { textKey: "kahoot.q11.a2", correct: false },
-          { textKey: "kahoot.q11.a3", correct: false },
-          { textKey: "kahoot.q11.a4", correct: true },
-        ],
-      },
-      {
-        titleKey: "kahoot.q12.title",
-        answers: [
-          { textKey: "kahoot.q12.a1", correct: true },
-          { textKey: "kahoot.q12.a2", correct: false },
-          { textKey: "kahoot.q12.a3", correct: false },
-          { textKey: "kahoot.q12.a4", correct: false },
-        ],
-      },
-    ];
+
+    const allQuestions = JSON.parse(readFileSync("./Server/data/kahoot-questions.json"));
+    this.questions = shuffle(allQuestions).splice(0, KAHOOT_QUESTIONS_PER_GAME);
+
     this.currentQuestionIndex = 0;
 
     this.currentQuestion = null;
@@ -141,7 +38,7 @@ export class KahootGame extends Minigame {
     );
   }
   unregisterListeners(socket) {
-    socket.off("submitAnswer");
+    socket.removeAllListeners("submitAnswer");
   }
 
   start() {
@@ -198,32 +95,15 @@ export class KahootGame extends Minigame {
     const q = this.questions[this.currentQuestionIndex];
     const time = Date.now() + 5000;
 
-    const questionForHost = {
-      time,
-      titleKey: q.titleKey,
-      answers: q.answers.map((a) => ({
-        textKey: a.textKey,
-        correct: a.correct,
-      })),
-    };
+    q.time = time;
 
-    const questionForPlayers = {
-      time,
-      titleKey: q.titleKey,
-      answers: q.answers.map((a) => ({
-        textKey: a.textKey,
-      })),
-    };
-
-    this.currentQuestion = questionForHost;
+    this.currentQuestion = q;
 
     this.kahootPlayers.forEach((p) => (p.hasAnswered = false));
     this.updateAnswerCount();
 
-    this.broadcastPlayers("startRound");
-    this.broadcastPlayers("startQuestion", questionForPlayers);
-
-    this.broadcastHosts("startQuestion", questionForHost);
+    this.broadcast("startRound");
+    this.broadcast("startQuestion", q);
   }
 
   updateAnswerCount() {

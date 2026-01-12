@@ -1,15 +1,18 @@
 <template>
   <div class="kahoot-container">
     <div class="title">
+      <p></p>
       <h1>{{ currentQuestion?.titleKey ? $t(currentQuestion.titleKey) : "" }}</h1>
       <p>Score: {{ score }}</p>
     </div>
     <div class="answers">
-      <div v-for="(option, i) in (currentQuestion.answers || [])" :key="answer.textKey || i" class="answer" :class="[
-        `answer-${i}`,
-        { unselected: hasAnswered && answerIndex != i },
-      ]" @click="answer(i)">
-      </div>
+      <div
+        v-for="(option, i) in currentQuestion.answers || []"
+        :key="answer.textKey || i"
+        class="answer"
+        :class="[`answer-${i}`, { unselected: hasAnswered && answerIndex != i }]"
+        @click="answer(i)"
+      ></div>
     </div>
   </div>
 </template>
@@ -39,8 +42,8 @@ export default {
     socket.on("startRound", () => (this.hasAnswered = false));
 
     socket.on("startQuestion", (q) => {
-    this.currentQuestion = q;   // q har titleKey + answers[textKey]
-  });
+      this.currentQuestion = q; // q har titleKey + answers[textKey]
+    });
   },
   beforeUnmount() {
     socket.off("setScore");

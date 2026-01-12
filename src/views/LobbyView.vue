@@ -1,10 +1,28 @@
 <template>
   <NewRetroContainer>
     <div class="info-button">
-      <RetroButton color="blue" size="small" @click="showRules = true"> ? </RetroButton>
+      <RetroButton color="blue" size="small" @click="$refs.infoPopup?.show()"> ? </RetroButton>
     </div>
     <div v-if="context.isHost" class="lobby-container">
-      <LobbyInfo v-if="showRules" @close="showRules = false" />
+      <Popup :title="$t('lobbyInfo.howToWin')" ref="infoPopup">
+        <div class="info-content">
+          <ul class="howToWinList">
+            <li>{{ $t("lobbyInfo.info1") }}</li>
+            <li>{{ $t("lobbyInfo.info2") }}</li>
+            <li>{{ $t("lobbyInfo.info3") }}</li>
+          </ul>
+          <h3 class="drinkingInfo">{{ $t("lobbyInfo.drinking") }}</h3>
+          <ul class="drinkingInfoList">
+            <li>{{ $t("lobbyInfo.info4") }}</li>
+            <li>{{ $t("lobbyInfo.info5") }}</li>
+            <li>{{ $t("lobbyInfo.info6") }}</li>
+            <li>{{ $t("lobbyInfo.info7") }}</li>
+          </ul>
+        </div>
+      </Popup>
+      <Popup title="Change settings" ref="settingsPopup">
+        <SettingsPanel :settings="context.state.settings" @settingsChanged="onSettingsChanged" />
+      </Popup>
       <div class="side-list player-list">
         <h1>
           {{ $t("common.player.players") }} ({{ context.state.players.length }}/{{
@@ -19,17 +37,15 @@
           </p>
         </div>
       </div>
-      <div>
+      <div class="main">
         <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state.lobbyId }}</h1>
-        <h3>{{ lobbyUri }}</h3>
         <QrCode :data="lobbyUri" background="FF89B4" color="000000" />
-        <br /><br />
         <RetroButton color="green" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
       </div>
       <div class="side-list settings-list">
         <h1>
           {{ $t("settings.settings") }}
-          <span class="gear-icon" @click="() => audioManager.play('/sounds/winner.mp3')"></span>
+          <span class="gear-icon" @click="$refs.settingsPopup.show()"></span>
         </h1>
         <p>
           # {{ $t("settings.rounds") }}:
@@ -73,14 +89,15 @@ import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { context } from "../context";
 import { socket } from "../socket";
 import { audioManager } from "@/AudioManager";
-import LobbyInfo from "@/components/lobbyInfo.vue";
+import Popup from "@/components/Popup.vue";
+import SettingsPanel from "@/components/SettingsPanel.vue";
 
 export default {
   name: "LobbyView",
   data: function () {
     return { context, audioManager, lobbyUri: "", showRules: false };
   },
-  components: { QrCode, NewRetroContainer, RetroButton, Avatar, LobbyInfo },
+  components: { QrCode, NewRetroContainer, RetroButton, Avatar, Popup, SettingsPanel },
   created: function () {
     const hostname = window.location.hostname;
     const origin = window.location.origin;
@@ -92,6 +109,9 @@ export default {
     startGame() {
       socket.emit("lobby:start");
       audioManager.stopAll();
+    },
+    onSettingsChanged() {
+      socket.emit("lobby:updateSettings", this.context.state.settings);
     },
   },
 };
@@ -133,6 +153,14 @@ p {
   padding: 1rem;
   border-radius: 0.25rem;
   box-shadow: 0px 0px 25px black;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .side-list {
@@ -182,5 +210,24 @@ p {
 
 .player-avatar {
   width: 4rem;
+}
+
+.info-content {
+  text-align: start;
+}
+
+.howToWinList {
+  color: var(--Points_Info);
+  text-shadow: 2px 2px black;
+}
+.drinkingInfo {
+  text-align: center;
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
+}
+
+.drinkingInfoList {
+  color: var(--Drunkness_Info);
+  text-shadow: 2px 2px black;
 }
 </style>
