@@ -64,12 +64,12 @@ export class RouletteGame extends Minigame {
     }
 
     unregisterListeners(socket) {
-        socket.off("roulette:placeBet");
-        socket.off("roulette:clearBets");
-        socket.off("roulette:requestState");
-        socket.off("roulette:startSpin");
-        socket.off("roulette:spinResult");
-        socket.off("roulette:nextRound");
+        socket.removeAllListeners("roulette:placeBet");
+        socket.removeAllListeners("roulette:clearBets");
+        socket.removeAllListeners("roulette:requestState");
+        socket.removeAllListeners("roulette:startSpin");
+        socket.removeAllListeners("roulette:spinResult");
+        socket.removeAllListeners("roulette:nextRound");
     }
 
     start() {
@@ -178,7 +178,13 @@ export class RouletteGame extends Minigame {
         if (this.round >= this.maxRounds) {
 
             this.broadcastRouletteState();
-            this.onFinished?.([]);
+            this.onFinished?.({
+                type: "credits",
+                data: Object.entries(this.totalPerPlayer).map(([playerId, total]) => ({
+                    playerId: playerId,
+                    credits: total,
+                }))
+            });
             return;
         }
         this.round += 1;

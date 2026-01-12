@@ -12,24 +12,30 @@
                         ref="wheel"
                         :phase="phase"
                         @spinFinished="onSpinFinished"/>
+                    <div class="spin-button">  
                     <RetroButton
                         color="yellow"
-                        class="spin-button"
+
                         @click="startSpin"
                         :disabled="phase !== 'betting'">
                         {{ $t("roulette.spin") }}
                     </RetroButton>
+                    </div> 
+                    <div class="next-round-button">
                     <RetroButton v-if="phase === 'result' && round < maxRounds"
                         color="pink"
-                        class="next-round-button" @click="nextRound"
+                        @click="nextRound"
                         >
                         {{$t("roulette.nextRound")}}
                     </RetroButton>
-                    <RetroButton v-else-if="phase === 'result' && round >= maxRounds"
+                    </div>
+                    <div class="continue-button" >
+                    <RetroButton v-if="phase === 'result' && round >= maxRounds"
                         color="green"
-                        class="continue-button" @click="nextRound">
+                        @click="nextRound">
                         {{$t("roulette.continue")}}
                     </RetroButton>
+                    </div>
                 </div>
             </div>
             <div class="right">
@@ -308,6 +314,5 @@ export default {
     left:12px;
     z-index: 50;
     cursor: pointer;
-
 }
 </style>
