@@ -49,9 +49,7 @@ p {
   place-items: center;
   margin: 0;
   gap: 1rem;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem var(--Caribbean_Green),
-    0 0 0.8rem var(--Caribbean_Green), 0 0 2.8rem var(--Caribbean_Green),
-    inset 0 0 1.3rem var(--Caribbean_Green);
+  box-shadow: var(--Neon_Glow);
 }
 
 .player-name {

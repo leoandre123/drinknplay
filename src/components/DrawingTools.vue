@@ -47,7 +47,7 @@ export default {
   emits: ["save-requested"],
   data() {
     return {
-      brushSize: [2, 10, 15, 25, 50],
+      brushSize: [2, 10, 15, 30],
       colors: [
         { name: "black", r: 0, g: 0, b: 0, a: 255 },
         { name: "white", r: 255, g: 255, b: 255, a: 255 },
