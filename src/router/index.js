@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateView from "../views/CreateView.vue";
-import ResultView from "../views/ResultView.vue";
+import ResultView from "../views/ScoreboardView.vue";
 import PlayerDrawingView from "../views/minigames/drawing/PlayerDrawingView.vue";
 import AdminView from "../views/AdminView.vue";
 import RouletteView from "../views/minigames/roulette/RouletteView.vue";
@@ -20,11 +20,6 @@ const router = createRouter({
       redirect: "/",
     },
     {
-      path: "/canvas",
-      name: "Canvas",
-      component: PlayerDrawingView,
-    },
-    {
       path: "/create",
       name: "Create",
       component: CreateView,
@@ -40,22 +35,6 @@ const router = createRouter({
       component: AdminView,
     },
     {
-      path: "/roulette",
-      name: "Roulette",
-      component: RouletteView,
-    },
-
-    {
-      path: "/roulette/player",
-      name: "RoulettePlayer",
-      component: RoulettePlayerView,
-    },
-    {
-      path: "/test",
-      name: "Test",
-      component: () => import("../views/TestView.vue"),
-    },
-    {
       path: "/join/:id",
       name: "JoinView",
       component: () => import("../views/JoinView.vue"),
@@ -69,6 +48,10 @@ const router = createRouter({
       path: "/game",
       name: "GameView",
       component: () => import("../views/GameView.vue"),
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      redirect: "/",
     },
   ],
 });

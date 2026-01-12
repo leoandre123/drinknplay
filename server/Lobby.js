@@ -33,6 +33,7 @@ export class Lobby {
     const isNewPlayer = player == undefined;
 
     if (isNewPlayer) {
+      if (this.context.players.length >= this.settings.maxPlayers) return;
       playerId = GenerateID(PLAYER_ID_LENGTH);
       player = new Player(name, playerId, socket, avatarSettings);
     } else {
@@ -398,7 +399,7 @@ export class Lobby {
   broadcastLobbyState() {
     const state = {
       lobbyId: this.context.lobbyId,
-      players: this.context.players.map(({ socket, ...rest }) => rest),
+      players: this.context.players.map((p) => p.toDto()),
       settings: this.settings,
       phase: this.phase,
       gameIndex: this.gameIndex,

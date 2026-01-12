@@ -17,4 +17,23 @@ export class Player {
     this.isReady = false;
     this.gameScore = 0;
   }
+
+  toDto() {
+    return {
+      name: this.name,
+      id: this.id,
+
+      connected: this.connected,
+      disconnectedAt: this.disconnectedAt,
+
+      avatarSettings: this.avatarSettings,
+
+      glassLevel: this.glassLevel,
+      drunkness: this.drunkness,
+      score: this.score,
+
+      isReady: this.isReady,
+      gameScore: this.gameScore,
+    };
+  }
 }

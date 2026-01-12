@@ -16,6 +16,8 @@ function sockets(io, socket, lobbyManager) {
       socket.emit("lobby:checkCodeResponse", { available: false, reason: "no_lobby" });
     } else if (lobby.phase != "lobby") {
       socket.emit("lobby:checkCodeResponse", { available: false, reason: "started" });
+    } else if (lobby.context.players.length >= lobby.settings.maxPlayers) {
+      socket.emit("lobby:checkCodeResponse", { available: false, reason: "lobby_full" });
     } else {
       socket.emit("lobby:checkCodeResponse", { available: true });
     }
@@ -72,7 +74,7 @@ function sockets(io, socket, lobbyManager) {
         return {
           id: l.context.lobbyId,
           phase: l.phase,
-          players: l.context.players.map(({ socket, ...rest }) => rest),
+          players: l.context.players.map((p) => p.toDto()),
         };
       })
     );
