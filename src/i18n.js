@@ -8,6 +8,7 @@ import enReaction from "@/locales/en/reaction.json";
 import enKahoot from "@/locales/en/kahoot.json";
 import enSettings from "@/locales/en/settings.json";
 import enGames from "@/locales/en/games.json";
+import enMazegame from "@/locales/en/mazegame.json";
 
 import svCommon from "@/locales/sv/common.json";
 import svLobby from "@/locales/sv/lobby.json";
@@ -17,7 +18,8 @@ import svReaction from "@/locales/sv/reaction.json";
 import svKahoot from "@/locales/sv/kahoot.json";
 import svRoulette from "@/locales/sv/roulette.json";
 import svSettings from "@/locales/sv/settings.json";
-import svGames from "@/locales/sv/games.json"
+import svGames from "@/locales/sv/games.json";
+import svMazegame from "@/locales/sv/mazegame.json";
 
 
 export default createI18n({
@@ -34,7 +36,8 @@ export default createI18n({
       reaction: enReaction,
       kahoot: enKahoot,
       settings: enSettings,
-      games: enGames
+      games: enGames,
+      mazegame: enMazegame
     },
     sv: {
       common: svCommon,
@@ -46,6 +49,7 @@ export default createI18n({
       kahoot: svKahoot,
       settings: svSettings,
       games: svGames,
+      mazegame: svMazegame
     },
   },
 });
