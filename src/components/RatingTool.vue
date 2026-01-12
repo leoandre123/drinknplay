@@ -1,5 +1,5 @@
 <template>
-    <div class="raiting-view-container">
+    <div class="rating-view-container">
         <div class="rating" v-if="!voted">
             <header>{{ $t("draw.rate10") }}</header>
             <div class="rating-buttons">

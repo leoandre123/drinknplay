@@ -58,31 +58,26 @@ export default {
     
 }
 .results-title {
-    color: #fff;
+    color: var(--French_Rose);
     margin: 2vw;
     font-size: 3vw;
     font-family: "Science Gothic", sans-serif;
-    background-color: gray;    
-    border: 1px outset gray;
+    background-color: var(--Metallic_Yellow);    
+    border: 1px outset black;
 }
     
 
 .best-drawing img {
     border: 3px outset black;
-    height: 15vw;
     display: block;
     margin:2%;
-    min-height: 0;
-    object-fit: contain;
-    background-color: gray;
-    padding: 2%
+    
 
 }
 
 .best-drawing {
-    flex: 1;
     font-family: "Science Gothic", sans-serif;
-    color: var(--Metallic_Yellow);
+    color: var(--French_Rose);
     text-shadow: 1px 1px black;
     display: flex;
     flex-direction: column;
@@ -102,16 +97,17 @@ export default {
 }
 
 .player-in-leaderboard{
-    border-bottom: 2px solid gray;
-    border-top: 2px solid gray;
-    margin: 5px;
+    color: var(--French_Rose);
+    border-bottom: 5px solid yellow;
+    margin-bottom: 5px;
+    
 }
 
 .best-drawing-title{
     margin: 2vw;
-    color: #fff;
+    color: var(--French_Rose);
     font-size: 3vw;
-    background-color: gray;
+    background-color: var(--Metallic_Yellow);
     animation: glow 1s ease-in-out infinite alternate;
     border: 1px outset gray;
 }

@@ -12,7 +12,9 @@
 
         <div v-if="phase === 'voting'" class="voting-container">
             <div class="vote-title">{{ $t("draw.rate") }}</div>
-            <img :src="currentDrawingToVote.png" class="drawing-to-vote"></img>
+            
+            <img class="drawing-to-vote" :src="currentDrawingToVote.png"></img>
+        
         </div>
 
         <DrawingResultScreen v-if="phase === 'results'" :score="scores"/>
@@ -20,7 +22,9 @@
         <div v-if="phase === 'start'" class = "start">
             {{ $t("draw.submitHost") }}
         </div>
-        <div v-if="phase !== 'results'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
+        <div v-if="phase !== 'start'" class="time">{{ $t("draw.time") }} {{ timer }}</div>
+        <div v-else class="time">{{ $t("draw.waiting") }}</div>
+
     </div>
 </template>
 
@@ -158,6 +162,8 @@ export default {
     font-size: 3rem;
     text-align: center;
     margin-top: auto;
+    border-top: 5px solid yellow;
+    
 }
 
 
@@ -166,6 +172,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 100%;
 }
 
 .vote-title {
@@ -175,14 +182,11 @@ export default {
 }
 
 .drawing-to-vote {
-    flex: 1;
-    object-fit: contain;
-    display: block;
     min-height: 0;
-    padding: 10px;
-    border: 5px double black;
-    background-color: gray;
-    margin: 10px;
+    display: block;
+    margin:2%;
+    object-fit: contain;
+
 }
 
 .start {
