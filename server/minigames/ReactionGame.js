@@ -1,11 +1,16 @@
 import { Minigame } from "../Minigame.js";
+import {
+  MAX_REACTION_ROUNDS,
+  FIGURE_COUNT_PER_ROUND,
+} from "../Constants.js";
+
 
 export class ReactionGame extends Minigame {
     constructor() {
         super();
         this.submissions = [];
         this.currentRound = 0;
-        this.maxRounds = 3; //ändra
+        this.maxRounds = MAX_REACTION_ROUNDS;
         this.figureCount = 0;
         this.winner = null;
         this.figurePositions = [];
@@ -17,7 +22,7 @@ export class ReactionGame extends Minigame {
         if (!this.scores.has(player.id)) {
             this.scores.set(player.id, 0);
         }
-        socket.emit("player:yourId", socket.data.playerId);
+        this.emitToPlayer(player.id, "player:yourId", player.id);
 
     }
 
@@ -63,7 +68,7 @@ export class ReactionGame extends Minigame {
         this.winner = null;
         this.winnerName = null;
         this.roundStartTime = Date.now();
-        this.figureCount = Math.floor(Math.random() * 6 + 1);
+        this.figureCount = Math.floor(Math.random() * FIGURE_COUNT_PER_ROUND + 1);
         this.figurePositions = this.generatePositions(this.figureCount);
 
         this.broadcast("reaction:startRound", {
@@ -72,9 +77,6 @@ export class ReactionGame extends Minigame {
         });
 
         this.broadcast("reaction:resetAmounts");
-    }
-
-    stop() { //vad gör denna?
     }
 
     onSubmit(playerId, amount, submitTime) {

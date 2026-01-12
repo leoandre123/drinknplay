@@ -14,11 +14,11 @@
       <h2>{{ amount }}</h2>
 
       <div class="button-container">
-        <button class="remove-button" @click="remove">-</button>
-        <button class="add-button" @click="add">+</button>
+        <RetroButton color="red" size="large" @click="remove">-</RetroButton>
+        <RetroButton color="green" size="large" @click="add">+</RetroButton>
 
         <div class="done-button-container">
-          <button class="submit-button" @click="submit" :disabled="submitDisabled"> {{ $t("reaction.done") }} </button>
+          <RetroButton color="purple" size="large" @click="submit" :disabled="submitDisabled"> {{ $t("reaction.done") }} </RetroButton>
         </div>
       </div>
     </div>
@@ -27,8 +27,12 @@
 
 <script>
 import { socket } from "../../../socket";
+import RetroButton from "@/components/RetroButton.vue";
 
 export default {
+  components: {
+    RetroButton,
+  },
   name: "ReactionGamePlayerView",
   data: function () {
     return {
@@ -57,7 +61,7 @@ export default {
     socket.on("reaction:startRound", () => {
       setTimeout(() => {
         this.submitDisabled = false;
-      }, 5000);
+      }, 6000);
     });
     socket.on("player:yourId", (id) => {
       this.myPlayerId = id;
