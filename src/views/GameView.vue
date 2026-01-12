@@ -85,7 +85,6 @@ import LobbyView from "./LobbyView.vue";
 import { socket } from "../socket";
 import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
-import Mascot from "../components/Mascot.vue";
 import { useDevice } from "../UseDevice.js";
 import GameResultPlayerView from "./GameResultPlayerView.vue";
 import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
@@ -127,7 +126,6 @@ export default {
     GameResultPlayerView,
     LobbyView,
     Flag,
-    Mascot,
     GameResultsView,
     ScoreboardPlayerView,
     FinalResultsView,

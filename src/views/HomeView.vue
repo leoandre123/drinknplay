@@ -22,14 +22,13 @@
 </template>
 
 <script>
-import RetroContainer from "../components/RetroContainer.vue";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
 import RetroText from "../components/RetroText.vue";
 import { socket } from "../socket";
 import RetroButton from "@/components/RetroButton.vue";
 export default {
   name: "HomeView",
-  components: { RetroContainer, RetroText, NewRetroContainer, RetroButton },
+  components: { NewRetroContainer, RetroText, NewRetroContainer, RetroButton },
   data: function () {
     return {
       isConnected: false,

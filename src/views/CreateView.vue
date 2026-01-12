@@ -1,5 +1,5 @@
 <template>
-  <RetroContainer>
+  <NewRetroContainer>
     <div class="info-button">
       <RetroButton color="blue" size="small" @click="$refs.infoPopup?.show()"> ? </RetroButton>
     </div>
@@ -37,13 +37,13 @@
         </div>
       </div>
     </div>
-  </RetroContainer>
+  </NewRetroContainer>
 </template>
 
 <script>
 import { DefaultSettings } from "../../shared/GameSettings";
 import { socket } from "../socket";
-import RetroContainer from "@/components/RetroContainer.vue";
+import NewRetroContainer from "@/components/NewRetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import Popup from "@/components/Popup.vue";
@@ -57,7 +57,7 @@ export default {
     };
   },
   components: {
-    RetroContainer,
+    NewRetroContainer,
     RetroButton,
     SettingsPanel,
     Popup,
