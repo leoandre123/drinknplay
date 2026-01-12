@@ -18,6 +18,7 @@ export class Player {
     this.gameScore = 0;
 
     this.credits = 0;
+    this.glassesToDrink = 0;
   }
 
   toDto() {
@@ -38,6 +39,7 @@ export class Player {
       gameScore: this.gameScore,
 
       credits: this.credits,
+      glassesToDrink: this.glassesToDrink,
     };
   }
 }
