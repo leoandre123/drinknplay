@@ -183,7 +183,7 @@ p {
   color: black;
   height: 2rem;
   aspect-ratio: 1;
-  background-image: url("gear.png");
+  background-image: url("/gear.png");
   background-size: contain;
   cursor: pointer;
   float: right;

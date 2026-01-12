@@ -62,10 +62,10 @@ export default {
 }
 
 .audio {
-  background-image: url("sound.png");
+  background-image: url("/sound.png");
 }
 .muted {
-  background-image: url("mute.png");
+  background-image: url("/mute.png");
 }
 
 .flag:hover {
@@ -73,9 +73,9 @@ export default {
 }
 
 .swe {
-  background-image: url("sweden.png");
+  background-image: url("/sweden.png");
 }
 .usa {
-  background-image: url("usa.png");
+  background-image: url("/usa.png");
 }
 </style>
