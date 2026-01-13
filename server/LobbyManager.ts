@@ -1,9 +1,13 @@
+import type { Server } from "socket.io";
 import { Lobby } from "./Lobby.js";
-import { RacingGame } from "./minigames/RacingGame.js";
 import { GenerateID } from "./Utils.js";
+import type { GameSettings } from "@shared/models/GameSettings.js";
 
 export class LobbyManager {
-  constructor(io) {
+  io: Server;
+  lobbies: Lobby[];
+
+  constructor(io: Server) {
     this.io = io;
 
     const resultLobby = new Lobby(io, "result");
@@ -25,15 +29,15 @@ export class LobbyManager {
     this.#addDebugLobby("roulette", 6);
   }
 
-  #addDebugLobby(id, gameIndex) {
+  #addDebugLobby(id: string, gameIndex: number) {
     const lobby = new Lobby(this.io, id);
     lobby.selectGame(gameIndex);
     lobby.startLoadingScreen();
     this.lobbies.push(lobby);
   }
 
-  createLobby(gameSettings) {
-    let id;
+  createLobby(gameSettings: GameSettings) {
+    let id: string;
     do {
       id = GenerateID(3);
     } while (this.lobbies.some((x) => x.context.lobbyId == id));
@@ -42,7 +46,7 @@ export class LobbyManager {
     return id;
   }
 
-  getLobby(lobbyId) {
+  getLobby(lobbyId: string) {
     return this.lobbies.find((x) => x.context.lobbyId == lobbyId);
   }
 }

@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev:frontend": "vite",
-    "dev:backend": "nodemon server/index.js",
-    "dev": "concurrently 'npm:dev:frontend' 'npm:dev:backend'",
-    "dev-host": "concurrently \"npm run dev:frontend -- --host\" \"npm run dev:backend\"",
+    "dev:backend": "tsx watch server/index.ts --tsconfig tsconfig.node.json ",
+    "dev": "concurrently 'npm:dev:frontend' 'npm:dev:backend' npm:typecheck",
     "build": "vite build",
     "preview": "vite preview",
     "start:backend": "node server/index.js",
     "preview:full": "concurrently \"npm run preview\" \"npm run start:backend\"",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit --watch"
   },
   "dependencies": {
     "@socket.io/admin-ui": "^0.5.1",
@@ -26,11 +26,16 @@
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@types/node": "^25.0.7",
     "@vitejs/plugin-vue": "^5.1.4",
     "concurrently": "^9.0.1",
     "eslint": "^9.13.0",
     "eslint-plugin-vue": "^9.29.0",
+    "node-ts": "^8.0.10",
     "nodemon": "^3.1.7",
-    "vite": "^6.4.1"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vue-tsc": "^3.2.2"
   }
 }

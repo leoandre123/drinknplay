@@ -24,17 +24,17 @@ const io = new Server(httpServer, {
 instrument(io, { auth: false });
 
 import { LobbyManager } from "./LobbyManager.js";
-import { sockets } from "./sockets.js";
+import { sockets } from "./sockets.ts";
 
 let lobbyManager = new LobbyManager(io);
 
 io.on("connection", function (socket) {
   var address = socket.handshake.address;
   logger.debug(`New connection ${socket.id} from ${address}`);
-  sockets(this, socket, lobbyManager);
+  sockets(io, socket, lobbyManager);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || "3000");
 const HOST = process.env.HOST || (process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0");
 httpServer.listen(PORT, HOST, () => {
   logger.info(`Socket.io server running on http://${HOST}:${PORT}`);

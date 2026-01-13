@@ -1,4 +1,4 @@
-import { ClosestWin } from "./minigames/ClosestWin.js";
+import { ClosestWin } from "./minigames/ClosestWin.ts";
 import { DrawingGame } from "./minigames/DrawingGame.js";
 import { KahootGame } from "./minigames/KahootGame.js";
 import { RacingGame } from "./minigames/RacingGame.js";

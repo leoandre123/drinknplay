@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import { DefaultSettings } from "../../shared/GameSettings";
+import { DefaultSettings } from "../../shared/models/GameSettings";
 import { socket } from "../socket";
 
 export default {

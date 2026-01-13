@@ -1,35 +1,59 @@
-import { Player } from "./models/Player.js";
-import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
-import { DefaultSettings } from "../shared/GameSettings.js";
-import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils.js";
-import { ALL_GAMES } from "./GamesRegistry.js";
-import { Logger } from "./Logger.js";
+import { Player } from "./models/Player";
+import { ServerLobbyContext } from "./models/ServerLobbyContext";
+import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils";
+import { ALL_GAMES } from "./GamesRegistry";
+import { Logger } from "./Logger";
+
+import type { GamePhase } from "../shared/models/GamePhase";
+import { DefaultSettings, type GameSettings } from "../shared/models/GameSettings";
+import type { AvatarSettings } from "../shared/models/AvatarSettings";
+
+import { Host } from "./models/Host";
+import type { Minigame } from "./Minigame";
+import type { Server, Socket } from "socket.io";
+
+import { SocketCommunication } from "./communication/SocketCommunication";
 import {
   CREDITS_PER_GLASS,
   CREDITS_PER_ROUNDPLAYER,
   DISCONNECT_TIMEOUT,
   PLAYER_ID_LENGTH,
   TOTAL_SCORE_PER_GAME,
-} from "./Constants.js";
-import { Host } from "./models/Host.js";
+} from "../shared/Constants";
+import type { GameResult } from "./models/GameResult.ts";
 
 export class Lobby {
-  constructor(io, lobbyId, settings = DefaultSettings) {
+  context: ServerLobbyContext;
+  currentGameIndex: number;
+  currentGame?: Minigame;
+  phase: GamePhase = "lobby";
+  settings: GameSettings;
+
+  givenCredits: Map<string, number>;
+
+  isAdvancing = false;
+  logger: Logger;
+
+  currentRound = 0;
+
+  constructor(io: Server, lobbyId: string, settings: GameSettings = DefaultSettings) {
     this.context = new ServerLobbyContext(io, lobbyId);
-    this.currentGame = null;
+
     this.phase = "lobby";
     this.settings = settings;
 
     this.givenCredits = new Map();
-    this.gameScores = new Map();
-
-    this.isAdvancing = false;
     this.logger = new Logger(`LOBBY: ${lobbyId}`);
 
-    this.currentRound = 0;
+    this.currentGameIndex = -1;
   }
 
-  onNewPlayerConnection(socket, playerId, name, avatarSettings) {
+  onNewPlayerConnection(
+    socket: Socket,
+    playerId: string,
+    name: string,
+    avatarSettings: AvatarSettings
+  ) {
     this.logger.info(`New connection: ${socket.id}, playerId: ${playerId}, name: ${name}`);
     let player = this.getPlayer(playerId);
     const isNewPlayer = player == undefined;
@@ -39,36 +63,28 @@ export class Lobby {
       playerId = GenerateID(PLAYER_ID_LENGTH);
       player = new Player(name, playerId, socket, avatarSettings);
     } else {
-      player.socket = socket;
+      player!.communication = new SocketCommunication(socket);
     }
 
-    this.onPlayerJoined(player, isNewPlayer);
+    this.onPlayerJoined(player!, isNewPlayer);
   }
 
-  onPlayerJoined(player, isNewPlayer) {
+  onPlayerJoined(player: Player, isNewPlayer: boolean) {
     if (!isNewPlayer) {
       this.logger.info(`${player.name} rejoined lobby '${this.context.lobbyId}'`);
       player.connected = true;
-      player.disconnectedAt = null;
+      player.disconnectedAt = undefined;
       clearTimeout(player.disconnectTimer);
     } else {
       this.logger.info(`${player.name} joined lobby '${this.context.lobbyId}'`);
       this.context.players.push(player);
     }
 
-    player.socket.join(this.context.lobbyId + "_PLAYERS");
-    player.socket.on("results:confirmCredits", (credits) =>
-      this.onCreditsReceived(player.id, credits)
-    );
-    player.socket.on("scoredboard:confirmDrink", () => this.onDrinkConfirmed(player.id));
-    player.socket.on("ready", (isReady) => {
-      this.onPlayerReady(player.id, isReady);
-    });
+    player.communication!.join(this.context.lobbyId + "_PLAYERS");
 
-    player.socket.data.lobbyId = this.context.lobbyId;
-    player.socket.data.playerId = player.id;
+    this.registerPlayerListeners(player);
 
-    player.socket.emit("lobby:joinResponse", {
+    player.communication!.emit("lobby:joinResponse", {
       lobbyId: this.context.lobbyId,
       playerId: player.id,
     });
@@ -78,13 +94,24 @@ export class Lobby {
       if (isNewPlayer) {
         this.currentGame?.onPlayerJoined(player);
       }
-      this.currentGame?.registerListeners(player.socket);
+      this.currentGame?.registerListeners(player);
     }
   }
 
-  onHostJoined(socket) {
+  registerPlayerListeners(player: Player) {
+    player.communication!.on("results:confirmCredits", (credits) =>
+      this.onCreditsReceived(player.id, credits)
+    );
+    player.communication!.on("scoredboard:confirmDrink", () => this.onDrinkConfirmed(player.id));
+    player.communication!.on("ready", (isReady) => {
+      this.onPlayerReady(player.id, isReady);
+    });
+  }
+
+  onHostJoined(socket: Socket) {
     this.logger.info(`Host ${socket.id} connected`);
-    this.context.hosts.push(new Host(socket));
+    const host = new Host(socket);
+    this.context.hosts.push(host);
 
     socket.join(this.context.lobbyId + "_HOST");
     socket.data.lobbyId = this.context.lobbyId;
@@ -97,23 +124,23 @@ export class Lobby {
 
     this.broadcastLobbyState();
     if (this.phase == "game") {
-      this.currentGame?.onHostJoined(socket);
+      this.currentGame?.onHostJoined(host);
     }
   }
 
-  onHostDisconnected(socket) {
+  onHostDisconnected(socket: Socket) {
     this.logger.info(`Host ${socket.id} disonnected`);
-    this.context.hosts = this.context.hosts.filter((x) => x.id != socket.id);
+    this.context.hosts = this.context.hosts.filter((x) => x.socket.id != socket.id);
   }
 
   //Anropas när en spelare har tappats kontakten med
-  onPlayerDisconnected(playerId) {
+  onPlayerDisconnected(playerId: string) {
     const player = this.getPlayer(playerId);
     if (!player) return;
 
     player.connected = false;
     player.disconnectedAt = Date.now();
-    player.socket = null;
+    player.communication = undefined;
 
     player.disconnectTimer = setTimeout(() => {
       this.onPlayerLeft(playerId);
@@ -121,7 +148,7 @@ export class Lobby {
   }
 
   //Anropas efter att en spelare har varit bortkopplad i x antal sekunder
-  onPlayerLeft(playerId) {
+  onPlayerLeft(playerId: string) {
     const playerIndex = this.context.players.findIndex((x) => x.id == playerId);
     if (playerIndex == -1) return;
     const playersToRemove = this.context.players.splice(playerIndex, 1);
@@ -131,8 +158,7 @@ export class Lobby {
       this.broadcastLobbyState();
       if (this.phase == "game") {
         this.currentGame?.onPlayerDisconnected(playersToRemove[0]);
-        if (playersToRemove[0].socket)
-          this.currentGame?.unregisterListeners(playersToRemove[0].socket);
+        this.currentGame?.unregisterListeners(playersToRemove[0]);
       }
     }
 
@@ -158,9 +184,9 @@ export class Lobby {
     }, 10000);
   }
 
-  selectGame(gameIndex) {
+  selectGame(gameIndex: number) {
     this.logger.debug(`Selecting game: ${gameIndex}`);
-    this.gameIndex = gameIndex;
+    this.currentGameIndex = gameIndex;
     const game = ALL_GAMES[gameIndex];
     if (game) {
       this.currentGame = new game();
@@ -180,38 +206,48 @@ export class Lobby {
     this.phase = "game";
     this.broadcastLobbyState();
 
+    if (!this.currentGame) {
+      this.logger.error("Current minigame is undefined");
+      return;
+    }
+
     this.currentGame.context = this.context;
 
     for (const player of this.context.players) {
       this.currentGame?.onPlayerJoined(player);
-      if (player.socket) this.currentGame.registerListeners(player.socket);
+      this.currentGame.registerListeners(player);
     }
 
     for (const host of this.context.hosts) {
-      this.currentGame?.onHostJoined(host.socket);
+      this.currentGame?.onHostJoined(host);
     }
 
     this.currentGame.onFinished = (results) => this.finishGame(results);
     this.currentGame.start();
   }
 
-  finishGame(results) {
+  finishGame(results: GameResult) {
     this.logger.info("Game Finished!");
     this.logger.debug(results);
 
+    if (!results) {
+      this.logger.error(`Minigame of type ${typeof this.currentGame} didn't provide any results`);
+      return;
+    }
+
     for (const player of this.context.players) {
-      if (player.socket) this.currentGame.unregisterListeners(player.socket);
+      this.currentGame?.unregisterListeners(player);
     }
-    for (const host of this.context.hosts) {
-      if (host.socket) this.currentGame.unregisterListeners(host.socket);
-    }
+    //TODO: Remove host listeners
+    //for (const host of this.context.hosts) {
+    //  this.currentGame?.unregisterListeners(host);
+    //}
 
     this.context.players.forEach((p) => {
       p.isReady = false;
       p.gameScore = 0;
     });
     this.givenCredits.clear();
-    this.gameScores.clear();
 
     let credits = [];
     let scores = [];
@@ -249,9 +285,8 @@ export class Lobby {
     scores = distributeScores(scores, TOTAL_SCORE_PER_GAME);
 
     for (let res of scores) {
-      this.gameScores.set(res.playerId, res.score);
       const player = this.getPlayer(res.playerId);
-      player.gameScore = res.score;
+      if (player) player.gameScore = res.score;
     }
 
     this.logger.debug(this.context.players);
@@ -314,9 +349,13 @@ export class Lobby {
    * CALLBACKS
    */
 
-  onCreditsReceived(id, credits) {
-    const player = this.getPlayer(id);
-    player.socket.emit("results:creditsConfirmed");
+  onCreditsReceived(playerId: string, credits: { playerId: string; credits: number }[]) {
+    const player = this.getPlayer(playerId);
+    if (!player) {
+      this.logger.warn(`Credits received from a player that doesn't exist: ${playerId}`);
+      return;
+    }
+    player.communication?.emit("results:creditsConfirmed");
     player.isReady = true;
 
     for (let c of credits) {
@@ -327,8 +366,12 @@ export class Lobby {
     this.tryAdvance(2000);
   }
 
-  onDrinkConfirmed(playerId) {
+  onDrinkConfirmed(playerId: string) {
     const player = this.getPlayer(playerId);
+    if (!player) {
+      this.logger.warn(`Drink confirmed from a player that doesn't exist: ${playerId}`);
+      return;
+    }
     if (player.glassesToDrink) {
       player.drunkness += player.glassesToDrink;
       player.glassesToDrink = 0;
@@ -339,16 +382,20 @@ export class Lobby {
     this.tryAdvance(5000);
   }
 
-  onPlayerReady(id, isReady) {
+  onPlayerReady(playerId: string, isReady: boolean) {
     if (this.phase != "loading") return;
-    const player = this.context.players.find((x) => x.id == id);
+
+    const player = this.getPlayer(playerId);
+    if (!player) {
+      this.logger.warn(`Ready up from a player that doesn't exist: ${playerId}`);
+      return;
+    }
     player.isReady = isReady;
     this.broadcastLobbyState();
-
     this.tryAdvance();
   }
 
-  onSettingsChanged(settings) {
+  onSettingsChanged(settings: GameSettings) {
     this.logger.debug("Settings changed");
     this.settings = settings;
     this.broadcastLobbyState();
@@ -369,7 +416,7 @@ export class Lobby {
         break;
       case "game":
         this.currentGame?.stop();
-        this.finishGame({ type: "", data: [] });
+        this.finishGame({ type: "scores", data: [] });
         this.startResultScreen();
         break;
       case "result":
@@ -418,13 +465,13 @@ export class Lobby {
       players: this.context.players.map((p) => p.toDto()),
       settings: this.settings,
       phase: this.phase,
-      gameIndex: this.gameIndex,
+      gameIndex: this.currentGameIndex,
     };
     this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("lobby:updateState", state);
     this.context.io.to(this.context.lobbyId + "_HOST").emit("lobby:updateState", state);
   }
 
-  getPlayer(playerId) {
+  getPlayer(playerId: string) {
     return this.context.players.find((x) => x.id == playerId);
   }
 }

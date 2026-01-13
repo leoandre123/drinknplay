@@ -1,5 +1,7 @@
+import type { Server, Socket } from "socket.io";
 import { PlayerBot } from "./models/PlayerBot.js";
 import { ServerInfo } from "./ServerInfo.js";
+import type { LobbyManager } from "./LobbyManager.js";
 
 /**
  * @param {import("socket.io").Server} io
@@ -7,7 +9,7 @@ import { ServerInfo } from "./ServerInfo.js";
  * @param {import("./LobbyManager.js").LobbyManager} lobbyManager
  */
 
-function sockets(io, socket, lobbyManager) {
+function sockets(io: Server, socket: Socket, lobbyManager: LobbyManager) {
   socket.on("lobby:checkCode", function (lobbyCode) {
     const lobby = lobbyManager.getLobby(lobbyCode);
     console.log(`Check lobby with code ${lobbyCode}`);

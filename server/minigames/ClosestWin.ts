@@ -1,9 +1,20 @@
+import type { Player } from "server/models/Player.js";
 import { geoDistance } from "../../shared/MathHelper.js";
-import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "../Constants.js";
+import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "../../shared/Constants.ts";
 import { Minigame } from "../Minigame.js";
-import  allLocations  from "../data/closest-locations.json" with { type: 'json' };
+import allLocations from "../data/closest-locations.json" assert { type: "json" };
+import type { ClosestLocation } from "../../shared/minigames/closest/models/ClosestLocation.ts";
+import type { ClosestPlayer } from "../../shared/minigames/closest/models/ClosestPlayer.ts";
+import type { Host } from "server/models/Host.js";
 
 export class ClosestWin extends Minigame {
+  locations: ClosestLocation[];
+  roundCount: number;
+  currentRound: number;
+  endTime: number;
+  currentLocation: ClosestLocation;
+  closestPlayers: ClosestPlayer[];
+
   constructor() {
     super();
     this.locations = allLocations;
@@ -15,7 +26,7 @@ export class ClosestWin extends Minigame {
     this.closestPlayers = [];
   }
 
-  onPlayerJoined(player) {
+  onPlayerJoined(player: Player) {
     this.closestPlayers.push({
       id: player.id,
       points: 0,
@@ -23,26 +34,27 @@ export class ClosestWin extends Minigame {
     });
     this.broadcastHosts("closest:updatePlayers", this.closestPlayers);
   }
-  onPlayerDisconnected(player) {
+  onPlayerDisconnected(player: Player) {
     this.closestPlayers = this.closestPlayers.filter((p) => p.id != player.id);
     this.broadcastHosts("closest:updatePlayers", this.closestPlayers);
   }
 
-  onHostJoined(socket) {
+  onHostJoined(host: Host) {
     console.log("HOST JOINED CLOSEST GAME");
-    socket.emit("closest:setLocation", this.currentLocation);
-    socket.emit("closest:updateRound", this.currentRound, this.roundCount);
-    socket.emit("closest:startRound", this.endTime);
-    socket.emit("closest:updatePlayers", this.closestPlayers);
+    host.socket.emit("closest:setLocation", this.currentLocation);
+    host.socket.emit("closest:updateRound", this.currentRound, this.roundCount);
+    host.socket.emit("closest:startRound", this.endTime);
+    host.socket.emit("closest:updatePlayers", this.closestPlayers);
   }
 
-  registerListeners(socket) {
-    socket.on("closest:updatePosition", (pos) => {
-      this.closestPlayers.find((p) => p.id == socket.data.playerId).pos = pos;
+  registerListeners(player: Player) {
+    player.communication?.on("closest:updatePosition", (pos) => {
+      const cp = this.closestPlayers.find((p) => p.id == player.id);
+      if (cp) cp.pos = pos;
     });
   }
-  unregisterListeners(socket) {
-    socket.removeAllListeners("closest:updatePosition");
+  unregisterListeners(player: Player) {
+    player.communication?.removeAllListeners("closest:updatePosition");
   }
 
   start() {
@@ -72,8 +84,10 @@ export class ClosestWin extends Minigame {
         console.log("Dist: ", r.distance);
       });
 
-      for (let i = 0; i < Math.min(3, results.length); i++)
-        this.closestPlayers.find((x) => x.id == results[i].id).points += 3 - i;
+      for (let i = 0; i < Math.min(3, results.length); i++) {
+        const cp = this.closestPlayers.find((x) => x.id == results[i].id);
+        if (cp) cp.points += 3 - i;
+      }
 
       this.broadcastHosts("closest:updatePlayers", this.closestPlayers);
       this.onRoundFinished();

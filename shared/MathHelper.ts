@@ -1,12 +1,12 @@
-export function mod(n, m) {
+export function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
 
-export function clamp(val, min, max) {
+export function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val));
 }
 
-export function geoDistance(pos0, pos1) {
+export function geoDistance(pos0: number[], pos1: number[]) {
   const R = 6371e3; // metres
   const φ1 = (pos0[0] * Math.PI) / 180; // φ, λ in radians
   const φ2 = (pos1[0] * Math.PI) / 180;

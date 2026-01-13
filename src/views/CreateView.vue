@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { DefaultSettings } from "../../shared/GameSettings";
+import { DefaultSettings } from "../../shared/models/GameSettings";
 import { socket } from "../socket";
 import NewRetroContainer from "@/components/NewRetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
