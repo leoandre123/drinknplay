@@ -5,6 +5,12 @@ import { Logger } from "./Logger.js";
 
 const logger = new Logger("SERVER");
 
+logger.info({
+  x: 2,
+  y: 2,
+  obj: { name: "Leo", age: 23, isGood: true },
+});
+
 console.log(`
 ###################################################################################################################
 #                                                                                                                 #

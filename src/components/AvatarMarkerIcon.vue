@@ -3,8 +3,8 @@
     <Avatar :settings="settings" />
   </div>
 </template>
-<script>
-import { DefaultAvatar, GetRandomAvatar } from "@shared/AvatarHelper";
+<script lang="ts">
+import { GetRandomAvatar } from "../../shared/utils/AvatarHelper";
 import Avatar from "./Avatar.vue";
 
 export default {

@@ -32,7 +32,7 @@ import trackEmptyURL from "@/assets/racing/track_empty.png";
 import wallURL from "@/assets/racing/wall.png";
 
 import { ROAD_WIDTH, TILE_SIZE } from "../views/minigames/racing/RacingView.vue";
-import { isWall, isOnTrack, angleBetween, distance } from "../../shared/RacingGameHelper.js";
+import { isWall, isOnTrack, angleBetween, distance } from "../../shared/utils/RacingGameHelper.js";
 
 const IS_DEBUG_MODE = true;
 

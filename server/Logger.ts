@@ -9,13 +9,45 @@ export class Logger {
     const time = new Date().toLocaleTimeString();
 
     if (typeof msg === "object" && msg !== null) {
-      console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]:`);
-      console.log(msg);
+      const syntaxHighlighted = this.syntaxHighlight(JSON.stringify(msg, undefined));
+
+      syntaxHighlighted
+        .split("\n")
+        .forEach((line) => console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${line}`));
     } else {
       console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`);
     }
 
     //return `[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`;
+  }
+
+  syntaxHighlight(json: string) {
+    if (typeof json != "string") {
+      json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return json.replace(
+      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+      function (match) {
+        var cls = "number";
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = "key";
+            return color.white(match);
+          } else {
+            cls = "string";
+            return color.green(match);
+          }
+        } else if (/true|false/.test(match)) {
+          cls = "boolean";
+          return color.green(match);
+        } else if (/null/.test(match)) {
+          cls = "null";
+          return color.green(match);
+        }
+        return color.red(match);
+      }
+    );
   }
 
   debug(msg: any) {
@@ -40,6 +72,7 @@ const color = {
   red: (s: any) => `\x1b[31m${s}\x1b[0m`,
   green: (s: any) => `\x1b[32m${s}\x1b[0m`,
   yellow: (s: any) => `\x1b[33m${s}\x1b[0m`,
+  white: (s: any) => `\x1b[37m${s}\x1b[0m`,
   gray: (s: any) => `\x1b[0;38;5;245;49m${s}\x1b[0m`,
 };
 

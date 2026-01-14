@@ -1,11 +1,12 @@
 import type { Player } from "server/models/Player.js";
-import { geoDistance } from "../../shared/MathHelper.js";
-import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "../../shared/Constants.ts";
+import { geoDistance } from "@shared/utils/MathHelper.js";
+import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "@shared/Constants.ts";
 import { Minigame } from "../Minigame.js";
-import allLocations from "../data/closest-locations.json" assert { type: "json" };
-import type { ClosestLocation } from "../../shared/minigames/closest/models/ClosestLocation.ts";
-import type { ClosestPlayer } from "../../shared/minigames/closest/models/ClosestPlayer.ts";
+import allLocations from "../data/closest-locations.json";
 import type { Host } from "server/models/Host.js";
+import type { ServerLobbyContext } from "server/models/ServerLobbyContext.ts";
+import type { GameResult } from "server/models/GameResult.ts";
+import type { ClosestLocation, ClosestPlayer } from "@shared/minigames/closest/types";
 
 export class ClosestWin extends Minigame {
   locations: ClosestLocation[];
@@ -15,8 +16,8 @@ export class ClosestWin extends Minigame {
   currentLocation: ClosestLocation;
   closestPlayers: ClosestPlayer[];
 
-  constructor() {
-    super();
+  constructor(context: ServerLobbyContext, onFinished: (results: GameResult) => void) {
+    super(context, onFinished);
     this.locations = allLocations;
 
     this.roundCount = CLOSEST_ROUNDS_PER_GAME;

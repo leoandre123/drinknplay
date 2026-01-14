@@ -15,7 +15,7 @@
         <RetroButton
           v-if="!context.isHost"
           size="large"
-          :color="[context.getCurrentPlayer().isReady ? 'red' : 'green']"
+          :color="context.getCurrentPlayer().isReady ? 'red' : 'green'"
           @click="toggleReady"
         >
           {{ context.getCurrentPlayer().isReady ? "Cancel" : "Ready" }}

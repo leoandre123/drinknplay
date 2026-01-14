@@ -1,7 +1,5 @@
-type DrawingMode =
-{
-    mode: "brush" | "bucket",
-    color: String,
-    size: Number
-}
-export default DrawingMode;
+export type DrawingMode = {
+  mode: "brush" | "bucket" | "eraser";
+  color: String;
+  size: Number;
+};

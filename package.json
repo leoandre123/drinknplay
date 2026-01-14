@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev:frontend": "vite",
-    "dev:backend": "tsx watch server/index.ts --tsconfig tsconfig.node.json ",
+    "dev:backend": "tsx watch --tsconfig tsconfig.node.json server/index.ts",
     "dev": "concurrently 'npm:dev:frontend' 'npm:dev:backend' npm:typecheck",
     "build": "vite build",
     "preview": "vite preview",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^25.0.7",
     "@vitejs/plugin-vue": "^5.1.4",
+    "@vue/tsconfig": "^0.8.1",
     "concurrently": "^9.0.1",
     "eslint": "^9.13.0",
     "eslint-plugin-vue": "^9.29.0",

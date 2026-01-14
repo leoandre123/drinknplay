@@ -15,17 +15,6 @@
 </template>
 
 <script>
-/*Player object: {id: player.id,
-                    score: 0,
-                    name: player.name}
-
-Drawing = {
-    playerName: socket.data.username,
-    socketId: socket.id,
-    score: 0,
-    png: canvasData,
-        };*/
-
 export default {
     data() {
     },

@@ -9,7 +9,6 @@ export const TOTAL_SCORE_PER_GAME = 1_000;
 
 //GAME CONSTANTS
 //KAHOOT
-export const KAHOOT_QUESTIONS_PER_GAME = 5;
 
 //CLOSEST
 export const CLOSEST_ROUNDS_PER_GAME = 5;

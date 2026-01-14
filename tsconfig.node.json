@@ -22,7 +22,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@shared/*": ["shared/*"]
+    }
   },
 
   "include": ["vite.config.ts", "server/**/*.ts"]

@@ -1,14 +1,21 @@
+import { Logger } from "./Logger";
 import type { GameResult } from "./models/GameResult";
 import { Host } from "./models/Host";
 import { Player } from "./models/Player";
 import { ServerLobbyContext } from "./models/ServerLobbyContext";
 
 export abstract class Minigame {
-  context?: ServerLobbyContext = undefined;
-  onFinished: (results: GameResult) => void = (_) => {};
+  context: ServerLobbyContext;
+  onFinished: (results: GameResult) => void;
   timeouts: NodeJS.Timeout[] = [];
 
-  constructor() {}
+  logger: Logger;
+
+  constructor(context: ServerLobbyContext, onFinished: (results: GameResult) => void) {
+    this.context = context;
+    this.onFinished = onFinished;
+    this.logger = new Logger(`LOBBY: ${this.context?.lobbyId} - ${this.constructor.name}`);
+  }
 
   abstract onPlayerJoined(player: Player): void;
   abstract onPlayerDisconnected(player: Player): void;
@@ -48,3 +55,8 @@ export abstract class Minigame {
     this.context?.io.to(this.context.lobbyId + "_PLAYERS").emit(ev, ...args);
   }
 }
+
+export type MinigameCtor = new (
+  context: ServerLobbyContext,
+  onFinished: (results: GameResult) => void
+) => Minigame;

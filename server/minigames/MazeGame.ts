@@ -1,55 +1,59 @@
-import { Minigame } from "../Minigame.js";
+import { Minigame } from "#server/Minigame.ts";
+import type { GameResult } from "#server/models/GameResult.ts";
+import type { Host } from "server/models/Host.ts";
+import type { Player } from "server/models/Player.ts";
+import type { ServerLobbyContext } from "#server/models/ServerLobbyContext.ts";
 
 export class Mazegame extends Minigame {
-  constructor() {
-    super();
-    this.winner = null;
-    this.winnerName = null;
+  winner: string | undefined;
+  gameActive: boolean;
+  scores: Map<string, number>;
+  roundStartTime: number;
+
+  constructor(context: ServerLobbyContext, onFinished: (results: GameResult) => void) {
+    super(context, onFinished);
+    this.winner = undefined;
     this.gameActive = false;
     this.scores = new Map();
+    this.roundStartTime = 0;
   }
 
-  onPlayerJoined(player) {
+  onPlayerJoined(player: Player) {
     if (!this.scores.has(player.id)) {
       this.scores.set(player.id, 0);
     }
   }
 
-  onPlayerDisconnected() {
+  onPlayerDisconnected(player: Player) {
     if (this.scores.has(player.id)) {
       this.scores.delete(player.id);
     }
   }
 
-  registerListeners(socket) {
-    socket.on("maze:finished", ({ time }) => {
-      this.onPlayerFinished(socket.data.playerId, time);
+  onHostJoined(_: Host) {}
+
+  registerListeners(player: Player) {
+    player.communication?.on("maze:finished", ({ time }) => {
+      this.onPlayerFinished(player.id, time);
     });
+  }
+  unregisterListeners(player: Player) {
+    player.communication;
   }
 
   start() {
-    this.winner = null;
-    this.winnerName = null;
+    this.winner = undefined;
     this.gameActive = true;
     this.roundStartTime = Date.now();
     console.log("Maze game started!");
   }
+  stop() {}
 
-  getPlayerName(playerId) {
-    const p = this.context.players?.find((x) => x.id === playerId);
-
-    return p?.name || p?.playerName || p?.nickname || "Okänd Spelare";
-  }
-
-  onPlayerFinished(playerId, playerTime) {
+  onPlayerFinished(playerId: string, playerTime: number) {
     if (!this.gameActive || this.winner) return;
 
     this.winner = playerId;
-    this.winnerName = this.getPlayerName(playerId);
     this.gameActive = false;
-
-    console.log("Player finished:", this.winnerName);
-
     const finishTime = playerTime - this.roundStartTime;
 
     console.log(finishTime);
@@ -60,7 +64,6 @@ export class Mazegame extends Minigame {
 
     this.broadcast("maze:roundResult", {
       winnerId: this.winner,
-      winnerName: this.winnerName,
       scores: Object.fromEntries(this.scores),
     });
 
@@ -71,7 +74,7 @@ export class Mazegame extends Minigame {
 
   finishGame() {
     console.log("Maze Game Finished");
-    const results = {
+    const results: GameResult = {
       type: "scores",
       data: [...this.scores].map(([playerId, score]) => ({
         playerId,

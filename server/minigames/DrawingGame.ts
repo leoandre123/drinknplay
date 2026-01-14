@@ -1,32 +1,49 @@
+import type { Player } from "server/models/Player.js";
 import { Minigame } from "../Minigame.js";
+import type { GameResult } from "server/models/GameResult.js";
+import type { Host } from "server/models/Host.js";
+import type { ServerLobbyContext } from "server/models/ServerLobbyContext.js";
+import type { DrawingPlayer, Drawing } from "@shared/minigames/drawing/types";
 
 export class DrawingGame extends Minigame {
-  constructor() {
-    super();
+  drawingPlayers: DrawingPlayer[];
+  allDrawings: Drawing[];
+  phase: string;
+  currentSubject: string;
+  subjects: string[];
+  timer: number;
+  timerID?: NodeJS.Timeout;
+  currentDrawingIndex: number;
+
+  constructor(context: ServerLobbyContext, onFinished: (results: GameResult) => void) {
+    super(context, onFinished);
+
     this.drawingPlayers = [];
     this.allDrawings = [];
     this.phase = "start";
     this.currentSubject = "";
     this.subjects = [];
-    this.timer = null;
-    this.timerID = null;
+    this.timer = 0;
+    this.timerID = undefined;
     this.currentDrawingIndex = 0;
   }
 
-  onPlayerJoined(player) {
+  onPlayerJoined(player: Player) {
+    this.logger.debug("Player joined");
     this.broadcastPlayers("gamePhase", this.phase);
     this.drawingPlayers.push({
       playerId: player.id,
       score: 0,
-      name: player.name,
       subjectSubmitted: false,
     });
   }
 
-  onPlayerDisconnected(player) {}
+  onHostJoined(host: Host) {}
+
+  onPlayerDisconnected(player: Player) {}
 
   //runs the game phase switching with timer
-  setTimer(seconds) {
+  setTimer(seconds: number) {
     this.stopTimer();
     this.timer = seconds;
     this.broadcast("timerTick", this.timer);
@@ -42,8 +59,8 @@ export class DrawingGame extends Minigame {
         } else {
           this.stopTimer();
           this.changeGamePhase();
-          console.log("GAMEPHASE CHANGING");
-          console.log(this.phase);
+          this.logger.debug("GAMEPHASE CHANGING");
+          this.logger.debug(this.phase);
         }
       }
     }, 1000);
@@ -52,7 +69,7 @@ export class DrawingGame extends Minigame {
   stopTimer() {
     if (this.timerID) {
       clearInterval(this.timerID);
-      this.timerID = null;
+      this.timerID = undefined;
     }
   }
 
@@ -84,19 +101,19 @@ export class DrawingGame extends Minigame {
   }
 
   gameFinished() {
-    const results = {
+    const results: GameResult = {
       type: "scores",
       data: this.drawingPlayers.map((dp) => ({
         playerId: dp.playerId,
         score: dp.score ?? 0,
       })),
     };
-    console.log("GAME FINISHED");
+    this.logger.debug("GAME FINISHED");
     this.onFinished?.(results);
   }
 
   initiateDrawing() {
-    console.log(this.subjects);
+    this.logger.debug(this.subjects);
     this.setTimer(90);
     this.changeSubject();
     this.allDrawings = [];
@@ -116,7 +133,7 @@ export class DrawingGame extends Minigame {
       this.setTimer(15);
       this.currentDrawingIndex = 0;
       this.broadcastVoting();
-      console.log("INITIATE VOITNG");
+      this.logger.debug("INITIATE VOITNG");
     } else {
       this.changeGamePhase();
     }
@@ -151,12 +168,14 @@ export class DrawingGame extends Minigame {
     this.allDrawings.sort((a, b) => b.score - a.score);
   }
 
-  registerListeners(socket) {
+  registerListeners(player: Player) {
     //Add subject that each player decides
-    socket.on("submitSubject", (subject) => {
+    player.communication?.on("submitSubject", (subject) => {
       this.subjects.push(subject);
-      const player = this.drawingPlayers.find((d) => d.playerId === socket.data.playerId);
-      player.subjectSubmitted = true;
+      const drawingPlayer = this.drawingPlayers.find((d) => d.playerId == player.id);
+      if (!drawingPlayer) return;
+
+      drawingPlayer.subjectSubmitted = true;
       const allSubmitted = this.drawingPlayers.every((p) => p.subjectSubmitted === true);
       if (allSubmitted && this.drawingPlayers.length > 0) {
         this.changeGamePhase();
@@ -164,48 +183,43 @@ export class DrawingGame extends Minigame {
     });
 
     //push drawings and update them to host
-    socket.on("updateCanvas", (canvasData) => {
-      console.log(this.allDrawings);
-      console.log(socket.data.playerId);
-      let drawing = this.allDrawings.find((d) => d.playerId === socket.data.playerId);
+    player.communication?.on("updateCanvas", (canvasData) => {
+      let drawing = this.allDrawings.find((d) => d.playerId == player.id);
       if (drawing) {
-        console.log("updating pic");
         drawing.png = canvasData;
       } else {
-        let player = this.drawingPlayers.find((d) => d.playerId === socket.data.playerId);
+        let drawingPlayer = this.drawingPlayers.find((d) => d.playerId == player.id);
+        if (!drawingPlayer) return;
         drawing = {
-          playerId: socket.data.playerId,
-          playerName: player.name,
+          playerId: player.id,
           png: canvasData,
           score: 0,
         };
         this.allDrawings.push(drawing);
-        console.log("new pic");
-        console.log(drawing.playerName);
       }
       this.broadcastHosts("updateCanvas", drawing);
     });
     //add scores to players
-    socket.on("playerVote", (scoreInfoFromPlayer) => {
+    player.communication?.on("playerVote", (scoreInfoFromPlayer) => {
       const drawing = this.allDrawings.find((d) => d.playerId === scoreInfoFromPlayer.playerId);
       if (drawing) {
-        console.log(scoreInfoFromPlayer.score);
+        this.logger.debug(scoreInfoFromPlayer.score);
         drawing.score += scoreInfoFromPlayer.score;
-        console.log(`Updated score for ${drawing.playerName}: ${drawing.score}`);
+        this.logger.debug(`Updated score for ${drawing.playerId}: ${drawing.score}`);
       }
 
-      const player = this.drawingPlayers.find((p) => p.playerId === drawing.playerId);
-      if (player) {
+      const drawingPlayer = this.drawingPlayers.find((p) => p.playerId === player.id);
+      if (drawingPlayer) {
         player.score += scoreInfoFromPlayer.score;
       }
-      console.log(`Updated score for ${player.name}: ${player.score}`);
+      this.logger.debug(`Updated score for ${player.name}: ${player.score}`);
     });
   }
 
-  unregisterListeners(socket) {
-    socket?.removeAllListeners("submitSubject");
-    socket?.removeAllListeners("updateCanvas");
-    socket?.removeAllListeners("playerVote");
+  unregisterListeners(player: Player) {
+    player.communication?.removeAllListeners("submitSubject");
+    player.communication?.removeAllListeners("updateCanvas");
+    player.communication?.removeAllListeners("playerVote");
   }
 
   start() {}

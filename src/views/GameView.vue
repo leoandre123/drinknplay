@@ -87,7 +87,7 @@ import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
 import { useDevice } from "../UseDevice.js";
 import GameResultPlayerView from "./GameResultPlayerView.vue";
-import { DefaultAvatar, GetRandomAvatar } from "../../shared/AvatarHelper.js";
+import { DefaultAvatar, GetRandomAvatar } from "@shared/utils/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
 import { audioManager } from "@/AudioManager";
 import FinalResultsView from "./FinalResultsView.vue";

@@ -66,6 +66,9 @@ export class Lobby {
       player!.communication = new SocketCommunication(socket);
     }
 
+    socket.data.lobbyId = this.context.lobbyId;
+    socket.data.playerId = playerId;
+
     this.onPlayerJoined(player!, isNewPlayer);
   }
 
@@ -189,7 +192,7 @@ export class Lobby {
     this.currentGameIndex = gameIndex;
     const game = ALL_GAMES[gameIndex];
     if (game) {
-      this.currentGame = new game();
+      this.currentGame = new game(this.context, (results) => this.finishGame(results));
     } else {
       this.logger.error(`No game with index ${gameIndex}`);
     }

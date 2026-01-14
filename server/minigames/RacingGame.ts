@@ -1,6 +1,10 @@
-import { Minigame } from "../Minigame.js";
-import { isWall, isOnTrack } from "../../shared/RacingGameHelper.js";
+import { Minigame } from "../Minigame";
+import { isWall, isOnTrack } from "../../shared/utils/RacingGameHelper";
 import  allTracks  from "../data/tracks.json" with { type: 'json' };
+import type { ServerLobbyContext } from "server/models/ServerLobbyContext.js";
+import type { GameResult } from "server/models/GameResult.js";
+import type { Player } from "server/models/Player.js";
+import type { Host } from "server/models/Host";
 
 const MAX_SPEED = 1;
 const MAX_SPEED_GRASS = 0.2;
@@ -13,13 +17,18 @@ const TILE_SIZE = 128;
 const ROAD_WIDTH = 64;
 
 export class RacingGame extends Minigame {
-  constructor(noWinCheck = false) {
-    super();
-    this.tracks = allTracks;
-    this.track = this.tracks[0];
+
+  track: any;
+  cars: any[];
+  startTime: number;
+  cancelRequested = false;
+
+
+  constructor(context: ServerLobbyContext, onFinished: (results: GameResult) => void) {
+    super(context, onFinished);
+    this.track = allTracks[0];
     this.cars = [];
     this.startTime = 0;
-    this.noWinCheck = noWinCheck;
 
     this.generateTrackData(
       this.track.data,
@@ -29,23 +38,23 @@ export class RacingGame extends Minigame {
     );
   }
 
-  registerListeners(socket) {
-    console.log(`Registering racing listeners for socket ${socket.id}`);
-    socket.on("racingInput", (input) => this.onPlayerInput(socket.data.playerId, input));
+  registerListeners(player: Player) {
+    player.communication?.on("racingInput", (input) => this.onPlayerInput(player.id, input));
   }
 
-  unregisterListeners(socket) {
-    console.log(`Unregistering racing listeners for socket ${socket.id}`);
-    socket?.removeAllListeners("racingInput");
+  unregisterListeners(player: Player) {
+    player.communication?.removeAllListeners("racingInput");
   }
 
-  onPlayerJoined(player) {
+  onPlayerJoined(player: Player) {
     console.log(`Player joined race: ${player.id}`);
     this.addPlayer(player.id);
   }
-  onPlayerDisconnected(player) {
+  onPlayerDisconnected(player: Player) {
     this.cars = this.cars.filter((x) => x.id != player.id);
   }
+
+  onHostJoined(_: Host){}
 
   start() {
     this.startGameLoop();
@@ -53,7 +62,7 @@ export class RacingGame extends Minigame {
   stop() {
     this.cancelRequested = true;
   }
-  onPlayerInput(playerId, input) {
+  onPlayerInput(playerId: string, input: any) {
     this.cars.find((x) => x.id == playerId).input = input;
   }
 
@@ -86,7 +95,7 @@ export class RacingGame extends Minigame {
     loop();
   }
 
-  update(dt) {
+  update(dt: number) {
     for (let car of this.cars) {
       this.checkCollisions(car);
       this.calculateDistance(car);
@@ -140,11 +149,10 @@ export class RacingGame extends Minigame {
       this.cars[order[i].index].place = i;
     }
 
-    if (!this.noWinCheck)
       if (this.cars.every((x) => x.isFinshed)) {
         this.stop();
 
-        const results = {
+        const results: GameResult = {
           type: "ranking",
           data: this.cars
             .toSorted((a, b) => a.finishTime - b.finishTime)
@@ -156,13 +164,13 @@ export class RacingGame extends Minigame {
         }, 3000);
       }
   }
-  calculateDistance(car) {
+  calculateDistance(car: any) {
     let carTileX = Math.floor(car.x / TILE_SIZE);
     let carTileY = Math.floor(car.y / TILE_SIZE);
     const subTileX = (car.x % TILE_SIZE) / TILE_SIZE;
     const subTileY = (car.y % TILE_SIZE) / TILE_SIZE;
 
-    const tileIndex = this.track.route.findIndex((t) => t.x == carTileX && t.y == carTileY);
+    const tileIndex = this.track.route.findIndex((t: any) => t.x == carTileX && t.y == carTileY);
     if (tileIndex == -1) {
       console.log("WTF!!!!");
       return;
@@ -185,23 +193,23 @@ export class RacingGame extends Minigame {
 
     car.distance = dist;
   }
-  checkCollisions(car) {
+  checkCollisions(car: any) {
     let wallCollision = isWall(car.x, car.y, this.track.data, TILE_SIZE, 10);
     while (wallCollision.isWall) {
-      car.x += Math.cos(wallCollision.wallNormal) * 0.1;
-      car.y += Math.sin(wallCollision.wallNormal) * 0.1;
+      car.x += Math.cos(wallCollision.wallNormal!) * 0.1;
+      car.y += Math.sin(wallCollision.wallNormal!) * 0.1;
 
       wallCollision = isWall(car.x, car.y, this.track.data, TILE_SIZE, 10);
     }
   }
-  onEnterNewTile(car) {
+  onEnterNewTile(car: any) {
     let carTileX = Math.floor(car.x / TILE_SIZE);
     let carTileY = Math.floor(car.y / TILE_SIZE);
 
     const lastTileIndex = this.track.route.findIndex(
-      (t) => t.x == car.lastTileX && t.y == car.lastTileY
+      (t: any) => t.x == car.lastTileX && t.y == car.lastTileY
     );
-    const newTileIndex = this.track.route.findIndex((t) => t.x == carTileX && t.y == carTileY);
+    const newTileIndex = this.track.route.findIndex((t: any) => t.x == carTileX && t.y == carTileY);
 
     console.log(`${lastTileIndex} -> ${newTileIndex}`);
 
@@ -219,15 +227,15 @@ export class RacingGame extends Minigame {
     car.lastTileX = carTileX;
     car.lastTileY = carTileY;
   }
-  onLapFinsihed(car) {
-    console.log(`${car.id} finished lap ${car.lap} out of ${this.laps}`);
+  onLapFinsihed(car: any) {
+    console.log(`${car.id} finished lap ${car.lap} out of ${this.track.laps}`);
     if (++car.lap >= this.track.laps) {
       console.log(`${car.id} finished the race`);
       car.isFinshed = true;
       car.finishTime = Date.now();
     }
   }
-  addPlayer(id) {
+  addPlayer(id: string) {
     this.cars.push({
       id: id,
       input: {
@@ -249,7 +257,7 @@ export class RacingGame extends Minigame {
       distance: 0,
     });
   }
-  generateTrackData(trackData, startX, startY, direction) {
+  generateTrackData(trackData: any[], startX: number, startY: number, direction: string) {
     this.track.data = trackData;
     this.track.width = trackData[0].length;
     this.track.height = trackData.length;
