@@ -6,6 +6,7 @@ import type { GameResult } from "server/models/GameResult.js";
 import type { KahootQuestion, KahootPlayer } from "shared/minigames/kahoot/types";
 import type { Player } from "server/models/Player.js";
 import type { Host } from "server/models/Host.js";
+import { KAHOOT_QUESTIONS_PER_GAME } from "@shared/minigames/kahoot/constants";
 
 export class KahootGame extends Minigame {
   questions: KahootQuestion[];

@@ -21,3 +21,11 @@ export function geoDistance(pos0: number[], pos1: number[]) {
   const d = R * c;
   return d;
 }
+
+export function distance(x0: number, y0: number, x1: number, y1: number) {
+  return Math.hypot(x1 - x0, y1 - y0);
+}
+
+export function angleBetween(x0: number, y0: number, x1: number, y1: number) {
+  return Math.atan2(x1 - x0, y1 - y0);
+}

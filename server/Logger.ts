@@ -9,7 +9,7 @@ export class Logger {
     const time = new Date().toLocaleTimeString();
 
     if (typeof msg === "object" && msg !== null) {
-      const syntaxHighlighted = this.syntaxHighlight(JSON.stringify(msg, undefined));
+      const syntaxHighlighted = syntaxHighlight(JSON.stringify(msg, undefined));
 
       syntaxHighlighted
         .split("\n")
@@ -17,37 +17,6 @@ export class Logger {
     } else {
       console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`);
     }
-
-    //return `[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`;
-  }
-
-  syntaxHighlight(json: string) {
-    if (typeof json != "string") {
-      json = JSON.stringify(json, undefined, 2);
-    }
-    json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    return json.replace(
-      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-      function (match) {
-        var cls = "number";
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-            cls = "key";
-            return color.white(match);
-          } else {
-            cls = "string";
-            return color.green(match);
-          }
-        } else if (/true|false/.test(match)) {
-          cls = "boolean";
-          return color.green(match);
-        } else if (/null/.test(match)) {
-          cls = "null";
-          return color.green(match);
-        }
-        return color.red(match);
-      }
-    );
   }
 
   debug(msg: any) {
@@ -91,4 +60,30 @@ function colorMessage(msg: any, level: string) {
 
 function shouldLog(level: number) {
   return level >= MIN_LEVEL;
+}
+
+function syntaxHighlight(json: string) {
+  json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return json.replace(
+    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    function (match) {
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          //KEY
+          return color.white(match);
+        } else {
+          //STRING
+          return color.green(match);
+        }
+      } else if (/true|false/.test(match)) {
+        //BOOL
+        return color.yellow(match);
+      } else if (/null/.test(match)) {
+        //NULL
+        return color.yellow(match);
+      }
+      //NUMBER
+      return color.red(match);
+    }
+  );
 }

@@ -38,9 +38,9 @@ export class DrawingGame extends Minigame {
     });
   }
 
-  onHostJoined(host: Host) {}
+  onHostJoined(_: Host) {}
 
-  onPlayerDisconnected(player: Player) {}
+  onPlayerDisconnected(_: Player) {}
 
   //runs the game phase switching with timer
   setTimer(seconds: number) {

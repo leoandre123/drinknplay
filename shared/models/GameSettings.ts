@@ -1,9 +1,9 @@
-export class GameSettings {
+export type GameSettings = {
   numberOfRounds: number;
   drunknessLevel: number;
   maxPlayers: number;
   doEvents: boolean;
-}
+};
 
 export const DefaultSettings: GameSettings = {
   numberOfRounds: 10,

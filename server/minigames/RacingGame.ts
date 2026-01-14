@@ -1,10 +1,10 @@
 import { Minigame } from "../Minigame";
-import { isWall, isOnTrack } from "../../shared/utils/RacingGameHelper";
 import  allTracks  from "../data/tracks.json" with { type: 'json' };
 import type { ServerLobbyContext } from "server/models/ServerLobbyContext.js";
 import type { GameResult } from "server/models/GameResult.js";
 import type { Player } from "server/models/Player.js";
 import type { Host } from "server/models/Host";
+import {isOnTrack, isWall} from "@shared/minigames/racing/RacingGameHelper"
 
 const MAX_SPEED = 1;
 const MAX_SPEED_GRASS = 0.2;

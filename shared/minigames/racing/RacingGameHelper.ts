@@ -1,4 +1,12 @@
-export function isOnTrack(x, y, trackData, tileSize, roadWidth) {
+import { angleBetween, distance } from "@shared/utils/MathHelper";
+
+export function isOnTrack(
+  x: number,
+  y: number,
+  trackData: string[][],
+  tileSize: number,
+  roadWidth: number
+) {
   const roadMargin = (tileSize - roadWidth) / 2;
 
   const tileX = Math.floor(x / tileSize);
@@ -35,7 +43,13 @@ export function isOnTrack(x, y, trackData, tileSize, roadWidth) {
   }
 }
 
-export function isWall(x, y, trackData, tileSize, wallWidth) {
+export function isWall(
+  x: number,
+  y: number,
+  trackData: string[][],
+  tileSize: number,
+  wallWidth: number
+) {
   const tileX = Math.floor(x / tileSize);
   const tileY = Math.floor(y / tileSize);
 
@@ -84,12 +98,4 @@ export function isWall(x, y, trackData, tileSize, wallWidth) {
     default:
       return { isWall: false, wallNormal: undefined };
   }
-}
-
-export function distance(x0, y0, x1, y1) {
-  return Math.hypot(x1 - x0, y1 - y0);
-}
-
-export function angleBetween(x0, y0, x1, y1) {
-  return Math.atan2(x1 - x0, y1 - y0);
 }
