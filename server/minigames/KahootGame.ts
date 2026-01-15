@@ -110,7 +110,7 @@ export class KahootGame extends Minigame {
     this.updateAnswerCount();
 
     this.broadcast("startRound");
-    this.broadcast("startQuestion", q);
+    this.broadcast("startQuestion", q, time);
   }
 
   updateAnswerCount() {

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="lobbyAvailable === undefined">{{$t('common.loading')}}...</div>
+  <div v-if="lobbyAvailable === undefined">{{ $t("common.loading") }}...</div>
   <div v-if="lobbyAvailable === true" class="join-container">
     <div class="menu">
-      <h1>{{ $t('common.joinGame') }}</h1>
-      <p>{{$t('common.personName')}}</p>
+      <h1>{{ $t("common.joinGame") }}</h1>
+      <p>{{ $t("common.personName") }}</p>
       <input v-model="name" @input="name = $event.target.value" />
       <br />
       <br />
@@ -66,11 +66,11 @@
 </template>
 
 <script>
-import { GetRandomAvatar } from "@shared/AvatarHelper";
-import { mod } from "@shared/MathHelper";
+import { mod } from "@shared/utils/MathHelper";
 import Avatar from "../components/Avatar.vue";
 import { socket } from "../socket";
 import RetroButton from "@/components/RetroButton.vue";
+import { GetRandomAvatar } from "@shared/models/AvatarSettings";
 
 export default {
   name: "JoinView",

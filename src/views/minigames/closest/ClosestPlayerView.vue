@@ -21,7 +21,7 @@ import { DivIcon, Icon } from "leaflet";
 
 import { createApp } from "vue";
 import Avatar from "@/components/Avatar.vue";
-import { DefaultAvatar } from "@shared/AvatarHelper";
+import { DefaultAvatar } from "@shared/models/AvatarSettings";
 import { context } from "@/context";
 import AvatarMarkerIcon from "@/components/AvatarMarkerIcon.vue";
 import { socket } from "@/socket";

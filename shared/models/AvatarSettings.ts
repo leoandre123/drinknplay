@@ -1,21 +1,15 @@
-export class AvatarSettings {
+export type AvatarSettings = {
   body: number;
   mouth: number;
   eyes: number;
+};
 
-  constructor(body: number, mouth: number, eyes: number) {
-    this.body = body;
-    this.mouth = mouth;
-    this.eyes = eyes;
-  }
+export const DefaultAvatar: AvatarSettings = { body: 0, mouth: 0, eyes: 0 };
 
-  static GetRandomAvatar() {
-    return new AvatarSettings(
-      Math.floor(Math.random() * 3),
-      Math.floor(Math.random() * 2),
-      Math.floor(Math.random() * 4)
-    );
-  }
-
-  static readonly Default: AvatarSettings = new AvatarSettings(0, 0, 0);
+export function GetRandomAvatar(): AvatarSettings {
+  return {
+    body: Math.floor(Math.random() * 3),
+    mouth: Math.floor(Math.random() * 2),
+    eyes: Math.floor(Math.random() * 4),
+  };
 }

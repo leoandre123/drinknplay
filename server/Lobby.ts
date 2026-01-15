@@ -21,6 +21,8 @@ import {
   TOTAL_SCORE_PER_GAME,
 } from "../shared/Constants";
 import type { GameResult } from "./models/GameResult.ts";
+import { LOBBY_JOIN_AS_PLAYER_RESPONSE } from "@shared/contracts/socket-events.ts";
+import type { JoinLobbyResponse } from "@shared/contracts/types.ts";
 
 export class Lobby {
   context: ServerLobbyContext;
@@ -58,12 +60,16 @@ export class Lobby {
     let player = this.getPlayer(playerId);
     const isNewPlayer = player == undefined;
 
+    const comm = new SocketCommunication(socket);
+
     if (isNewPlayer) {
       if (this.context.players.length >= this.settings.maxPlayers) return;
       playerId = GenerateID(PLAYER_ID_LENGTH);
-      player = new Player(name, playerId, socket, avatarSettings);
+      player = new Player(name, playerId, comm, avatarSettings);
     } else {
-      player!.communication = new SocketCommunication(socket);
+      player!.communication = comm;
+      console.log("NEW SOCCOM CREATED");
+      console.log(player?.communication);
     }
 
     socket.data.lobbyId = this.context.lobbyId;
@@ -83,14 +89,18 @@ export class Lobby {
       this.context.players.push(player);
     }
 
+    this.logger.debug(this.context.players);
+
     player.communication!.join(this.context.lobbyId + "_PLAYERS");
 
     this.registerPlayerListeners(player);
 
-    player.communication!.emit("lobby:joinResponse", {
+    const resp: JoinLobbyResponse = {
+      success: true,
       lobbyId: this.context.lobbyId,
       playerId: player.id,
-    });
+    };
+    player.communication!.emit(LOBBY_JOIN_AS_PLAYER_RESPONSE, resp);
 
     this.broadcastLobbyState();
     if (this.phase == "game") {

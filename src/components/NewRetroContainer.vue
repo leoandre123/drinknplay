@@ -151,7 +151,7 @@ export default {
 <style scoped>
 .retro-container {
   overflow: hidden;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100dvw;

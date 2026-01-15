@@ -8,7 +8,6 @@ export const CREDITS_PER_ROUNDPLAYER = [0, 1, 3, 5];
 export const TOTAL_SCORE_PER_GAME = 1_000;
 
 //GAME CONSTANTS
-//KAHOOT
 
 //CLOSEST
 export const CLOSEST_ROUNDS_PER_GAME = 5;

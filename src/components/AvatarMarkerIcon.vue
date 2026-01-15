@@ -4,7 +4,7 @@
   </div>
 </template>
 <script lang="ts">
-import { GetRandomAvatar } from "../../shared/utils/AvatarHelper";
+import { GetRandomAvatar } from "@shared/models/AvatarSettings";
 import Avatar from "./Avatar.vue";
 
 export default {

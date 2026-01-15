@@ -62,13 +62,13 @@ export default {
     socket.off("");
   },
   methods: {
-    onStartQuestion(q) {
+    onStartQuestion(q, t) {
       console.log("START QUESTION", q);
       this.reveal = false;
       this.currentQuestion = q;
 
       const updateTimer = () => {
-        const delta = q.time - Date.now();
+        const delta = t - Date.now();
         if (delta > 0) {
           this.timer = Math.ceil(delta / 1000);
           setTimeout(updateTimer, 10);

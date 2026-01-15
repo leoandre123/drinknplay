@@ -29,34 +29,35 @@
     </div>
   </div>
 
-  <div v-if="!context.isConnected">
-    <div class="connection-warning">
-      <div>
-        <h1>Not connected</h1>
-        <h3>Available Lobbies</h3>
-        <button @click="socket.emit('debug:getAllLobbies')">Refresh</button>
-        <div class="debug-lobbies">
-          <div v-for="lobby in debug.availableLobbies" class="debug-lobby">
-            <h4>{{ lobby.id }}</h4>
-            <p>Players: {{ lobby.playerCount }}</p>
-            <button @click="joinLobbyAsHost(lobby.id)">Host</button>
-            <button
-              @click="joinLobby(lobby.id, null, 'player_' + Math.floor(Math.random() * 1000))"
-            >
-              player
-            </button>
+  <div v-if="!context.isConnected" class="not-connected">
+    <h1>Connecting...</h1>
+    <NewRetroContainer>
+      <div v-if="false" class="connection-warning">
+        <div>
+          <h1>Not connected</h1>
+          <h3>Available Lobbies</h3>
+          <button @click="socket.emit('debug:getAllLobbies')">Refresh</button>
+          <div class="debug-lobbies">
+            <div v-for="lobby in debug.availableLobbies" class="debug-lobby">
+              <h4>{{ lobby.id }}</h4>
+              <p>Players: {{ lobby.playerCount }}</p>
+              <button @click="joinLobbyAsHost(lobby.id)">Host</button>
+              <button
+                @click="joinLobby(lobby.id, null, 'player_' + Math.floor(Math.random() * 1000))"
+              >
+                player
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </NewRetroContainer>
   </div>
 
-  <div v-if="false" class="popup">
-    <div class="enable-audio">
-      <p>Sound is not enabled</p>
-      <button @click="audioManager.unlock()">Grant access to play sounds</button>
-    </div>
-  </div>
+  <Popup title="Lobby unavailable" ref="unavailablePopup">
+    <p>Lobby not available</p>
+    <RetroButton><span class="gear-icon"></span></RetroButton>
+  </Popup>
 
   <div v-if="context.isConnected" class="game-container">
     <LobbyView v-if="context.state?.phase == 'lobby'" />
@@ -87,10 +88,15 @@ import { context } from "../context";
 import { Flag } from "vue-flag-icon/components";
 import { useDevice } from "../UseDevice.js";
 import GameResultPlayerView from "./GameResultPlayerView.vue";
-import { DefaultAvatar, GetRandomAvatar } from "@shared/utils/AvatarHelper.js";
 import GameResultsView from "./GameResultsView.vue";
 import { audioManager } from "@/AudioManager";
 import FinalResultsView from "./FinalResultsView.vue";
+import { DefaultAvatar, GetRandomAvatar } from "@shared/models/AvatarSettings.js";
+import Popup from "@/components/Popup.vue";
+
+import { LOBBY_JOIN_AS_PLAYER_RESPONSE } from "@shared/contracts/socket-events.js";
+import NewRetroContainer from "@/components/NewRetroContainer.vue";
+import RetroButton from "@/components/RetroButton.vue";
 
 export default {
   name: "GameView",
@@ -129,16 +135,24 @@ export default {
     GameResultsView,
     ScoreboardPlayerView,
     FinalResultsView,
+    Popup,
+    NewRetroContainer,
+    RetroButton,
   },
   mounted() {
-    socket.on("lobby:joinResponse", (response) => {
-      context.isHost = false;
-      context.isConnected = true;
-      context.lobbyId = response.lobbyId;
-      context.playerId = response.playerId;
-
+    socket.on(LOBBY_JOIN_AS_PLAYER_RESPONSE, (response) => {
       console.log(response);
-      localStorage.setItem("playerId", response.playerId);
+      if (response.success) {
+        context.isHost = false;
+        context.isConnected = true;
+        context.lobbyId = response.lobbyId;
+        context.playerId = response.playerId;
+
+        console.log(response);
+        localStorage.setItem("playerId", response.playerId);
+      } else {
+        this.$refs.unavailablePopup.show();
+      }
     });
     socket.on("lobby:joinHostResponse", (response) => {
       context.isHost = true;
@@ -250,6 +264,23 @@ export default {
   align-content: center;
   background-color: red;
   color: white;
+}
+
+.not-connected {
+  width: 100dvw;
+  height: 100dvh;
+  justify-items: center;
+  align-content: center;
+}
+
+.gear-icon {
+  color: black;
+  height: 2rem;
+  aspect-ratio: 1;
+  background-image: url("/gear.png");
+  background-size: contain;
+  cursor: pointer;
+  float: right;
 }
 
 .debug-container {

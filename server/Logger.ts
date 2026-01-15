@@ -1,3 +1,5 @@
+import { Server, Socket } from "socket.io";
+
 export class Logger {
   name: string;
 
@@ -9,7 +11,7 @@ export class Logger {
     const time = new Date().toLocaleTimeString();
 
     if (typeof msg === "object" && msg !== null) {
-      const syntaxHighlighted = syntaxHighlight(JSON.stringify(msg, undefined));
+      const syntaxHighlighted = syntaxHighlight(safeStringify(msg));
 
       syntaxHighlighted
         .split("\n")
@@ -85,5 +87,51 @@ function syntaxHighlight(json: string) {
       //NUMBER
       return color.red(match);
     }
+  );
+}
+function safeStringify(value: any, space = 2) {
+  const seen = new WeakSet<object>();
+  return JSON.stringify(
+    value,
+    (_key, val) => {
+      // Handle Errors (JSON.stringify(new Error()) => {})
+      if (val instanceof Error) {
+        return {
+          __type: "Error",
+          name: val.name,
+          message: val.message,
+          stack: val.stack,
+        };
+      }
+
+      // Handle BigInt
+      if (typeof val === "bigint") return val.toString();
+
+      // Map / Set
+      if (val instanceof Map) {
+        return { __type: "Map", entries: Array.from(val.entries()) };
+      }
+      if (val instanceof Set) {
+        return { __type: "Set", values: Array.from(val.values()) };
+      }
+
+      // Socket.IO objects (replace with summaries)
+      //const summarized = summarizeSocketIO(val);
+      //if (summarized) return summarized;
+
+      const blacklist = [Socket, Server];
+      if (blacklist.some((t) => val instanceof t)) {
+        return `[${val?.constructor?.name}]`;
+      }
+
+      // Circular detection
+      if (val && typeof val === "object") {
+        if (seen.has(val)) return "[Circular]";
+        seen.add(val);
+      }
+
+      return val;
+    },
+    space
   );
 }
