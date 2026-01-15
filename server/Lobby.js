@@ -147,7 +147,7 @@ export class Lobby {
     this.broadcastLobbyState();
 
     setTimeout(() => {
-      const gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
+      const gameIndex = Math.floor(Math.random() * (ALL_GAMES.length - 1)) + 1;
       this.selectGame(gameIndex);
       this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
       this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
