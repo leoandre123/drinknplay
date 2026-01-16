@@ -41,7 +41,7 @@ export class RouletteGame extends Minigame {
 
     this.broadcastRouletteState();
   }
-
+  onPlayerRejoined(player: Player) {}
   onPlayerDisconnected(_: Player) {
     this.broadcastRouletteState();
   }

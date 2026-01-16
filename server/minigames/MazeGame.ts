@@ -1,4 +1,4 @@
-import { Minigame } from "#server/Minigame.ts";
+import { Minigame } from "server/Minigame";
 import type { GameResult } from "#server/models/GameResult.ts";
 import type { Host } from "server/models/Host.ts";
 import type { Player } from "server/models/Player.ts";
@@ -23,7 +23,7 @@ export class Mazegame extends Minigame {
       this.scores.set(player.id, 0);
     }
   }
-
+  onPlayerRejoined(player: Player) {}
   onPlayerDisconnected(player: Player) {
     if (this.scores.has(player.id)) {
       this.scores.delete(player.id);

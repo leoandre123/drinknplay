@@ -39,7 +39,7 @@ export class KahootGame extends Minigame {
     this.kahootPlayers = this.kahootPlayers.filter((x) => x.playerId != player.id);
     this.updateAnswerCount();
   }
-
+  onPlayerRejoined(player: Player) {}
   onHostJoined(_: Host) {}
 
   registerListeners(player: Player) {

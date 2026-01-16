@@ -1,6 +1,6 @@
 import type { Player } from "server/models/Player.js";
 import { geoDistance } from "@shared/utils/MathHelper.js";
-import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "@shared/Constants.ts";
+import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "@shared/Constants";
 import { Minigame } from "../Minigame.js";
 import allLocations from "../data/closest-locations.json";
 import type { Host } from "server/models/Host.js";
@@ -35,6 +35,7 @@ export class ClosestWin extends Minigame {
     });
     this.broadcastHosts("closest:updatePlayers", this.closestPlayers);
   }
+  onPlayerRejoined(player: Player) {}
   onPlayerDisconnected(player: Player) {
     this.closestPlayers = this.closestPlayers.filter((p) => p.id != player.id);
     this.broadcastHosts("closest:updatePlayers", this.closestPlayers);

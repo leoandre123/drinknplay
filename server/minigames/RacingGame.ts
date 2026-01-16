@@ -45,7 +45,7 @@ export class RacingGame extends Minigame {
   unregisterListeners(player: Player) {
     player.communication?.removeAllListeners("racingInput");
   }
-
+  onPlayerRejoined(player: Player) {}
   onPlayerJoined(player: Player) {
     console.log(`Player joined race: ${player.id}`);
     this.addPlayer(player.id);
