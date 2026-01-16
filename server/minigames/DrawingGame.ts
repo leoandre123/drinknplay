@@ -37,6 +37,9 @@ export class DrawingGame extends Minigame {
       subjectSubmitted: false,
     });
   }
+  onPlayerRejoined(player: Player) {
+    this.broadcastPlayers("gamePhase", this.phase);
+  }
 
   onHostJoined(_: Host) {}
 

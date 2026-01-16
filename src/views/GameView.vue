@@ -54,9 +54,9 @@
     </NewRetroContainer>
   </div>
 
-  <Popup title="Lobby unavailable" ref="unavailablePopup">
-    <p>Lobby not available</p>
-    <RetroButton><span class="gear-icon"></span></RetroButton>
+  <Popup title="Lobby unavailable" no-close ref="unavailablePopup">
+    <br />
+    <RetroButton @click="goHome">Home</RetroButton>
   </Popup>
 
   <div v-if="context.isConnected" class="game-container">
@@ -94,7 +94,12 @@ import FinalResultsView from "./FinalResultsView.vue";
 import { DefaultAvatar, GetRandomAvatar } from "@shared/models/AvatarSettings.js";
 import Popup from "@/components/Popup.vue";
 
-import { LOBBY_JOIN_AS_PLAYER_RESPONSE } from "@shared/contracts/socket-events.js";
+import {
+  LOBBY_JOIN_AS_HOST,
+  LOBBY_JOIN_AS_HOST_RESPONSE,
+  LOBBY_JOIN_AS_PLAYER,
+  LOBBY_JOIN_AS_PLAYER_RESPONSE,
+} from "@shared/contracts/socket-events.js";
 import NewRetroContainer from "@/components/NewRetroContainer.vue";
 import RetroButton from "@/components/RetroButton.vue";
 
@@ -154,10 +159,15 @@ export default {
         this.$refs.unavailablePopup.show();
       }
     });
-    socket.on("lobby:joinHostResponse", (response) => {
-      context.isHost = true;
-      context.isConnected = true;
-      context.lobbyId = response.lobbyId;
+    socket.on(LOBBY_JOIN_AS_HOST_RESPONSE, (response) => {
+      console.log(response);
+      if (response.success) {
+        context.isHost = true;
+        context.isConnected = true;
+        context.lobbyId = response.lobbyId;
+      } else {
+        this.$refs.unavailablePopup.show();
+      }
     });
     socket.on("lobby:updateState", (state) => {
       context.state = state;
@@ -189,8 +199,8 @@ export default {
     this.setupDebug();
   },
   beforeUnmount() {
-    socket.off("lobby:joinResponse");
-    socket.off("lobby:joinHostResponse");
+    socket.off(LOBBY_JOIN_AS_PLAYER_RESPONSE);
+    socket.off(LOBBY_JOIN_AS_HOST_RESPONSE);
     socket.off("lobby:updateState");
     window.removeEventListener("error", this.onError);
     window.removeEventListener("unhandledrejection", this.onUnhandledRejection);
@@ -200,7 +210,11 @@ export default {
       console.error("Unhandled error FUFAUF", e.reason);
       alert(`Error: ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`);
     },
-
+    goHome() {
+      this.$router.push({
+        path: "/",
+      });
+    },
     onUnhandledRejection(e) {
       console.error("Unhandled promise:", e.reason);
     },
@@ -226,10 +240,10 @@ export default {
       socket.emit("debug:getAllLobbies");
     },
     joinLobby(lobbyId, playerId, name, avatarSettings = DefaultAvatar) {
-      socket.emit("lobby:joinAsPlayer", lobbyId, playerId, name, avatarSettings);
+      socket.emit(LOBBY_JOIN_AS_PLAYER, lobbyId, playerId, name, avatarSettings);
     },
     joinLobbyAsHost(lobbyId) {
-      socket.emit("lobby:joinAsHost", lobbyId);
+      socket.emit(LOBBY_JOIN_AS_HOST, lobbyId);
     },
     advance() {
       socket.emit("lobby:advancePhase");

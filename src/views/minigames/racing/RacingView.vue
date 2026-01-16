@@ -1,19 +1,6 @@
 <template>
   <div>
     <div class="container">
-      <!--
-      <div class="info">
-        <div class="debug">
-          <p style="position: absolute; top: 0; left: 0">debug</p>
-          <p>FPS: {{ Math.round(fps) }}</p>
-          <button @click="joinAsHost">Join as Host</button>
-          <button @click="loop">Restart rendering</button>
-          <button @click="startTime = Date.now()">Start timer</button>
-          <button @click="cars = []">Remove all players</button>
-          <button @click="spawnPlayer('ghost')">Add ghost player</button>
-        </div>
-      </div>
--->
       <div class="canvas-container" :style="gridStyle">
         <RacingCanvas
           v-for="car in cars"
@@ -61,7 +48,16 @@ export default {
       track: {
         width: 8,
         height: 8,
-        data: ["########", "#┌───┐##", "#│#┌─┘##", "#└┐│┌─┐#", "#┌┘└┘┌┘#", "#│###└┐#", "#└────┘#", "########"],
+        data: [
+          "########",
+          "#┌───┐##",
+          "#│#┌─┘##",
+          "#└┐│┌─┐#",
+          "#┌┘└┘┌┘#",
+          "#│###└┐#",
+          "#└────┘#",
+          "########",
+        ],
         startX: 4,
         startY: 6,
         route: [

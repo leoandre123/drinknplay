@@ -8,4 +8,6 @@ export interface PlayerCommunication {
   off(event: string, handler: (...args: any[]) => void): void;
 
   removeAllListeners(event: string): void;
+
+  logListeners(): void;
 }

@@ -18,6 +18,7 @@ export abstract class Minigame {
   }
 
   abstract onPlayerJoined(player: Player): void;
+  abstract onPlayerRejoined(player: Player): void;
   abstract onPlayerDisconnected(player: Player): void;
 
   abstract onHostJoined(host: Host): void;

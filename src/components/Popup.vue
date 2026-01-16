@@ -1,9 +1,9 @@
 <template>
-  <div v-if="isShowing" class="popup-container" @click.self="hide">
+  <div v-if="isShowing" class="popup-container" @click.self="!noClose && hide()">
     <div class="popup">
       <h2 class="title">{{ title }}</h2>
       <div class="close-button">
-        <RetroButton size="small" color="red" @click="hide">x</RetroButton>
+        <RetroButton v-if="!noClose" size="small" color="red" @click="hide">x</RetroButton>
       </div>
 
       <slot></slot>
@@ -18,6 +18,7 @@ export default {
   emits: ["close"],
   props: {
     title: String,
+    noClose: Boolean,
   },
   data() {
     return { isShowing: false };

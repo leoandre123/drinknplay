@@ -21,8 +21,11 @@ import {
   TOTAL_SCORE_PER_GAME,
 } from "../shared/Constants";
 import type { GameResult } from "./models/GameResult.ts";
-import { LOBBY_JOIN_AS_PLAYER_RESPONSE } from "@shared/contracts/socket-events.ts";
-import type { JoinLobbyResponse } from "@shared/contracts/types.ts";
+import {
+  LOBBY_JOIN_AS_HOST_RESPONSE,
+  LOBBY_JOIN_AS_PLAYER_RESPONSE,
+} from "@shared/contracts/socket-events.ts";
+import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.ts";
 
 export class Lobby {
   context: ServerLobbyContext;
@@ -37,6 +40,8 @@ export class Lobby {
   logger: Logger;
 
   currentRound = 0;
+
+  animationPlaying = false;
 
   constructor(io: Server, lobbyId: string, settings: GameSettings = DefaultSettings) {
     this.context = new ServerLobbyContext(io, lobbyId);
@@ -68,8 +73,6 @@ export class Lobby {
       player = new Player(name, playerId, comm, avatarSettings);
     } else {
       player!.communication = comm;
-      console.log("NEW SOCCOM CREATED");
-      console.log(player?.communication);
     }
 
     socket.data.lobbyId = this.context.lobbyId;
@@ -104,10 +107,12 @@ export class Lobby {
 
     this.broadcastLobbyState();
     if (this.phase == "game") {
+      this.currentGame?.registerListeners(player);
       if (isNewPlayer) {
         this.currentGame?.onPlayerJoined(player);
+      } else {
+        this.currentGame?.onPlayerRejoined(player);
       }
-      this.currentGame?.registerListeners(player);
     }
   }
 
@@ -133,7 +138,11 @@ export class Lobby {
     socket.on("lobby:updateSettings", (settings) => this.onSettingsChanged(settings));
     socket.on("lobby:advancePhase", () => this.advancePhase());
 
-    socket.emit("lobby:joinHostResponse", this.context.lobbyId);
+    const resp: JoinLobbyHostResponse = {
+      success: true,
+      lobbyId: this.context.lobbyId,
+    };
+    socket.emit(LOBBY_JOIN_AS_HOST_RESPONSE, resp);
 
     this.broadcastLobbyState();
     if (this.phase == "game") {
@@ -186,7 +195,11 @@ export class Lobby {
     this.broadcastLobbyState();
 
     setTimeout(() => {
-      const gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
+      let gameIndex;
+      do {
+        gameIndex = Math.floor(Math.random() * (ALL_GAMES.length - 1) + 1);
+      } while (gameIndex == this.currentGameIndex);
+
       this.selectGame(gameIndex);
       this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);
       this.context.io.to(this.context.lobbyId + "_HOST").emit("startSpin", gameIndex);
@@ -250,6 +263,7 @@ export class Lobby {
 
     for (const player of this.context.players) {
       this.currentGame?.unregisterListeners(player);
+      player.communication!.logListeners();
     }
     //TODO: Remove host listeners
     //for (const host of this.context.hosts) {
@@ -315,6 +329,8 @@ export class Lobby {
     this.phase = "scoreboard";
     this.broadcastLobbyState();
 
+    this.animationPlaying = true;
+
     //1. Uppdatera scores
     this.logger.debug("UPDATING SCORES");
     await sleep(1000);
@@ -350,6 +366,7 @@ export class Lobby {
       }
     }
 
+    this.animationPlaying = false;
     this.tryAdvance(5000);
   }
 
@@ -448,12 +465,15 @@ export class Lobby {
 
   //Kollar ifall något hindrar och går annars till nästa fas
   tryAdvance(delay = 0) {
+    if (this.animationPlaying) return;
     if (this.isAdvancing) return;
     if (this.context.players.length == 0) return;
 
     this.logger.debug(`Trying to advance from ${this.phase}`);
 
-    if (this.phase == "loading") {
+    if (this.phase == "lobby" || this.phase == "slot" || this.phase == "game") {
+      return;
+    } else if (this.phase == "loading") {
       if (this.context.players.filter((p) => p.isReady).length < this.context.players.length / 2)
         return;
     } else if (this.phase == "result") {

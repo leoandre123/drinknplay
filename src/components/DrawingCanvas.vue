@@ -26,6 +26,11 @@ let savedCanvasPNG: string | undefined = undefined;
 
 const props = defineProps({ options: { type: Object, required: true } });
 
+defineExpose({
+  getCanvas,
+  clearCanvas,
+});
+
 onMounted(() => {
   canvas.value!.width = 640;
   canvas.value!.height = 360;

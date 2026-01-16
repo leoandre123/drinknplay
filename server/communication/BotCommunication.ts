@@ -12,4 +12,5 @@ export class BotCommunication implements PlayerCommunication {
   off(event: string, handler: (...args: any[]) => void) {}
 
   removeAllListeners(event: string) {}
+  logListeners() {}
 }

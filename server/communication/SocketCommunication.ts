@@ -29,4 +29,8 @@ export class SocketCommunication implements PlayerCommunication {
   removeAllListeners(event: string) {
     this.socket.removeAllListeners(event);
   }
+
+  logListeners() {
+    console.log(this.socket.eventNames());
+  }
 }

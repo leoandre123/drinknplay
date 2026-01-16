@@ -30,8 +30,6 @@
 
 <script>
 
-//access via https://localhost:5173/game?id=draw&mode=host
-//{{context.state.players.find(x => x.id == painting.playerId).name}}
 
 import { context } from "../../../context";
 import { socket } from "../../../socket";

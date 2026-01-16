@@ -3,10 +3,12 @@ import { Server, Socket } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import { Logger } from "./Logger.js";
 import {
+  LOBBY_JOIN_AS_HOST,
+  LOBBY_JOIN_AS_HOST_RESPONSE,
   LOBBY_JOIN_AS_PLAYER,
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
 } from "@shared/contracts/socket-events.js";
-import type { JoinLobbyResponse } from "@shared/contracts/types.js";
+import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.js";
 
 const logger = new Logger("SERVER");
 
@@ -85,8 +87,17 @@ function registerDefaultListeners(io: Server, socket: Socket, lobbyManager: Lobb
     lobby.onNewPlayerConnection(socket, playerId, name, avatarSettings);
   });
 
-  socket.on("lobby:joinAsHost", function (lobbyCode) {
-    lobbyManager.getLobby(lobbyCode)?.onHostJoined(socket);
+  socket.on(LOBBY_JOIN_AS_HOST, function (lobbyCode) {
+    const lobby = lobbyManager.getLobby(lobbyCode);
+    if (!lobby) {
+      const resp: JoinLobbyHostResponse = {
+        success: false,
+        reason: "no_lobby",
+      } as JoinLobbyResponse;
+      socket.emit(LOBBY_JOIN_AS_HOST_RESPONSE, resp);
+      return;
+    }
+    lobby.onHostJoined(socket);
   });
 
   socket.on("disconnect", function () {
