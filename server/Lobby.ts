@@ -24,7 +24,7 @@ import type { GameResult } from "./models/GameResult.ts";
 import {
   LOBBY_JOIN_AS_HOST_RESPONSE,
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
-} from "@shared/contracts/socket-events.ts";
+} from "@shared/contracts/socket-events";
 import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.ts";
 
 export class Lobby {
