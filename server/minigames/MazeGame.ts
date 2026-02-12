@@ -1,8 +1,8 @@
-import type { GameResult } from "#server/models/GameResult.ts";
+import type { GameResult } from "server/models/GameResult.ts";
 import type { Host } from "server/models/Host.ts";
 import type { Player } from "server/models/Player.ts";
-import type { ServerLobbyContext } from "#server/models/ServerLobbyContext.ts";
-import { Minigame } from "#server/Minigame.js";
+import type { ServerLobbyContext } from "server/models/ServerLobbyContext.ts";
+import { Minigame } from "server/Minigame.js";
 
 export class Mazegame extends Minigame {
   winner: string | undefined;
