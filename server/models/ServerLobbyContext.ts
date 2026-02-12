@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import { Player } from "./Player";
-import { Host } from "./Host";
+import { Player } from "./Player.js";
+import { Host } from "./Host.js";
 
 export class ServerLobbyContext {
   io: Server;

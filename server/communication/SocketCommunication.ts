@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import type { PlayerCommunication } from "./PlayerCommunication";
+import type { PlayerCommunication } from "./PlayerCommunication.js";
 
 export class SocketCommunication implements PlayerCommunication {
   socket: Socket;

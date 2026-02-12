@@ -7,7 +7,7 @@ import {
   LOBBY_JOIN_AS_HOST_RESPONSE,
   LOBBY_JOIN_AS_PLAYER,
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
-} from "@shared/contracts/socket-events";
+} from "@shared/contracts/socket-events.js";
 import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.js";
 
 const logger = new Logger("SERVER");

@@ -1,12 +1,12 @@
 import type { ServerLobbyContext } from "server/models/ServerLobbyContext.js";
 import { Minigame } from "../Minigame.js";
 import { shuffle } from "../Utils.js";
-import allQuestions from "../data/kahoot-questions.json" assert { type: "json" };
+import allQuestions from "../data/kahoot-questions.json" with { type: "json" };
 import type { GameResult } from "server/models/GameResult.js";
-import type { KahootQuestion, KahootPlayer } from "shared/minigames/kahoot/types";
+import type { KahootQuestion, KahootPlayer } from "shared/minigames/kahoot/types.js";
 import type { Player } from "server/models/Player.js";
 import type { Host } from "server/models/Host.js";
-import { KAHOOT_QUESTIONS_PER_GAME } from "@shared/minigames/kahoot/constants";
+import { KAHOOT_QUESTIONS_PER_GAME } from "@shared/minigames/kahoot/constants.js";
 
 export class KahootGame extends Minigame {
   questions: KahootQuestion[];
@@ -43,8 +43,8 @@ export class KahootGame extends Minigame {
   onHostJoined(_: Host) {}
 
   registerListeners(player: Player) {
-    player.communication?.on("submitAnswer", (index, time) =>
-      this.onAnswerSubmitted(player.id, index, time)
+    player.communication?.on("submitAnswer", (index: number, time: number) =>
+      this.onAnswerSubmitted(player.id, index, time),
     );
   }
   unregisterListeners(player: Player) {
@@ -75,7 +75,7 @@ export class KahootGame extends Minigame {
 
   onRoundFinished() {
     this.kahootPlayers.forEach((player) =>
-      this.emitToPlayer(player.playerId, "setScore", player.score)
+      this.emitToPlayer(player.playerId, "setScore", player.score),
     );
     this.broadcastHosts("revealAnswers");
 

@@ -41,8 +41,8 @@ export class ReactionGame extends Minigame {
   onHostJoined(_: Host) {}
   onPlayerRejoined(player: Player) {}
   registerListeners(player: Player) {
-    player.communication?.on("reaction:submit", ({ amount, time }) => {
-      this.onSubmit(player.id, amount, time);
+    player.communication?.on("reaction:submit", (msg: { amount: number; time: number }) => {
+      this.onSubmit(player.id, msg.amount, msg.time);
     });
   }
 

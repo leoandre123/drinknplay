@@ -63,7 +63,7 @@ export class RouletteGame extends Minigame {
     host.socket.emit("roulette:update", this.getPublicState());
   }
   registerListeners(player: Player) {
-    player.communication?.on("roulette:placeBet", (bet) => {
+    player.communication?.on("roulette:placeBet", (bet: any) => {
       this.onPlaceBet(player.id, bet);
     });
     player.communication?.on("roulette:clearBets", () => {
@@ -77,8 +77,8 @@ export class RouletteGame extends Minigame {
       this.onStartSpin();
     });
 
-    player.communication?.on("roulette:spinResult", ({ number }) => {
-      this.onSpinResult(number);
+    player.communication?.on("roulette:spinResult", (msg: { number: number }) => {
+      this.onSpinResult(msg.number);
     });
     player.communication?.on("roulette:nextRound", () => {
       this.onNextRound();

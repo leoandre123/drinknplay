@@ -1,5 +1,5 @@
-import type { PlayerCommunication } from "server/communication/PlayerCommunication";
-import type { AvatarSettings } from "../../shared/models/AvatarSettings.ts";
+import type { PlayerCommunication } from "server/communication/PlayerCommunication.js";
+import type { AvatarSettings } from "../../shared/models/AvatarSettings.js";
 
 export class Player {
   name: string;
@@ -25,7 +25,7 @@ export class Player {
     name: string,
     id: string,
     communication: PlayerCommunication,
-    avatarSettings: AvatarSettings
+    avatarSettings: AvatarSettings,
   ) {
     this.name = name;
     this.id = id;

@@ -1,11 +1,11 @@
-import { angleBetween, distance } from "@shared/utils/MathHelper";
+import { angleBetween, distance } from "@shared/utils/MathHelper.js";
 
 export function isOnTrack(
   x: number,
   y: number,
   trackData: string[][],
   tileSize: number,
-  roadWidth: number
+  roadWidth: number,
 ) {
   const roadMargin = (tileSize - roadWidth) / 2;
 
@@ -48,7 +48,7 @@ export function isWall(
   y: number,
   trackData: string[][],
   tileSize: number,
-  wallWidth: number
+  wallWidth: number,
 ) {
   const tileX = Math.floor(x / tileSize);
   const tileY = Math.floor(y / tileSize);

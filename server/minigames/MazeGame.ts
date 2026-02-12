@@ -33,8 +33,8 @@ export class Mazegame extends Minigame {
   onHostJoined(_: Host) {}
 
   registerListeners(player: Player) {
-    player.communication?.on("maze:finished", ({ time }) => {
-      this.onPlayerFinished(player.id, time);
+    player.communication?.on("maze:finished", (msg: { time: number }) => {
+      this.onPlayerFinished(player.id, msg.time);
     });
   }
   unregisterListeners(player: Player) {

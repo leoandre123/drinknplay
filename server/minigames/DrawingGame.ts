@@ -3,7 +3,7 @@ import { Minigame } from "../Minigame.js";
 import type { GameResult } from "server/models/GameResult.js";
 import type { Host } from "server/models/Host.js";
 import type { ServerLobbyContext } from "server/models/ServerLobbyContext.js";
-import type { DrawingPlayer, Drawing } from "@shared/minigames/drawing/types";
+import type { DrawingPlayer, Drawing } from "@shared/minigames/drawing/types.js";
 
 export class DrawingGame extends Minigame {
   drawingPlayers: DrawingPlayer[];
@@ -173,7 +173,7 @@ export class DrawingGame extends Minigame {
 
   registerListeners(player: Player) {
     //Add subject that each player decides
-    player.communication?.on("submitSubject", (subject) => {
+    player.communication?.on("submitSubject", (subject: string) => {
       this.subjects.push(subject);
       const drawingPlayer = this.drawingPlayers.find((d) => d.playerId == player.id);
       if (!drawingPlayer) return;
@@ -186,7 +186,7 @@ export class DrawingGame extends Minigame {
     });
 
     //push drawings and update them to host
-    player.communication?.on("updateCanvas", (canvasData) => {
+    player.communication?.on("updateCanvas", (canvasData: string) => {
       let drawing = this.allDrawings.find((d) => d.playerId == player.id);
       if (drawing) {
         drawing.png = canvasData;
@@ -203,7 +203,7 @@ export class DrawingGame extends Minigame {
       this.broadcastHosts("updateCanvas", drawing);
     });
     //add scores to players
-    player.communication?.on("playerVote", (scoreInfoFromPlayer) => {
+    player.communication?.on("playerVote", (scoreInfoFromPlayer: any) => {
       const drawing = this.allDrawings.find((d) => d.playerId === scoreInfoFromPlayer.playerId);
       if (drawing) {
         this.logger.debug(scoreInfoFromPlayer.score);

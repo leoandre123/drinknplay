@@ -1,10 +1,10 @@
-import { Minigame } from "../Minigame";
-import  allTracks  from "../data/tracks.json" with { type: 'json' };
+import { Minigame } from "../Minigame.js";
+import allTracks from "../data/tracks.json" with { type: "json" };
 import type { ServerLobbyContext } from "server/models/ServerLobbyContext.js";
 import type { GameResult } from "server/models/GameResult.js";
 import type { Player } from "server/models/Player.js";
-import type { Host } from "server/models/Host";
-import {isOnTrack, isWall} from "@shared/minigames/racing/RacingGameHelper"
+import type { Host } from "server/models/Host.js";
+import { isOnTrack, isWall } from "@shared/minigames/racing/RacingGameHelper.js";
 
 const MAX_SPEED = 1;
 const MAX_SPEED_GRASS = 0.2;
@@ -17,12 +17,10 @@ const TILE_SIZE = 128;
 const ROAD_WIDTH = 64;
 
 export class RacingGame extends Minigame {
-
   track: any;
   cars: any[];
   startTime: number;
   cancelRequested = false;
-
 
   constructor(context: ServerLobbyContext, onFinished: (results: GameResult) => void) {
     super(context, onFinished);
@@ -34,12 +32,12 @@ export class RacingGame extends Minigame {
       this.track.data,
       this.track.startX,
       this.track.startY,
-      this.track.direction
+      this.track.direction,
     );
   }
 
   registerListeners(player: Player) {
-    player.communication?.on("racingInput", (input) => this.onPlayerInput(player.id, input));
+    player.communication?.on("racingInput", (input: any) => this.onPlayerInput(player.id, input));
   }
 
   unregisterListeners(player: Player) {
@@ -54,7 +52,7 @@ export class RacingGame extends Minigame {
     this.cars = this.cars.filter((x) => x.id != player.id);
   }
 
-  onHostJoined(_: Host){}
+  onHostJoined(_: Host) {}
 
   start() {
     this.startGameLoop();
@@ -110,7 +108,7 @@ export class RacingGame extends Minigame {
       if (car.input.gas) {
         car.speed = Math.min(
           car.speed + ACCELERATION * dt,
-          onTrack ? MAX_SPEED + (car.input.boost || 0) : MAX_SPEED_GRASS
+          onTrack ? MAX_SPEED + (car.input.boost || 0) : MAX_SPEED_GRASS,
         );
       } else {
         car.speed *= onTrack ? FRICTION_COEFFICIENT : FRICTION_COEFFICIENT_GRASS;
@@ -124,7 +122,7 @@ export class RacingGame extends Minigame {
         else
           car.speed = Math.max(
             car.speed - ACCELERATION * dt,
-            onTrack ? -MAX_SPEED : -MAX_SPEED_GRASS
+            onTrack ? -MAX_SPEED : -MAX_SPEED_GRASS,
           );
       }
 
@@ -149,20 +147,20 @@ export class RacingGame extends Minigame {
       this.cars[order[i].index].place = i;
     }
 
-      if (this.cars.every((x) => x.isFinshed)) {
-        this.stop();
+    if (this.cars.every((x) => x.isFinshed)) {
+      this.stop();
 
-        const results: GameResult = {
-          type: "ranking",
-          data: this.cars
-            .toSorted((a, b) => a.finishTime - b.finishTime)
-            .map((c) => ({ playerId: c.id })),
-        };
+      const results: GameResult = {
+        type: "ranking",
+        data: this.cars
+          .toSorted((a, b) => a.finishTime - b.finishTime)
+          .map((c) => ({ playerId: c.id })),
+      };
 
-        setTimeout(() => {
-          this.onFinished?.(results);
-        }, 3000);
-      }
+      setTimeout(() => {
+        this.onFinished?.(results);
+      }, 3000);
+    }
   }
   calculateDistance(car: any) {
     let carTileX = Math.floor(car.x / TILE_SIZE);
@@ -207,7 +205,7 @@ export class RacingGame extends Minigame {
     let carTileY = Math.floor(car.y / TILE_SIZE);
 
     const lastTileIndex = this.track.route.findIndex(
-      (t: any) => t.x == car.lastTileX && t.y == car.lastTileY
+      (t: any) => t.x == car.lastTileX && t.y == car.lastTileY,
     );
     const newTileIndex = this.track.route.findIndex((t: any) => t.x == carTileX && t.y == carTileY);
 

@@ -1,12 +1,12 @@
 import type { Player } from "server/models/Player.js";
-import { geoDistance } from "@shared/utils/MathHelper";
-import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "@shared/Constants";
+import { geoDistance } from "@shared/utils/MathHelper.js";
+import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "@shared/Constants.js";
 import { Minigame } from "../Minigame.js";
-import allLocations from "../data/closest-locations.json";
+import allLocations from "../data/closest-locations.json" with { type: "json" };
 import type { Host } from "server/models/Host.js";
 import type { ServerLobbyContext } from "server/models/ServerLobbyContext.ts";
 import type { GameResult } from "server/models/GameResult.ts";
-import type { ClosestLocation, ClosestPlayer } from "@shared/minigames/closest/types";
+import type { ClosestLocation, ClosestPlayer } from "@shared/minigames/closest/types.js";
 
 export class ClosestWin extends Minigame {
   locations: ClosestLocation[];
@@ -50,7 +50,7 @@ export class ClosestWin extends Minigame {
   }
 
   registerListeners(player: Player) {
-    player.communication?.on("closest:updatePosition", (pos) => {
+    player.communication?.on("closest:updatePosition", (pos: any) => {
       const cp = this.closestPlayers.find((p) => p.id == player.id);
       if (cp) cp.pos = pos;
     });

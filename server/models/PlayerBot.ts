@@ -1,6 +1,6 @@
-import { GetRandomAvatar } from "@shared/models/AvatarSettings";
-import { BotCommunication } from "../communication/BotCommunication";
-import { Player } from "./Player";
+import { GetRandomAvatar } from "@shared/models/AvatarSettings.js";
+import { BotCommunication } from "../communication/BotCommunication.js";
+import { Player } from "./Player.js";
 
 export class PlayerBot extends Player {
   constructor(name: string) {
@@ -8,7 +8,7 @@ export class PlayerBot extends Player {
       name,
       "bot_" + Math.floor(Math.random() * 100000),
       new BotCommunication(),
-      GetRandomAvatar()
+      GetRandomAvatar(),
     );
     this.score = Math.floor(Math.random() * 2000);
   }

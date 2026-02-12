@@ -1,31 +1,32 @@
-import { Player } from "./models/Player";
-import { ServerLobbyContext } from "./models/ServerLobbyContext";
-import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils";
-import { ALL_GAMES } from "./GamesRegistry";
-import { Logger } from "./Logger";
+import { Player } from "./models/Player.js";
+import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
+import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils.js";
+import { ALL_GAMES } from "./GamesRegistry.js";
+import { Logger } from "./Logger.js";
 
-import type { GamePhase } from "../shared/models/GamePhase";
-import { DefaultSettings, type GameSettings } from "../shared/models/GameSettings";
-import type { AvatarSettings } from "../shared/models/AvatarSettings";
+import type { GamePhase } from "../shared/models/GamePhase.js";
+import { DefaultSettings, type GameSettings } from "../shared/models/GameSettings.js";
+import type { AvatarSettings } from "../shared/models/AvatarSettings.js";
 
-import { Host } from "./models/Host";
-import type { Minigame } from "./Minigame";
+import { Host } from "./models/Host.js";
+import type { Minigame } from "./Minigame.js";
 import type { Server, Socket } from "socket.io";
 
-import { SocketCommunication } from "./communication/SocketCommunication";
+import { SocketCommunication } from "./communication/SocketCommunication.js";
 import {
   CREDITS_PER_GLASS,
   CREDITS_PER_ROUNDPLAYER,
   DISCONNECT_TIMEOUT,
   PLAYER_ID_LENGTH,
   TOTAL_SCORE_PER_GAME,
-} from "../shared/Constants";
+} from "../shared/Constants.js";
 import type { GameResult } from "./models/GameResult.ts";
+
+import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.ts";
 import {
   LOBBY_JOIN_AS_HOST_RESPONSE,
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
-} from "@shared/contracts/socket-events";
-import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.ts";
+} from "@shared/contracts/socket-events.js";
 
 export class Lobby {
   context: ServerLobbyContext;
@@ -59,7 +60,7 @@ export class Lobby {
     socket: Socket,
     playerId: string,
     name: string,
-    avatarSettings: AvatarSettings
+    avatarSettings: AvatarSettings,
   ) {
     this.logger.info(`New connection: ${socket.id}, playerId: ${playerId}, name: ${name}`);
     let player = this.getPlayer(playerId);
@@ -117,11 +118,11 @@ export class Lobby {
   }
 
   registerPlayerListeners(player: Player) {
-    player.communication!.on("results:confirmCredits", (credits) =>
-      this.onCreditsReceived(player.id, credits)
+    player.communication!.on("results:confirmCredits", (credits: any) =>
+      this.onCreditsReceived(player.id, credits),
     );
     player.communication!.on("scoredboard:confirmDrink", () => this.onDrinkConfirmed(player.id));
-    player.communication!.on("ready", (isReady) => {
+    player.communication!.on("ready", (isReady: boolean) => {
       this.onPlayerReady(player.id, isReady);
     });
   }
@@ -284,13 +285,13 @@ export class Lobby {
     } else if (results?.type == "scores") {
       credits = distributeCredits(
         results.data,
-        CREDITS_PER_ROUNDPLAYER[this.settings.drunknessLevel] * results.data.length
+        CREDITS_PER_ROUNDPLAYER[this.settings.drunknessLevel] * results.data.length,
       );
       scores = results.data ?? [];
     } else if (results?.type == "ranking") {
       credits = distributeCredits(
         results.data.map((x, i) => ({ playerId: x.id, score: results.data.length - i })),
-        CREDITS_PER_ROUNDPLAYER[this.settings.drunknessLevel] * results.data.length
+        CREDITS_PER_ROUNDPLAYER[this.settings.drunknessLevel] * results.data.length,
       );
       scores = results.data ?? [];
     }

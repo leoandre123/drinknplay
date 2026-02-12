@@ -1,4 +1,4 @@
-import type { PlayerCommunication } from "./PlayerCommunication";
+import type { PlayerCommunication } from "./PlayerCommunication.js";
 
 export class BotCommunication implements PlayerCommunication {
   constructor() {}

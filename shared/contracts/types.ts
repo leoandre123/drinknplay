@@ -1,4 +1,4 @@
-import type { AvatarSettings } from "@shared/models/AvatarSettings";
+import type { AvatarSettings } from "@shared/models/AvatarSettings.js";
 
 export type JoinLobbyRequest = {
   lobbyId: string;

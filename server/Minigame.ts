@@ -1,8 +1,8 @@
-import { Logger } from "./Logger";
-import type { GameResult } from "./models/GameResult";
-import { Host } from "./models/Host";
-import { Player } from "./models/Player";
-import { ServerLobbyContext } from "./models/ServerLobbyContext";
+import { Logger } from "./Logger.js";
+import type { GameResult } from "./models/GameResult.js";
+import { Host } from "./models/Host.js";
+import { Player } from "./models/Player.js";
+import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 
 export abstract class Minigame {
   context: ServerLobbyContext;
@@ -59,5 +59,5 @@ export abstract class Minigame {
 
 export type MinigameCtor = new (
   context: ServerLobbyContext,
-  onFinished: (results: GameResult) => void
+  onFinished: (results: GameResult) => void,
 ) => Minigame;
