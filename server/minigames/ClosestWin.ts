@@ -1,5 +1,5 @@
 import type { Player } from "server/models/Player.js";
-import { geoDistance } from "@shared/utils/MathHelper.js";
+import { geoDistance } from "@shared/utils/MathHelper";
 import { CLOSEST_ROUND_TIMER, CLOSEST_ROUNDS_PER_GAME } from "@shared/Constants";
 import { Minigame } from "../Minigame.js";
 import allLocations from "../data/closest-locations.json";

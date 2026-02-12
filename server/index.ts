@@ -7,7 +7,7 @@ import {
   LOBBY_JOIN_AS_HOST_RESPONSE,
   LOBBY_JOIN_AS_PLAYER,
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
-} from "@shared/contracts/socket-events.js";
+} from "@shared/contracts/socket-events";
 import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.js";
 
 const logger = new Logger("SERVER");
@@ -116,7 +116,7 @@ function registerDefaultListeners(io: Server, socket: Socket, lobbyManager: Lobb
           id: x.context.lobbyId,
           playerCount: x.context.players.length,
         };
-      })
+      }),
     );
   });
   socket.on("debug:startMinigame", function (gameIndex) {
@@ -140,7 +140,7 @@ function registerDefaultListeners(io: Server, socket: Socket, lobbyManager: Lobb
           phase: l.phase,
           players: l.context.players.map((p) => p.toDto()),
         };
-      })
+      }),
     );
     socket.emit("admin:serverInfo", ServerInfo);
   });
