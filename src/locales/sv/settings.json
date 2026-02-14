@@ -6,5 +6,6 @@
   "drunknessLevel": "Fyllenivå",
   "maxPlayers": "Max antal spelare",
   "create": "SKAPA LOBBY",
-  "back": "Gå tillbaka"
+  "back": "Gå tillbaka",
+  "selectedGames": "Valda minispel"
 }

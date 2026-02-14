@@ -9,7 +9,7 @@
 
       <div class="ready-container">
         <p v-if="context.isHost">
-          {{ context.state.players.filter((x) => x.isReady).length }} of
+          {{ context.state.players.filter((x: any) => x.isReady).length }} of
           {{ Math.ceil(context.state.players.length / 2) }} required players ready
         </p>
         <RetroButton
@@ -25,54 +25,34 @@
   </div>
 </template>
 
-<script>
-import { context } from "../context";
-import gameinfo from "@/assets/gameinfo.json";
-import { socket } from "../socket";
-import RetroButton from "@/components/RetroButton.vue";
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import RetroButton from "../components/RetroButton.vue";
+import { context } from "../context.js";
+import { socket } from "../socket.js";
+import { computed } from "vue";
+import gameinfo from "../assets/gameinfo.json";
 
-export default {
-  name: "LoadingView",
+const { tm } = useI18n();
 
-  data() {
-    return {
-      gameinfo,
-      context,
-    };
-  },
-  components: { RetroButton },
-  async created() {},
-  methods: {
-    toggleReady() {
-      socket.emit("ready", !context.getCurrentPlayer().isReady);
-    },
-  },
-  computed: {
-    currentGameInfo() {
-      return this.gameinfo[this.context.state.gameIndex] || {};
-    },
-    title() {
-      const key = this.currentGameInfo.titleKey;
-      return key ? this.$t(key) : "Unknown Game";
-    },
-    tip() {
-      const allTipKeys = this.currentGameInfo.tipsKeys;
+const title = computed(() => {
+  return tm(`games[${context.state.gameIndex}].title`);
+});
+const tip = computed(() => {
+  const tips = tm(`games[${context.state.gameIndex}].tips`);
 
-      if (!allTipKeys || allTipKeys.length === 0) {
-        return "Lycka till!";
-      }
+  return tips[Math.floor(Math.random() * tips.length)];
+});
+const backgroundStyle = computed(() => {
+  const uri = gameinfo[context.state?.gameIndex ?? 0]?.imageUri || "game_backgrounds/question.jpg";
+  return {
+    backgroundImage: `url(/${uri})`,
+  };
+});
 
-      const randomKey = allTipKeys[Math.floor(Math.random() * allTipKeys.length)];
-      return this.$t(randomKey);
-    },
-    backgroundStyle() {
-      const uri = this.currentGameInfo.imageUri || "game_backgrounds/question.jpg";
-      return {
-        backgroundImage: `url(/${uri})`,
-      };
-    },
-  },
-};
+function toggleReady() {
+  socket.emit("ready", !context.getCurrentPlayer().isReady);
+}
 </script>
 
 <style scoped>

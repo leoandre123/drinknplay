@@ -24,7 +24,7 @@ import Flag from "vue-flag-icon/components/icon/Flag.vue";
 import { useI18n } from "vue-i18n";
 import { RouterView } from "vue-router";
 import { audioManager } from "./AudioManager";
-import { context } from "./context";
+import { context } from "./context.js";
 
 export default {
   name: "App",

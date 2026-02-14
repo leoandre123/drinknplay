@@ -4,15 +4,22 @@
   </button>
 </template>
 
-<script>
-export default {
-  props: {
-    color: { type: String, default: "blue" },
-    size: { type: String, default: "medium" },
-    disabled: { type: Boolean, default: false },
-  },
-  emits: ["click"],
-};
+<script setup lang="ts">
+withDefaults(defineProps<{ color?: string; size?: string; disabled?: boolean }>(), {
+  color: "blue",
+  size: "medium",
+  disabled: false,
+});
+defineEmits(["click"]);
+
+//export default {
+//  props: {
+//    color: { type: String, default: "blue" },
+//    size: { type: String, default: "medium" },
+//    disabled: { type: Boolean, default: false },
+//  },
+//  emits: ["click"],
+//};
 </script>
 
 <style scoped>
@@ -33,9 +40,16 @@ export default {
   position: relative;
   color: white;
   box-shadow:
-    /* pixel black outline */ -4px 0 0 0 #000, 4px 0 0 0 #000, 0 -4px 0 0 #000,
-    0 4px 0 0 #000, /* extra corner pixels */ -4px -4px 0 0 #000, 4px -4px 0 0 #000,
-    -4px 4px 0 0 #000, 4px 4px 0 0 #000, /* drop shadow */ 4px 6px 0 0 #000;
+    /* pixel black outline */
+    -4px 0 0 0 #000,
+    4px 0 0 0 #000,
+    0 -4px 0 0 #000,
+    0 4px 0 0 #000,
+    /* extra corner pixels */ -4px -4px 0 0 #000,
+    4px -4px 0 0 #000,
+    -4px 4px 0 0 #000,
+    4px 4px 0 0 #000,
+    /* drop shadow */ 4px 6px 0 0 #000;
 }
 
 /* COLORS — pure flat pixel palette */
@@ -97,8 +111,16 @@ export default {
 /* press effect */
 .pixel-btn:active:not([disabled]) {
   top: 2px;
-  box-shadow: -4px 0 0 0 #000, 4px 0 0 0 #000, 0 -4px 0 0 #000, 0 4px 0 0 #000, -4px -4px 0 0 #000,
-    4px -4px 0 0 #000, -4px 4px 0 0 #000, 4px 4px 0 0 #000, 4px 4px 0 0 #000;
+  box-shadow:
+    -4px 0 0 0 #000,
+    4px 0 0 0 #000,
+    0 -4px 0 0 #000,
+    0 4px 0 0 #000,
+    -4px -4px 0 0 #000,
+    4px -4px 0 0 #000,
+    -4px 4px 0 0 #000,
+    4px 4px 0 0 #000,
+    4px 4px 0 0 #000;
 }
 
 .pixel-btn:disabled {

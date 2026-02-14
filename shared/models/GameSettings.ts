@@ -3,6 +3,7 @@ export type GameSettings = {
   drunknessLevel: number;
   maxPlayers: number;
   doEvents: boolean;
+  selectedMinigames: number[];
 };
 
 export const DefaultSettings: GameSettings = {
@@ -10,4 +11,5 @@ export const DefaultSettings: GameSettings = {
   drunknessLevel: 2,
   maxPlayers: 6,
   doEvents: true,
+  selectedMinigames: [0, 1, 2, 3, 4, 5, 6],
 };

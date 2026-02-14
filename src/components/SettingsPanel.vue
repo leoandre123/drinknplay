@@ -45,18 +45,35 @@
         {{ $t(`game.drunknessLevel[${i}]`) }}
       </RetroButton>
     </div>
+    <h2>{{ $t("settings.selectedGames") }}</h2>
+    <div class="button-group">
+      <RetroButton
+        v-for="(_, i) in 7"
+        size="small"
+        :color="settings.selectedMinigames.includes(i) ? 'purple' : 'pink'"
+        @click="
+          if (settings.selectedMinigames.includes(i)) {
+            if (settings.selectedMinigames.length > 1) {
+              settings.selectedMinigames = settings.selectedMinigames.filter((x) => x != i);
+            }
+          } else {
+            settings.selectedMinigames.push(i);
+          }
+          $emit('settingsChanged');
+        "
+      >
+        {{ $t(`games[${i}].title`) }}
+      </RetroButton>
+    </div>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { GameSettings } from "@shared/models/GameSettings";
 import RetroButton from "./RetroButton.vue";
 
-export default {
-  name: "SettingsPanel",
-  components: { RetroButton },
-  props: { settings: Object },
-  emits: ["settingsChanged"],
-};
+const props = defineProps<{ settings: GameSettings }>();
+defineEmits(["settingsChanged"]);
 </script>
 
 <style scoped>
@@ -65,11 +82,13 @@ export default {
   flex-direction: column;
   gap: 1rem;
   padding: 2rem;
+  max-width: 40rem;
 }
 .button-group {
   display: flex;
   justify-content: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .minigameButton {

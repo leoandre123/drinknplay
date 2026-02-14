@@ -6,5 +6,6 @@
   "drunknessLevel": "Drunkness level",
   "maxPlayers": "Max players",
   "create": "CREATE LOBBY",
-  "back": "Go back"
+  "back": "Go back",
+  "selectedGames": "Selected games"
 }

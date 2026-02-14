@@ -198,8 +198,12 @@ export class Lobby {
     setTimeout(() => {
       let gameIndex;
       do {
-        gameIndex = Math.floor(Math.random() * (ALL_GAMES.length - 1) + 1);
-      } while (gameIndex == this.currentGameIndex);
+        // gameIndex = Math.floor(Math.random() * ALL_GAMES.length);
+        gameIndex =
+          this.settings.selectedMinigames[
+            Math.floor(Math.random() * this.settings.selectedMinigames.length)
+          ];
+      } while (this.settings.selectedMinigames.length > 1 && gameIndex == this.currentGameIndex);
 
       this.selectGame(gameIndex);
       this.context.io.to(this.context.lobbyId + "_PLAYERS").emit("startSpin", gameIndex);

@@ -9,14 +9,14 @@
         @spin-finished="onSpinFinished"
       />
     </div>
-    <div v-if="!context.isHost" class="slot">{{$t('common.slotMessage')}}</div>
+    <div v-if="!context.isHost" class="slot">{{ $t("common.slotMessage") }}</div>
   </NewRetroContainer>
 </template>
 
 <script>
 import SlotMachine from "../components/SlotMachine.vue";
 import { socket } from "../socket";
-import { context } from "../context";
+import { context } from "../context.js";
 import NewRetroContainer from "../components/NewRetroContainer.vue";
 import { audioManager } from "@/AudioManager";
 import gameinfo from "@/assets/gameinfo.json";
@@ -36,7 +36,7 @@ export default {
     availableGames() {
       return this.gameinfo.map((game, index) => {
         return {
-          name: this.$t(game.titleKey),
+          name: this.$t(`games[${index}].title`),
           symbol: game.symbol || "❓",
         };
       });
