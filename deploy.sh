@@ -12,7 +12,7 @@ echo "== Git pull =="
 git pull --ff-only
 
 echo "== Install deps =="
-npm ci --omit=dev
+npm ci
 
 echo "== Build =="
 npm run build
