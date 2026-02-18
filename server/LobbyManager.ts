@@ -50,4 +50,8 @@ export class LobbyManager {
   getLobby(lobbyId: string) {
     return this.lobbies.find((x) => x.context.lobbyId == lobbyId);
   }
+
+  killLobby(lobbyId: string) {
+    this.lobbies = this.lobbies.filter((x) => x.context.lobbyId != lobbyId);
+  }
 }

@@ -1,17 +1,28 @@
 <template>
   <div class="player-view-container">
-    <div  v-if="gamePhase === 'start'" class="submit-subject">
-    <h1 v-if="!subjectSubmitted">{{ $t("draw.typeSubject") }}</h1>
-    <h1 v-if="subjectSubmitted">{{ subject }} {{ $t("draw.submitted") }}</h1>
-    <input v-model="subject" :disabled="subjectSubmitted" @input="subject = subject.toUpperCase()" :placeholder='$t("draw.drawA")'/>
-    <RetroButton
-    color="yellow"
-    class="subject-button" 
-    :disabled="!isSubjectValid || subjectSubmitted"
-    @click="submitSubject">{{ $t("draw.submitSubject") }}</RetroButton>
+    <div v-if="gamePhase === 'start'" class="submit-subject">
+      <h1 v-if="!subjectSubmitted">{{ $t("draw.typeSubject") }}</h1>
+      <h1 v-if="subjectSubmitted">{{ subject }} {{ $t("draw.submitted") }}</h1>
+      <input
+        v-model="subject"
+        :disabled="subjectSubmitted"
+        @input="subject = subject.toUpperCase()"
+        :placeholder="$t('draw.drawA')"
+      />
+      <RetroButton
+        color="yellow"
+        class="subject-button"
+        :disabled="!isSubjectValid || subjectSubmitted"
+        @click="submitSubject"
+        >{{ $t("draw.submitSubject") }}</RetroButton
+      >
     </div>
 
-    <div v-if="gamePhase === 'drawing'" class="drawing-canvas" :style="{ flexDirection: isMobile ? 'row' : 'column' }">
+    <div
+      v-if="gamePhase === 'drawing'"
+      class="drawing-canvas"
+      :style="{ flexDirection: isMobile ? 'row' : 'column' }"
+    >
       <div v-if="!isMobile" class="drawing-title">{{ $t("draw.title") }}</div>
       <DrawingColors v-if="isMobile" :options="drawingOptions" direction="column" />
       <div class="canvas-container">
@@ -29,19 +40,18 @@
       />
     </div>
 
-      <RatingTool
-        class="rating"
-        v-if="canVote && gamePhase == 'voting'"
-        :key="currentDrawingToVote.playerId"
-        @rating-submitted="playerRated"
-      >
-      </RatingTool>
-      <div class="waiting"
-      v-if="gamePhase == 'voting' && !canVote"> You can not vote on your own picture...</div>
-      
-      <div class="waiting" v-if="gamePhase == 'results'">
-         Waiting for next round...</div>
-  
+    <RatingTool
+      class="rating"
+      v-if="canVote && gamePhase == 'voting'"
+      :key="currentDrawingToVote.playerId"
+      @rating-submitted="playerRated"
+    >
+    </RatingTool>
+    <div class="waiting" v-if="gamePhase == 'voting' && !canVote">
+      You can not vote on your own picture...
+    </div>
+
+    <div class="waiting" v-if="gamePhase == 'results'">Waiting for next round...</div>
   </div>
 </template>
 
@@ -83,28 +93,27 @@ export default {
       if (!this.currentDrawingToVote) return false;
       return this.currentDrawingToVote.playerId !== context.getCurrentPlayer().id;
     },
-    isSubjectValid(){
+    isSubjectValid() {
       return this.subject.trim().length > 2;
-    }
+    },
   },
   mounted() {
     socket.on("gamePhase", (phaseFromServer) => {
       this.gamePhase = phaseFromServer;
-      console.log("player phase change: "+ phaseFromServer);
+      console.log("player phase change: " + phaseFromServer);
       if (this.gamePhase !== "drawing") {
-      this.canvasSent = false;
-      this.canvasPNG = null;
+        this.canvasSent = false;
+        this.canvasPNG = null;
       }
-
     });
     socket.on("drawingToVote", (drawingFromServer) => {
       this.currentDrawingToVote = drawingFromServer;
     });
     socket.on("timerTick", (timer) => {
-      if (timer <= 2 && !this.canvasSent && this.gamePhase=="drawing"){
-        this.saveCanvas(); 
+      if (timer <= 2 && !this.canvasSent && this.gamePhase == "drawing") {
+        this.saveCanvas();
       }
-    })
+    });
   },
   methods: {
     submitSubject() {
@@ -116,7 +125,6 @@ export default {
       this.canvasPNG = this.$refs.canvas.getCanvas();
       socket.emit("updateCanvas", this.canvasPNG);
       this.canvasSent = true;
-
     },
     playerRated(score) {
       console.log("SCORES ADDED: " + score);
@@ -125,19 +133,18 @@ export default {
         (score = {
           score: score,
           playerId: this.currentDrawingToVote.playerId,
-        })
+        }),
       );
     },
   },
-beforeUnmount() {
+  beforeUnmount() {
     socket.off("gamePhase");
     socket.off("drawingToVote");
     socket.off("timerTick");
-    
-    console.log("Player socket listeners unregistered");
-  }
-};
 
+    console.log("Player socket listeners unregistered");
+  },
+};
 </script>
 
 <style scoped>
@@ -151,7 +158,7 @@ input {
   border: 0.15rem solid #2c3b5f;
   text-transform: uppercase;
 }
-.rating{
+.rating {
   height: 100%;
   width: 100%;
 }
@@ -193,11 +200,9 @@ input {
   background-color: rgb(192, 187, 187);
   height: 4rem;
   border: 5px outset black;
-  
 }
 
-
-.submit-subject{
+.submit-subject {
   gap: 1rem;
   display: flex;
   flex-direction: column;
@@ -207,16 +212,15 @@ input {
   justify-content: center;
 }
 
-.waiting{
-height: 100%;
-width: 100;
-font-size: 2vw;
-font-family: "Science Gothic", sans-serif;
-color: white;
-background-color: var(--Violet_Blue);
-display: flex;
-justify-content: center;
-align-items: center; 
-
+.waiting {
+  height: 100%;
+  width: 100;
+  font-size: 2vw;
+  font-family: "Science Gothic", sans-serif;
+  color: white;
+  background-color: var(--Violet_Blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

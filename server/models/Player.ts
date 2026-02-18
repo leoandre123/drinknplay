@@ -1,5 +1,6 @@
 import type { PlayerCommunication } from "server/communication/PlayerCommunication.js";
 import type { AvatarSettings } from "../../shared/models/AvatarSettings.js";
+import type { PlayerDto } from "@shared/models/PlayerDto.js";
 
 export class Player {
   name: string;
@@ -33,7 +34,7 @@ export class Player {
     this.avatarSettings = avatarSettings;
   }
 
-  toDto() {
+  toDto(): PlayerDto {
     return {
       name: this.name,
       id: this.id,

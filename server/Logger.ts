@@ -1,7 +1,17 @@
 import { Server, Socket } from "socket.io";
 
+interface LogEntry {
+  timestamp: number;
+  level: string;
+  message: any;
+  context: string;
+}
+
 export class Logger {
   name: string;
+
+  private static MAX_LOGS = 300;
+  private static buffer: LogEntry[] = [];
 
   constructor(name: string) {
     this.name = name;
@@ -10,6 +20,14 @@ export class Logger {
   logFormatted(level: string, msg: any) {
     const time = new Date().toLocaleTimeString();
 
+    const entry: LogEntry = {
+      level: level,
+      message: msg,
+      timestamp: Date.now(),
+      context: this.name,
+    };
+    Logger.push(entry);
+
     if (typeof msg === "object" && msg !== null) {
       const syntaxHighlighted = syntaxHighlight(safeStringify(msg));
 
@@ -17,7 +35,8 @@ export class Logger {
         .split("\n")
         .forEach((line) => console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${line}`));
     } else {
-      console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`);
+      const formatted = `[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`;
+      console.log(formatted);
     }
   }
 
@@ -32,6 +51,18 @@ export class Logger {
   }
   error(msg: any) {
     if (shouldLog(LEVEL.ERROR)) this.logFormatted("error", msg);
+  }
+
+  private static push(entry: LogEntry) {
+    Logger.buffer.push(entry);
+
+    // keep only latest N logs
+    if (Logger.buffer.length > Logger.MAX_LOGS) {
+      Logger.buffer.shift();
+    }
+  }
+  static getRecentLogs() {
+    return [...Logger.buffer]; // return copy
   }
 }
 const LEVEL = { DEBUG: 10, INFO: 20, WARN: 30, ERROR: 40 };
@@ -86,7 +117,7 @@ function syntaxHighlight(json: string) {
       }
       //NUMBER
       return color.red(match);
-    }
+    },
   );
 }
 function safeStringify(value: any, space = 2) {
@@ -132,6 +163,6 @@ function safeStringify(value: any, space = 2) {
 
       return val;
     },
-    space
+    space,
   );
 }

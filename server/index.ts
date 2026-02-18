@@ -1,6 +1,6 @@
+import "dotenv/config";
 import { createServer } from "http";
-import { Server, Socket } from "socket.io";
-import { instrument } from "@socket.io/admin-ui";
+import { Namespace, Server, Socket } from "socket.io";
 import { Logger } from "./Logger.js";
 import {
   LOBBY_JOIN_AS_HOST,
@@ -34,10 +34,8 @@ const io = new Server(httpServer, {
   cors: { origin: ["*", "https://admin.socket.io"], credentials: true },
 });
 
-instrument(io, { auth: false });
-
 import { LobbyManager } from "./LobbyManager.js";
-import { ServerInfo } from "./ServerInfo.js";
+import { getServerInfo } from "./ServerInfo.js";
 import { PlayerBot } from "./models/PlayerBot.js";
 
 let lobbyManager = new LobbyManager(io);
@@ -46,6 +44,22 @@ io.on("connection", function (socket) {
   var address = socket.handshake.address;
   logger.debug(`New connection ${socket.id} from ${address}`);
   registerDefaultListeners(io, socket, lobbyManager);
+});
+
+const admin = io.of("/admin");
+
+admin.use((socket, next) => {
+  const token = socket.handshake.auth?.adminToken;
+  const ok = token && token === process.env.ADMIN_TOKEN;
+  if (!ok) {
+    next(new Error("Not authorized"));
+  } else {
+    next();
+  }
+});
+
+admin.on("connection", function (socket) {
+  registerAdminListeners(socket);
 });
 
 const PORT = parseInt(process.env.PORT || "3000");
@@ -131,20 +145,6 @@ function registerDefaultListeners(io: Server, socket: Socket, lobbyManager: Lobb
     lobby.onPlayerJoined(new PlayerBot(name), true);
   });
 
-  socket.on("admin:requestUpdate", function () {
-    socket.emit(
-      "admin:allLobbies",
-      lobbyManager.lobbies.map((l) => {
-        return {
-          id: l.context.lobbyId,
-          phase: l.phase,
-          players: l.context.players.map((p) => p.toDto()),
-        };
-      }),
-    );
-    socket.emit("admin:serverInfo", ServerInfo);
-  });
-
   //TODO: Move to game
   socket.on("reaction:submit", function (lobbyCode, amount, name) {
     const lobby = lobbyManager.getLobby(lobbyCode);
@@ -155,5 +155,26 @@ function registerDefaultListeners(io: Server, socket: Socket, lobbyManager: Lobb
       name,
       playerId: socket.id,
     });
+  });
+}
+
+function registerAdminListeners(socket: Socket) {
+  socket.on("admin:requestUpdate", function () {
+    socket.emit(
+      "admin:allLobbies",
+      lobbyManager.lobbies.map((l) => l.toDto()),
+    );
+
+    const info = getServerInfo();
+    socket.emit("admin:serverInfo", info);
+
+    socket.emit("admin:recent_logs", Logger.getRecentLogs());
+  });
+
+  socket.on("admin:killLobby", function (id: string) {
+    lobbyManager.killLobby(id);
+  });
+  socket.on("admin:killServer", () => {
+    process.exit();
   });
 }

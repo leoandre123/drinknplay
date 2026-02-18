@@ -1,7 +1,9 @@
 <template>
-  <button class="pixel-btn" :class="[color, size]" :disabled="disabled" @click="$emit('click')">
-    <slot></slot>
-  </button>
+  <div class="pixel-wrapper">
+    <button class="pixel-btn" :class="[color, size]" :disabled="disabled" @click="$emit('click')">
+      <slot></slot>
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -11,18 +13,13 @@ withDefaults(defineProps<{ color?: string; size?: string; disabled?: boolean }>(
   disabled: false,
 });
 defineEmits(["click"]);
-
-//export default {
-//  props: {
-//    color: { type: String, default: "blue" },
-//    size: { type: String, default: "medium" },
-//    disabled: { type: Boolean, default: false },
-//  },
-//  emits: ["click"],
-//};
 </script>
 
 <style scoped>
+.pixel-wrapper {
+  display: inline-block;
+  padding: 4px; /* matches your pixel border */
+}
 .pixel-btn {
   font-family: "Jersey 25", Helvetica, Arial, sans-serif;
   font-size: 2rem;

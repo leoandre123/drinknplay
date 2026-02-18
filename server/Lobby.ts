@@ -3,6 +3,7 @@ import { ServerLobbyContext } from "./models/ServerLobbyContext.js";
 import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils.js";
 import { ALL_GAMES } from "./GamesRegistry.js";
 import { Logger } from "./Logger.js";
+import type { LobbyDto } from "@shared/models/LobbyDto.js";
 
 import type { GamePhase } from "../shared/models/GamePhase.js";
 import { DefaultSettings, type GameSettings } from "../shared/models/GameSettings.js";
@@ -186,6 +187,11 @@ export class Lobby {
     }
 
     this.tryAdvance(0);
+  }
+
+  stopLobby() {
+    this.currentGame?.stop();
+    this.context.players = [];
   }
 
   /*
@@ -511,5 +517,13 @@ export class Lobby {
 
   getPlayer(playerId: string) {
     return this.context.players.find((x) => x.id == playerId);
+  }
+
+  toDto(): LobbyDto {
+    return {
+      id: this.context.lobbyId,
+      phase: this.phase,
+      players: this.context.players.map((x) => x.toDto()),
+    };
   }
 }
