@@ -20,21 +20,29 @@ export class Logger {
   logFormatted(level: string, msg: any) {
     const time = new Date().toLocaleTimeString();
 
-    const entry: LogEntry = {
-      level: level,
-      message: msg,
-      timestamp: Date.now(),
-      context: this.name,
-    };
-    Logger.push(entry);
-
     if (typeof msg === "object" && msg !== null) {
-      const syntaxHighlighted = syntaxHighlight(safeStringify(msg));
+      const json = safeStringify(msg);
+      const syntaxHighlighted = syntaxHighlight(json);
+
+      const entry: LogEntry = {
+        level: level,
+        message: json,
+        timestamp: Date.now(),
+        context: this.name,
+      };
+      Logger.push(entry);
 
       syntaxHighlighted
         .split("\n")
         .forEach((line) => console.log(`[${time}][\x1b[32m${this.name}\x1b[0m]: ${line}`));
     } else {
+      const entry: LogEntry = {
+        level: level,
+        message: msg,
+        timestamp: Date.now(),
+        context: this.name,
+      };
+      Logger.push(entry);
       const formatted = `[${time}][\x1b[32m${this.name}\x1b[0m]: ${colorMessage(msg, level)}`;
       console.log(formatted);
     }

@@ -5,4 +5,5 @@ export type LobbyDto = {
   phase: string;
   players: PlayerDto[];
   createdDate: number;
+  disposalScheduled: boolean;
 };

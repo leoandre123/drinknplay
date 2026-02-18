@@ -4,25 +4,22 @@ import { distributeCredits, distributeScores, GenerateID, sleep } from "./Utils.
 import { ALL_GAMES } from "./GamesRegistry.js";
 import { Logger } from "./Logger.js";
 import type { LobbyDto } from "@shared/models/LobbyDto.js";
-
 import type { GamePhase } from "../shared/models/GamePhase.js";
 import { DefaultSettings, type GameSettings } from "../shared/models/GameSettings.js";
 import type { AvatarSettings } from "../shared/models/AvatarSettings.js";
-
 import { Host } from "./models/Host.js";
 import type { Minigame } from "./Minigame.js";
 import type { Server, Socket } from "socket.io";
-
 import { SocketCommunication } from "./communication/SocketCommunication.js";
 import {
   CREDITS_PER_GLASS,
   CREDITS_PER_ROUNDPLAYER,
   DISCONNECT_TIMEOUT,
+  LOBBY_DISPOSE_TIMER,
   PLAYER_ID_LENGTH,
   TOTAL_SCORE_PER_GAME,
 } from "../shared/Constants.js";
 import type { GameResult } from "./models/GameResult.ts";
-
 import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.ts";
 import {
   LOBBY_JOIN_AS_HOST_RESPONSE,
@@ -45,6 +42,10 @@ export class Lobby {
 
   animationPlaying = false;
   createdDate: number;
+
+  disposeTimeout?: NodeJS.Timeout;
+
+  onDisposed?: () => void;
 
   constructor(io: Server, lobbyId: string, settings: GameSettings = DefaultSettings) {
     this.context = new ServerLobbyContext(io, lobbyId);
@@ -97,6 +98,8 @@ export class Lobby {
       this.context.players.push(player);
     }
 
+    clearTimeout(this.disposeTimeout);
+
     this.logger.debug(this.context.players);
 
     player.communication!.join(this.context.lobbyId + "_PLAYERS");
@@ -136,6 +139,8 @@ export class Lobby {
     const host = new Host(socket);
     this.context.hosts.push(host);
 
+    clearTimeout(this.disposeTimeout);
+
     socket.join(this.context.lobbyId + "_HOST");
     socket.data.lobbyId = this.context.lobbyId;
 
@@ -158,6 +163,8 @@ export class Lobby {
   onHostDisconnected(socket: Socket) {
     this.logger.info(`Host ${socket.id} disonnected`);
     this.context.hosts = this.context.hosts.filter((x) => x.socket.id != socket.id);
+
+    this.checkIfEmpty();
   }
 
   //Anropas när en spelare har tappats kontakten med
@@ -189,12 +196,9 @@ export class Lobby {
       }
     }
 
-    this.tryAdvance(0);
-  }
+    this.checkIfEmpty();
 
-  stopLobby() {
-    this.currentGame?.stop();
-    this.context.players = [];
+    this.tryAdvance(0);
   }
 
   /*
@@ -528,6 +532,26 @@ export class Lobby {
       phase: this.phase,
       players: this.context.players.map((x) => x.toDto()),
       createdDate: this.createdDate,
+      disposalScheduled: !!this.disposeTimeout,
     };
+  }
+
+  checkIfEmpty() {
+    this.logger.debug("CHeck if empty");
+    if (this.context.hosts.length == 0 && this.context.players.length == 0) {
+      this.logger.info(`Lobby empty. Scheduled for disposal in ${LOBBY_DISPOSE_TIMER / 1000}s`);
+      this.disposeTimeout = setTimeout(() => {
+        this.dispose();
+      }, LOBBY_DISPOSE_TIMER);
+    }
+  }
+
+  dispose(emit = true) {
+    this.currentGame?.stop();
+    this.context.players = [];
+
+    if (emit) {
+      this.onDisposed?.();
+    }
   }
 }

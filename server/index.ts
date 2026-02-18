@@ -12,6 +12,7 @@ import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts
 import { LobbyManager } from "./LobbyManager.js";
 import { ENVIRONTMENT, getServerInfo, VERSION } from "./ServerInfo.js";
 import { PlayerBot } from "./models/PlayerBot.js";
+import { DefaultSettings } from "@shared/models/GameSettings.js";
 
 const logger = new Logger("SERVER");
 
@@ -167,8 +168,11 @@ function registerAdminListeners(socket: Socket) {
 
     const info = getServerInfo();
     socket.emit("admin:serverInfo", info);
-
     socket.emit("admin:recent_logs", Logger.getRecentLogs());
+  });
+
+  socket.on("admin:create_lobby", () => {
+    lobbyManager.createLobby(DefaultSettings);
   });
 
   socket.on("admin:killLobby", function (id: string) {

@@ -1,6 +1,7 @@
 //LOBBY SETTINGS
 export const DISCONNECT_TIMEOUT = 10_000;
 export const PLAYER_ID_LENGTH = 5;
+export const LOBBY_DISPOSE_TIMER = 600_000;
 
 //GAME SETTINGS
 export const CREDITS_PER_GLASS = 5;

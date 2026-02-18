@@ -2,7 +2,7 @@
   <div v-if="!isAuthenticated" class="admin-background not-authenticated">
     <p>Code:</p>
     <br />
-    <input v-model="code" />
+    <input v-model="code" type="password" />
     <br />
     <br />
     <RetroButton @click="authenticate">Authenticate</RetroButton>
@@ -45,7 +45,7 @@
 
       <div class="lobby-container">
         <div v-for="lobby in lobbies" class="lobby-card">
-          <h2>{{ lobby.id }}</h2>
+          <h2>{{ lobby.id }} <span v-if="lobby.disposalScheduled" style="color: red">(D)</span></h2>
           <p>Players: {{ lobby.players.length }}</p>
           <p>Phase: {{ lobby.phase }}</p>
           <p>Created: {{ formatDuration(Date.now() - lobby.createdDate) }} ago</p>
@@ -171,7 +171,7 @@ function update() {
 function createLobby() {
   dialog.confirm("Create lobby", "Do you want to create a new lobby?").then((x) => {
     if (x) {
-      adminSocket?.emit("lobby:create", DefaultSettings);
+      adminSocket?.emit("admin:create_lobby");
       update();
     }
   });

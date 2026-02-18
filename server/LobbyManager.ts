@@ -43,6 +43,9 @@ export class LobbyManager {
       id = GenerateID(3);
     } while (this.lobbies.some((x) => x.context.lobbyId == id));
     const lobby = new Lobby(this.io, id, gameSettings);
+    lobby.onDisposed = () => {
+      this.deleteLobby(lobby.context.lobbyId);
+    };
     this.lobbies.push(lobby);
     return id;
   }
@@ -52,6 +55,15 @@ export class LobbyManager {
   }
 
   killLobby(lobbyId: string) {
-    this.lobbies = this.lobbies.filter((x) => x.context.lobbyId != lobbyId);
+    const lobby = this.deleteLobby(lobbyId);
+    lobby?.dispose(false);
+  }
+
+  deleteLobby(lobbyId: string): Lobby | undefined {
+    const deletedLobbies = this.lobbies.splice(
+      this.lobbies.findIndex((x) => x.context.lobbyId == lobbyId),
+      1,
+    );
+    return deletedLobbies.length ? deletedLobbies[1] : undefined;
   }
 }
