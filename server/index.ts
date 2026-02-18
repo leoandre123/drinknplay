@@ -12,12 +12,6 @@ import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts
 
 const logger = new Logger("SERVER");
 
-logger.info({
-  x: 2,
-  y: 2,
-  obj: { name: "Leo", age: 23, isGood: true },
-});
-
 console.log(`
 ###################################################################################################################
 #                                                                                                                 #
@@ -28,6 +22,7 @@ console.log(`
 #   /_____/_/  /_/_/ /_/_/|_|  /_/ /_/   /_____/_/   \\__,_/ |__/|__/   /____/\\___/_/    |___/\\___/_/              #
 #                                                                                                                 #
 ###################################################################################################################`);
+logger.info(`Starting Drink n' Draw Server ${VERSION}`);
 const httpServer = createServer();
 const io = new Server(httpServer, {
   maxHttpBufferSize: 1e7,
@@ -35,7 +30,7 @@ const io = new Server(httpServer, {
 });
 
 import { LobbyManager } from "./LobbyManager.js";
-import { getServerInfo } from "./ServerInfo.js";
+import { getServerInfo, VERSION } from "./ServerInfo.js";
 import { PlayerBot } from "./models/PlayerBot.js";
 
 let lobbyManager = new LobbyManager(io);
