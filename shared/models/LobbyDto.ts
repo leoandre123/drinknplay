@@ -4,4 +4,5 @@ export type LobbyDto = {
   id: string;
   phase: string;
   players: PlayerDto[];
+  createdDate: number;
 };

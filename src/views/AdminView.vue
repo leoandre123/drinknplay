@@ -48,7 +48,7 @@
           <h2>{{ lobby.id }}</h2>
           <p>Players: {{ lobby.players.length }}</p>
           <p>Phase: {{ lobby.phase }}</p>
-
+          <p>Created: {{ formatDuration(Date.now() - lobby.createdDate) }} ago</p>
           <div class="button-group">
             <RetroButton size="small" color="red" @click="killLobby(lobby.id)">Kill</RetroButton>
             <RetroButton size="small">Manage</RetroButton>
@@ -192,6 +192,18 @@ function killServer() {
     }
   });
 }
+
+function formatDuration(duration: number): string {
+  if (duration < 1000) {
+    return `${Math.floor(duration)}ms`;
+  } else if (duration < 60_000) {
+    return `${Math.floor(duration / 1000)}s`;
+  } else if (duration < 3_600_000) {
+    return `${Math.floor(duration / 60_000)}m`;
+  } else {
+    return `${Math.floor(duration / 3_600_000)}h`;
+  }
+}
 </script>
 <style scoped>
 .admin-background {
@@ -251,7 +263,7 @@ input {
   text-transform: uppercase;
 }
 .refresh {
-  background-image: url("img/refresh.png");
+  background-image: url("/img/refresh.png");
   background-size: contain;
   width: 1rem;
   height: 1rem;

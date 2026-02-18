@@ -9,6 +9,9 @@ import {
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
 } from "@shared/contracts/socket-events.js";
 import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.js";
+import { LobbyManager } from "./LobbyManager.js";
+import { ENVIRONTMENT, getServerInfo, VERSION } from "./ServerInfo.js";
+import { PlayerBot } from "./models/PlayerBot.js";
 
 const logger = new Logger("SERVER");
 
@@ -22,16 +25,18 @@ console.log(`
 #   /_____/_/  /_/_/ /_/_/|_|  /_/ /_/   /_____/_/   \\__,_/ |__/|__/   /____/\\___/_/    |___/\\___/_/              #
 #                                                                                                                 #
 ###################################################################################################################`);
-logger.info(`Starting Drink n' Draw Server ${VERSION}`);
+logger.info("Starting Drink n' Draw Server");
+logger.info(`Version: ${VERSION}`);
+logger.info(`Environment: ${ENVIRONTMENT}`);
+console.log();
+console.log();
+console.log();
+
 const httpServer = createServer();
 const io = new Server(httpServer, {
   maxHttpBufferSize: 1e7,
   cors: { origin: ["*", "https://admin.socket.io"], credentials: true },
 });
-
-import { LobbyManager } from "./LobbyManager.js";
-import { getServerInfo, VERSION } from "./ServerInfo.js";
-import { PlayerBot } from "./models/PlayerBot.js";
 
 let lobbyManager = new LobbyManager(io);
 

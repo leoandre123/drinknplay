@@ -44,6 +44,7 @@ export class Lobby {
   currentRound = 0;
 
   animationPlaying = false;
+  createdDate: number;
 
   constructor(io: Server, lobbyId: string, settings: GameSettings = DefaultSettings) {
     this.context = new ServerLobbyContext(io, lobbyId);
@@ -55,6 +56,8 @@ export class Lobby {
     this.logger = new Logger(`LOBBY: ${lobbyId}`);
 
     this.currentGameIndex = -1;
+
+    this.createdDate = Date.now();
   }
 
   onNewPlayerConnection(
@@ -524,6 +527,7 @@ export class Lobby {
       id: this.context.lobbyId,
       phase: this.phase,
       players: this.context.players.map((x) => x.toDto()),
+      createdDate: this.createdDate,
     };
   }
 }
