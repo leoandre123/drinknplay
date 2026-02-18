@@ -31,7 +31,4 @@ npm run build
 echo "== Restart service =="
 sudo systemctl restart "$SERVICE"
 
-echo "== Status =="
-sudo systemctl --no-pager --full status "$SERVICE" | head -n 30
-
 echo "== Deployed $TAG =="
