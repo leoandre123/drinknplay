@@ -87,7 +87,7 @@ defineEmits(["settingsChanged"]);
 .button-group {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 

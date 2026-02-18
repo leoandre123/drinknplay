@@ -27,6 +27,9 @@ defineEmits(["click"]);
   cursor: pointer;
   text-transform: uppercase;
 
+  width: 100%;
+  height: 100%;
+
   /* removes smoothing */
   image-rendering: pixelated;
   -webkit-font-smoothing: none;
