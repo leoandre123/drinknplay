@@ -25,6 +25,7 @@ import {
   LOBBY_JOIN_AS_HOST_RESPONSE,
   LOBBY_JOIN_AS_PLAYER_RESPONSE,
 } from "@shared/contracts/socket-events.js";
+import type { LobbyStateDto } from "@shared/models/LobbyStateDto.js";
 
 export class Lobby {
   context: ServerLobbyContext;
@@ -511,7 +512,7 @@ export class Lobby {
   }
 
   broadcastLobbyState() {
-    const state = {
+    const state: LobbyStateDto = {
       lobbyId: this.context.lobbyId,
       players: this.context.players.map((p) => p.toDto()),
       settings: this.settings,

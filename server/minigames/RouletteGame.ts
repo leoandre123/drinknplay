@@ -108,11 +108,13 @@ export class RouletteGame extends Minigame {
   }
 
   onPlaceBet(playerId: string, bet: any) {
+    console.log("Bet received");
     //säkerhetåtgärder
     if (this.phase !== "betting") return;
     if (!playerId) return;
     if (!bet || typeof bet.amount !== "number" || bet.amount <= 0) return;
     if (bet.type !== "color" && bet.type !== "number") return;
+    console.log("Bet working");
     //0 blir grön, cheeky coolare
     if (bet.type === "number" && bet.value === 0) {
       bet = { type: "color", value: "green", amount: bet.amount };
@@ -131,6 +133,7 @@ export class RouletteGame extends Minigame {
       bets.push({ type: bet.type, value: bet.value, amount: bet.amount });
     }
     this.betsByPlayer.set(playerId, bets);
+    console.log(this.getPublicState());
     this.broadcastRouletteState();
   }
 
@@ -239,11 +242,11 @@ export class RouletteGame extends Minigame {
   getPublicState() {
     return {
       phase: this.phase,
-      betsByPlayer: this.betsByPlayer,
+      betsByPlayer: Object.fromEntries(this.betsByPlayer),
       spinResult: this.spinResult,
       round: this.round,
       maxRounds: this.maxRounds,
-      totalPerPlayer: this.totalPerPlayer,
+      totalPerPlayer: Object.fromEntries(this.totalPerPlayer),
     };
   }
   broadcastRouletteState() {

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { createServer } from "http";
-import { Namespace, Server, Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { Logger } from "./Logger.js";
 import {
   LOBBY_JOIN_AS_HOST,
@@ -10,9 +10,10 @@ import {
 } from "@shared/contracts/socket-events.js";
 import type { JoinLobbyHostResponse, JoinLobbyResponse } from "@shared/contracts/types.js";
 import { LobbyManager } from "./LobbyManager.js";
-import { ENVIRONTMENT, getServerInfo, VERSION } from "./ServerInfo.js";
+import { ENVIRONMENT, getServerInfo, NODE_VERSION, VERSION } from "./ServerInfo.js";
 import { PlayerBot } from "./models/PlayerBot.js";
 import { DefaultSettings } from "@shared/models/GameSettings.js";
+import { getCrashes, logCrash } from "./CrashHandler.js";
 
 const logger = new Logger("SERVER");
 
@@ -28,7 +29,30 @@ console.log(`
 ###################################################################################################################`);
 logger.info("Starting Drink n' Draw Server");
 logger.info(`Version: ${VERSION}`);
-logger.info(`Environment: ${ENVIRONTMENT}`);
+logger.info(`Environment: ${ENVIRONMENT}`);
+logger.info(`Node version: ${NODE_VERSION}`);
+
+const major = Number(process.versions.node.split(".")[0]);
+
+if (major < 20) {
+  logger.error(`DrinknPlay requires Node 20+. Current version: ${NODE_VERSION}`);
+  process.exit(1);
+}
+
+process.on("uncaughtException", (err, origin) => {
+  logger.error("Uncaught Exception:");
+  logger.error(err.message);
+  logger.error(err.stack);
+  logCrash(err, origin);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+
+  process.exit(1);
+});
+
 console.log();
 console.log();
 console.log();
@@ -166,9 +190,12 @@ function registerAdminListeners(socket: Socket) {
       lobbyManager.lobbies.map((l) => l.toDto()),
     );
 
+    console.log("Sending s");
     const info = getServerInfo();
     socket.emit("admin:serverInfo", info);
     socket.emit("admin:recent_logs", Logger.getRecentLogs());
+    socket.emit("admin:crashes", getCrashes());
+    console.log("Sending crashes");
   });
 
   socket.on("admin:create_lobby", () => {

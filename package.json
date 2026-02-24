@@ -3,6 +3,9 @@
   "version": "1.5.2",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev:frontend": "vite",
     "dev:backend": "tsx watch --tsconfig tsconfig.node.json server/index.ts",

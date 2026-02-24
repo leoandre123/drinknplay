@@ -1,8 +1,9 @@
 import { reactive } from "vue";
+import type { LobbyStateDto } from "@shared/models/LobbyStateDto.js";
 
 export const context = reactive<{
   isConnected: boolean;
-  state: any;
+  state: LobbyStateDto | null;
   isHost: boolean;
   lobbyId: string;
   playerId: string;
