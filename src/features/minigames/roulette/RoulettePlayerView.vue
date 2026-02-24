@@ -13,7 +13,7 @@
           </div>
 
           <div
-            v-for="n in numbers"
+            v-for="n in NUMBERS"
             :key="n"
             class="square"
             :style="{ backgroundColor: color(n) }"
@@ -98,97 +98,83 @@
   </NewRetroContainer>
 </template>
 
-<script>
+<script setup lang="ts">
 import { socket } from "@/socket";
 import { context } from "@/context";
 import NewRetroContainer from "@/shared/components/UI/NewRetroContainer.vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import type { Bet, RouletteStateDto } from "@shared/features/minigames/roulette/RouletteState";
 
 const RED_NUMBERS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
 
-export default {
-  name: "RoulettePlayerView",
-  components: { NewRetroContainer },
+const NUMBERS = [
+  3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 1, 4, 7,
+  10, 13, 16, 19, 22, 25, 28, 31, 34,
+];
 
-  data() {
-    return {
-      numbers: [
-        3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 1,
-        4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34,
-      ],
-      selectedColor: null,
-      selectedNumber: null,
-      stake: 1,
-      placedBets: [],
-    };
-  },
-  mounted() {
-    socket.emit("roulette:requestState");
+const selectedColor = ref<string>();
+const selectedNumber = ref<number>();
+const stake = ref(1);
+const placedBets = ref<Bet[]>([]);
 
-    this.onRouletteUpdate = (state) => {
-      console.log(state.betsByPlayer);
-      const playerBets = state?.betsByPlayer?.[context.playerId];
-      console.log(playerBets);
-      this.placedBets = playerBets ?? [];
-    };
+onMounted(() => {
+  socket.emit("roulette:requestState");
 
-    socket.on("roulette:update", this.onRouletteUpdate);
-  },
-  beforeUnmount() {
-    socket.off("roulette:update", this.onRouletteUpdate);
-  },
+  socket.on("roulette:update", onRouletteUpdate);
+});
 
-  methods: {
-    color(number) {
-      if (number === 0) return "rgb(2,112,2)";
-      return RED_NUMBERS.has(number) ? "rgb(172,8,8)" : "rgb(0,0,0)";
-    },
-    placeColorBet(color) {
-      if (this.selectedColor === color) {
-        this.selectedColor = null;
-        return;
-      }
-      this.selectedColor = color;
-      this.selectedNumber = null;
-    },
-    increaseStake() {
-      this.stake += 1;
-    },
-    decreaseStake() {
-      if (this.stake > 1) this.stake -= 1;
-    },
-    placeBet() {
-      console.log("place bet");
-      if (!this.selectedColor && this.selectedNumber === null) return;
-      console.log("place be2t");
-      let bet;
+onBeforeUnmount(() => {
+  socket.off("roulette:update", onRouletteUpdate);
+});
 
-      if (this.selectedNumber === 0) {
-        bet = { type: "color", value: "green", amount: this.stake };
-      } else if (this.selectedNumber !== null) {
-        bet = { type: "number", value: this.selectedNumber, amount: this.stake };
-      } else {
-        bet = { type: "color", value: this.selectedColor, amount: this.stake };
-      }
+function onRouletteUpdate(state: RouletteStateDto) {
+  console.log(state.betsByPlayer);
+  const playerBets = state?.betsByPlayer?.find((x) => x[0] == context.playerId)?.[1] ?? [];
+  console.log(playerBets);
+  placedBets.value = playerBets;
+}
 
-      socket.emit("roulette:placeBet", bet);
-    },
-    clearBets() {
-      socket.emit("roulette:clearBets");
-      this.selectedColor = null;
-      this.selectedNumber = null;
-      this.placedBets = [];
-    },
+function color(number: number) {
+  if (number === 0) return "rgb(2,112,2)";
+  return RED_NUMBERS.has(number) ? "rgb(172,8,8)" : "rgb(0,0,0)";
+}
+function placeColorBet(color: string) {
+  selectedColor.value = color;
+  selectedNumber.value = undefined;
+}
+function increaseStake() {
+  stake.value += 1;
+}
+function decreaseStake() {
+  if (stake.value > 1) stake.value -= 1;
+}
+function placeBet() {
+  console.log("place bet");
+  if (!selectedColor && selectedNumber === null) return;
+  console.log("place be2t");
+  let bet;
 
-    selectNumber(n) {
-      if (this.selectedNumber === n) {
-        this.selectedNumber = null;
-        return;
-      }
-      this.selectedNumber = n;
-      this.selectedColor = null;
-    },
-  },
-};
+  if (selectedNumber.value === 0) {
+    bet = { type: "color", value: "green", amount: stake };
+  } else if (selectedNumber !== null) {
+    bet = { type: "number", value: selectedNumber, amount: stake };
+  } else {
+    bet = { type: "color", value: selectedColor, amount: stake };
+  }
+
+  socket.emit("roulette:placeBet", bet);
+}
+function clearBets() {
+  socket.emit("roulette:clearBets");
+  selectedColor.value = undefined;
+  selectedNumber.value = undefined;
+  placedBets.value = [];
+}
+
+function selectNumber(n: number) {
+  selectedNumber.value = n;
+  selectedColor.value = undefined;
+}
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <NewRetroContainer>
+  <NewRetroContainer v-if="state">
     <div class="layout">
       <div class="left">
         <RetroButton class="rules-button" color="blue" @click="showRules = true">
@@ -8,15 +8,15 @@
         <RouletteRules v-if="showRules" @close="showRules = false" />
 
         <div class="wheel-area">
-          <RouletteWheel ref="wheel" :phase="phase" @spinFinished="onSpinFinished" />
+          <RouletteWheel ref="wheel" :phase="state?.phase" @spinFinished="onSpinFinished" />
           <div class="spin-button">
-            <RetroButton color="yellow" @click="startSpin" :disabled="phase !== 'betting'">
+            <RetroButton color="yellow" @click="startSpin" :disabled="state.phase !== 'betting'">
               {{ $t("roulette.spin") }}
             </RetroButton>
           </div>
           <div class="next-round-button">
             <RetroButton
-              v-if="phase === 'result' && round < maxRounds"
+              v-if="state.phase === 'result' && state.round < state.maxRounds"
               color="pink"
               @click="nextRound"
             >
@@ -25,7 +25,7 @@
           </div>
           <div class="continue-button">
             <RetroButton
-              v-if="phase === 'result' && round >= maxRounds"
+              v-if="state?.phase === 'result' && state.round >= state.maxRounds"
               color="green"
               @click="nextRound"
             >
@@ -35,19 +35,27 @@
         </div>
       </div>
       <div class="right">
-        <h2 class="round-info">{{ $t("roulette.round") }} {{ round }}/{{ maxRounds }}</h2>
+        <h2 class="round-info">
+          {{ $t("roulette.round") }} {{ state.round }}/{{ state.maxRounds }}
+        </h2>
         <div class="top-panels">
           <div class="bets-area">
             <h2 class="bets-title">{{ $t("roulette.bets") }}</h2>
 
-            <div v-if="betsList.length === 0">{{ $t("roulette.noBetsPlaced") }}</div>
+            <div v-if="state.betsByPlayer.size === 0">{{ $t("roulette.noBetsPlaced") }}</div>
 
             <div v-else>
-              <div v-for="[playerId, p] in betsList" :key="playerId" class="player-bets">
-                <div class="player-name">{{ p.name }}</div>
+              <div
+                v-for="[playerId, bets] in state.betsByPlayer"
+                :key="playerId"
+                class="player-bets"
+              >
+                <div class="player-name">
+                  {{ context.state?.players.find((x) => x.id == playerId)?.name }}
+                </div>
 
-                <ul v-if="p.bets && p.bets.length" class="bet-list">
-                  <li v-for="b in p.bets" :key="`${b.type} - ${b.value}`">
+                <ul v-if="bets && bets.length" class="bet-list">
+                  <li v-for="b in bets" :key="`${b.type} - ${b.value}`">
                     <span v-if="b.type === 'color'">
                       {{ $t("roulette.color") }}: {{ String(b.value).toUpperCase() }} -
                       {{ b.amount }} {{ $t("roulette.drinkCredits") }}
@@ -64,22 +72,26 @@
           </div>
           <div class="result-area">
             <h2 class="result-title">{{ $t("roulette.result") }}</h2>
-            <div v-if="phase === 'betting'">
+            <div v-if="state.phase === 'betting'">
               {{ $t("roulette.waitSpin") }}
             </div>
-            <div v-else-if="phase === 'spinning'">
+            <div v-else-if="state.phase === 'spinning'">
               {{ $t("roulette.spinning") }}
             </div>
             <div v-else>
-              <div v-if="spinResult">
-                <div>{{ $t("roulette.number") }}: {{ spinResult.number }}</div>
-                <div>{{ $t("roulette.color") }}: {{ String(spinResult.color).toUpperCase() }}</div>
+              <div v-if="state.spinResult">
+                <div>{{ $t("roulette.number") }}: {{ state.spinResult.result }}</div>
+                <div>
+                  {{ $t("roulette.color") }}: {{ String(state.spinResult.color).toUpperCase() }}
+                </div>
 
                 <div>
                   {{ $t("roulette.winners") }}:
-                  <div v-if="spinResult.winners.length === 0">{{ $t("roulette.noWinners") }}</div>
+                  <div v-if="state.spinResult.winners.length === 0">
+                    {{ $t("roulette.noWinners") }}
+                  </div>
                   <ul v-else>
-                    <li v-for="w in spinResult.winners" :key="w.playerId">
+                    <li v-for="w in state.spinResult.winners" :key="w.playerId">
                       {{ w.name }} - {{ w.winningAmount }} {{ $t("roulette.drinkCredits") }}
                     </li>
                   </ul>
@@ -119,16 +131,25 @@ import NewRetroContainer from "@/shared/components/UI/NewRetroContainer.vue";
 import RouletteRules from "./components/RouletteRules.vue";
 import RetroButton from "@/shared/components/UI/RetroButton.vue";
 import { socket } from "@/socket";
-import { onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import {
+  RouletteState,
+  type RouletteStateDto,
+} from "@shared/features/minigames/roulette/RouletteState";
+import { context } from "@/context";
 
-const round = ref(1);
-const maxRounds = ref(3);
-const phase = ref("betting");
-const betsByPlayer = ref({});
-const spinResult = ref(null);
-const totalPerPlayer = ref({});
+//const round = ref(1);
+//const maxRounds = ref(3);
+//const phase = ref("betting");
+//const betsByPlayer = ref({});
+//const spinResult = ref<SpinResult>();
+//const totalPerPlayer = ref({});
 const showRules = ref(false);
 const spinAudio = ref<HTMLAudioElement>();
+
+const state = ref<RouletteState>();
+
+const wheel = useTemplateRef("wheel");
 
 onMounted(() => {
   socket.on("roulette:update", onRouletteUpdate);
@@ -139,58 +160,46 @@ onMounted(() => {
   spinAudio.value.volume = 0.8;
   const jazz = audioManager.play("/sounds/Jazz.mp3", { loop: true, volume: 0.5 });
 });
+onBeforeUnmount(() => {
+  socket.off("roulette:update", onRouletteUpdate);
+  audioManager.stopAll();
+});
 
-function onRouletteUpdate(state) {
-  round.value = state?.round ?? 1;
-  maxRounds.value = state?.maxRounds ?? 3;
-  phase.value = state?.phase ?? "betting";
-  betsByPlayer.value = state?.betsByPlayer ?? {};
-  spinResult.value = state?.spinResult ?? null;
-  totalPerPlayer.value = state?.totalPerPlayer ?? {};
+function onRouletteUpdate(data: RouletteStateDto) {
+  console.log(data);
+  state.value = RouletteState.toState(data);
 }
 
-export default {
-  mounted() {},
-  beforeUnmount() {
-    socket.off("roulette:update", onRouletteUpdate);
-    spinAudio = null;
-    audioManager.stopAll();
-  },
-  computed: {
-    betsList() {
-      return Object.entries(betsByPlayer ?? {}).map((x) => {});
-    },
-    standingsTable() {
-      const betsByPlayer = betsByPlayer ?? {};
-      const totals = totalPerPlayer ?? {};
-      const rows = Object.entries(betsByPlayer).map(([playerId, p]) => ({
-        playerId,
-        name: p?.name ?? playerId,
-        total: totals[playerId] ?? 0,
-      }));
-      rows.sort((a, b) => b.total - a.total);
-      return rows;
-    },
-  },
-  methods: {
-    playSpinSound() {
-      if (!spinAudio) return;
-      spinAudio.currentTime = 0; //kan spelas direkt igen
-      spinAudio.play();
-    },
-    startSpin() {
-      playSpinSound();
-      socket.emit("roulette:startSpin");
-      $refs.wheel.spin(); //spin() från RouletteWheelviewen
-    },
-    onSpinFinished(number) {
-      socket.emit("roulette:spinResult", { number });
-    },
-    nextRound() {
-      socket.emit("roulette:nextRound");
-    },
-  },
-};
+const standingsTable = computed(() => {
+  console.log(state.value);
+  if (!state.value) return [];
+  const betsByPlayer = state.value.betsByPlayer;
+  const totals = state.value.totalPerPlayer;
+  const rows = Object.entries(betsByPlayer).map(([playerId, p]) => ({
+    playerId,
+    name: p?.name ?? playerId,
+    total: totals.get(playerId) ?? 0,
+  }));
+  rows.sort((a, b) => b.total - a.total);
+  return rows;
+});
+
+function playSpinSound() {
+  if (!spinAudio.value) return;
+  spinAudio.value.currentTime = 0;
+  spinAudio.value.play();
+}
+function startSpin() {
+  playSpinSound();
+  socket.emit("roulette:startSpin");
+  wheel.value.spin();
+}
+function onSpinFinished(number: number) {
+  socket.emit("roulette:spinResult", { number });
+}
+function nextRound() {
+  socket.emit("roulette:nextRound");
+}
 </script>
 <style scoped>
 .layout {

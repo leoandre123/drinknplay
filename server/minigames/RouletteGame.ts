@@ -3,12 +3,7 @@ import { Minigame } from "../Minigame.js";
 import type { GameResult } from "server/models/GameResult.js";
 import type { Player } from "server/models/Player.js";
 import type { Host } from "server/models/Host.js";
-
-type Bet = {
-  amount: number;
-  type: string;
-  value: any;
-};
+import { RouletteState, type Bet } from "@shared/features/minigames/roulette/RouletteState.js";
 
 export class RouletteGame extends Minigame {
   phase: string;
@@ -47,7 +42,7 @@ export class RouletteGame extends Minigame {
   }
   onHostJoined(host: Host) {
     host.socket.on("roulette:requestState", () => {
-      host.socket.emit("roulette:update", this.getPublicState());
+      host.socket.emit("roulette:update", RouletteState.toDto(this.getPublicState()));
     });
 
     host.socket.on("roulette:startSpin", () => {
@@ -60,7 +55,7 @@ export class RouletteGame extends Minigame {
     host.socket.on("roulette:nextRound", () => {
       this.onNextRound();
     });
-    host.socket.emit("roulette:update", this.getPublicState());
+    host.socket.emit("roulette:update", RouletteState.toDto(this.getPublicState()));
   }
   registerListeners(player: Player) {
     player.communication?.on("roulette:placeBet", (bet: any) => {
@@ -70,7 +65,7 @@ export class RouletteGame extends Minigame {
       this.onClearBets(player.id);
     });
     player.communication?.on("roulette:requestState", () => {
-      player.communication?.emit("roulette:update", this.getPublicState());
+      player.communication?.emit("roulette:update", RouletteState.toDto(this.getPublicState()));
     });
 
     player.communication?.on("roulette:startSpin", () => {
@@ -239,18 +234,18 @@ export class RouletteGame extends Minigame {
     return 0;
   }
 
-  getPublicState() {
+  getPublicState(): RouletteState {
     return {
       phase: this.phase,
-      betsByPlayer: Object.fromEntries(this.betsByPlayer),
+      betsByPlayer: this.betsByPlayer,
       spinResult: this.spinResult,
       round: this.round,
       maxRounds: this.maxRounds,
-      totalPerPlayer: Object.fromEntries(this.totalPerPlayer),
+      totalPerPlayer: this.totalPerPlayer,
     };
   }
   broadcastRouletteState() {
     const state = this.getPublicState();
-    this.broadcast("roulette:update", state);
+    this.broadcast("roulette:update", RouletteState.toDto(state));
   }
 }
