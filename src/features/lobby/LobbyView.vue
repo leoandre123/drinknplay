@@ -21,7 +21,9 @@
       <div class="main">
         <h1>{{ $t("lobby.lobbyCode") }}: {{ context.state!.lobbyId }}</h1>
         <QrCode :data="lobbyUri" background="FF89B4" color="000000" />
-        <RetroButton color="green" @click="startGame">{{ $t("game.startGame") }}</RetroButton>
+        <RetroButton size="medium" color="green" @click="startGame">{{
+          $t("game.startGame")
+        }}</RetroButton>
       </div>
       <div class="side-list settings-list">
         <h1>

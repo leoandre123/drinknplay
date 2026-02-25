@@ -15,7 +15,7 @@
           />
         </TransitionGroup>
       </div>
-      <button @click="simulate">Simulate</button>
+      <button @click="simulate" v-if="environment.isDev">Simulate</button>
       <div v-if="isMessageShowing" class="message-overlay">
         <p>{{ message }}</p>
       </div>
@@ -27,137 +27,133 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import PlayerCard from "@/shared/components/PlayerCard.vue";
 import { context } from "../../context";
 import { socket } from "../../socket";
+import { environment } from "@/core/environment";
+import { computed, onMounted, ref } from "vue";
 
-export default {
-  name: "ScoreboardView",
-  components: { PlayerCard },
+const filledGlassIndex = ref(-1);
+const scores = ref(new Map());
+const glassLevels = ref(new Map());
+const drunknesses = ref(new Map());
+const message = ref("");
+const isMessageShowing = ref(false);
 
-  data: function () {
-    return {
-      context,
-      filledGlassIndex: -1,
-      scores: new Map(),
-      glassLevels: new Map(),
-      drunknesses: new Map(),
-      message: "",
-      isMessageShowing: false,
-    };
-  },
-  created: function () {
-    this.context.state.players.forEach((p) => {
-      this.scores.set(p.id, p.score);
-      this.glassLevels.set(p.id, p.glassLevel ?? 0);
-      this.drunknesses.set(p.id, p.drunkness);
-    });
+onMounted(() => {
+  context.state?.players.forEach((p) => {
+    scores.value.set(p.id, p.score);
+    glassLevels.value.set(p.id, p.glassLevel ?? 0);
+    drunknesses.value.set(p.id, p.drunkness);
+  });
 
-    socket.on("scoreboard:update", () => {
-      this.updatePlayerInfos();
-    });
-    socket.on("scoreboard:creditsReceived", (filleeId, newValue) => {
-      this.onCreditsReceived(filleeId, newValue);
-    });
-  },
-  methods: {
-    async simulate() {
-      this.setScores(
-        this.context.state.players.map((p) => {
-          return { id: p.id, score: Math.floor(Math.random() * 10000) };
-        }),
-      );
-      this.updateScores(
-        this.context.state.players.map((p) => {
-          return { id: p.id, score: Math.floor(Math.random() * 10000) };
-        }),
-      );
+  socket.on("scoreboard:update", () => {
+    updatePlayerInfos();
+  });
+  socket.on("scoreboard:creditsReceived", (filleeId, newValue) => {
+    onCreditsReceived(filleeId, newValue);
+  });
+});
 
-      await new Promise((r) => setTimeout(r, 6000));
+const sortedPlayers = computed(() => {
+  return [...(context.state?.players ?? [])].sort(
+    (a, b) => scores.value.get(b.id) - scores.value.get(a.id),
+  );
+});
+const playerScores = computed(() => {
+  return context.state?.players.map((p) => p.score);
+});
+const playerGridStyle = computed(() => {
+  return {
+    gridTemplateColumns: `repeat(${Math.min(sortedPlayers.value.length, 5)}, 1fr)`,
+  };
+});
 
-      this.onCreditsReceived(this.context.state.players[0].id, Math.random());
-      await new Promise((r) => setTimeout(r, 10000));
-      this.animateDrunkness(this.context.state.players[0].id, 2);
-    },
-    setScores(values) {
-      values.forEach((s) => {
-        this.scores.set(s.id, s.score);
-      });
-    },
+async function simulate() {
+  if (!context.state) return;
+  setScores(
+    context.state.players.map((p) => {
+      return { id: p.id, score: Math.floor(Math.random() * 10000) };
+    }),
+  );
+  updateScores(
+    context.state.players.map((p) => {
+      return { id: p.id, score: Math.floor(Math.random() * 10000) };
+    }),
+  );
 
-    updatePlayerInfos() {
-      console.log("UPDATE INFO");
-      console.log(this.context.state.players);
-      this.context.state.players.forEach((p) => {
-        this.animateScore(p.id, p.score);
-        this.animateGlass(p.id, p.glassLevel);
-        this.animateDrunkness(p.id, p.drunkness);
-      });
-    },
-    updateScores(values) {
-      values.forEach((s) => {
-        this.animateScore(s.id, s.score);
-      });
-    },
-    onCreditsReceived(receiverId, credits) {
-      const fillee = this.context.state.players.find((x) => x.id == receiverId);
-      this.showMessage(`${fillee.name} har mottagit ${credits} dryckeskrediter!`);
-    },
-    showMessage(msg) {
-      this.message = msg;
-      this.isMessageShowing = true;
-      setTimeout(() => {
-        this.isMessageShowing = false;
-      }, 6000);
-    },
-    fillGlass(index, id) {
-      this.filledGlassIndex = index;
-      socket.emit("fillGlassIndex", id);
-    },
-    animateGlass(id, target) {
-      console.log(`Fill glass of ${id} to ${target} from ${this.glassLevels.get(id)}`);
-      this.animate(this.glassLevels, id, target, 2000, false);
-    },
-    animateDrunkness(id, target) {
-      this.animate(this.drunknesses, id, target, 2000, false);
-    },
-    animateScore(id, target) {
-      this.animate(this.scores, id, target, 3000, true);
-    },
-    animate(map, id, target, duration, round) {
-      const start = map.get(id) ?? target;
-      const startTime = performance.now();
+  await new Promise((r) => setTimeout(r, 6000));
 
-      const tick = (now) => {
-        const t = Math.min((now - startTime) / duration, 1);
-        const value = round
-          ? Math.round(start + (target - start) * t)
-          : start + (target - start) * t;
-        map.set(id, value);
+  onCreditsReceived(context.state.players[0]!.id, Math.random());
+  await new Promise((r) => setTimeout(r, 10000));
+  animateDrunkness(context.state.players[0]!.id, 2);
+}
+function setScores(values: { id: string; score: number }[]) {
+  values.forEach((s) => {
+    scores.value.set(s.id, s.score);
+  });
+}
 
-        if (t < 1) requestAnimationFrame(tick);
-      };
+function updatePlayerInfos() {
+  console.log("UPDATE INFO");
+  console.log(context.state?.players);
+  context.state?.players.forEach((p) => {
+    animateScore(p.id, p.score);
+    animateGlass(p.id, p.glassLevel);
+    animateDrunkness(p.id, p.drunkness);
+  });
+}
+function updateScores(values: { id: string; score: number }[]) {
+  values.forEach((s) => {
+    animateScore(s.id, s.score);
+  });
+}
+function onCreditsReceived(receiverId: string, credits: number) {
+  const fillee = context.state?.players.find((x) => x.id == receiverId);
+  if (fillee) showMessage(`${fillee.name} har mottagit ${credits} dryckeskrediter!`);
+}
+function showMessage(msg: string) {
+  message.value = msg;
+  isMessageShowing.value = true;
+  setTimeout(() => {
+    isMessageShowing.value = false;
+  }, 6000);
+}
+function fillGlass(index: number, id: string) {
+  filledGlassIndex.value = index;
+  socket.emit("fillGlassIndex", id);
+}
+function animateGlass(id: string, target: number) {
+  console.log(`Fill glass of ${id} to ${target} from ${glassLevels.value.get(id)}`);
+  animate(glassLevels.value, id, target, 2000, false);
+}
+function animateDrunkness(id: string, target: number) {
+  animate(drunknesses.value, id, target, 2000, false);
+}
+function animateScore(id: string, target: number) {
+  animate(scores.value, id, target, 3000, true);
+}
+function animate(
+  map: Map<string, any>,
+  id: string,
+  target: number,
+  duration: number,
+  round: boolean,
+) {
+  const start = map.get(id) ?? target;
+  const startTime = performance.now();
 
-      requestAnimationFrame(tick);
-    },
-  },
-  computed: {
-    sortedPlayers() {
-      return [...this.context.state.players].sort(
-        (a, b) => this.scores.get(b.id) - this.scores.get(a.id),
-      );
-    },
-    playerScores() {
-      return this.context.state.players.map((p) => p.score);
-    },
-    playerGridStyle() {
-      return {
-        gridTemplateColumns: `repeat(${Math.min(this.sortedPlayers.length, 5)}, 1fr)`,
-      };
-    },
-  },
-};
+  const tick = (now: number) => {
+    const t = Math.min((now - startTime) / duration, 1);
+    const value = round ? Math.round(start + (target - start) * t) : start + (target - start) * t;
+    map.set(id, value);
+
+    if (t < 1) requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+}
 </script>
 
 <style scoped>
