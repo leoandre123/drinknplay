@@ -1,15 +1,15 @@
 <template>
   <NewRetroContainer>
-    <div class="info-button">
-      <RetroButton color="blue" size="small" @click="showInfo()"> ? </RetroButton>
-    </div>
+    <RetroButton class="info-button" color="blue" size="small" @click="showInfo()"> ? </RetroButton>
     <div class="create-container">
       <h1>{{ $t("settings.settings") }}</h1>
       <SettingsPanel :settings="settings" class="settings" />
       <div style="display: flex; gap: 1rem">
-        <RetroButton color="red" @click="goBack">{{ $t("settings.back") }}</RetroButton>
+        <RetroButton size="medium" color="red" @click="goBack">{{
+          $t("settings.back")
+        }}</RetroButton>
         <div>
-          <RetroButton class="submitButton" @click="createGame" color="green">{{
+          <RetroButton size="medium" @click="createGame" color="green">{{
             $t("settings.create")
           }}</RetroButton>
         </div>

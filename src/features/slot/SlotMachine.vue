@@ -72,18 +72,35 @@ export default {
   border: 0.2rem solid #fff;
   border-radius: 2rem;
   padding: 20px;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+  box-shadow:
+    0 0 0.2rem #fff,
+    0 0 0.2rem #fff,
+    0 0 2rem #bc13fe,
+    0 0 0.8rem #bc13fe,
+    0 0 2.8rem #bc13fe,
+    inset 0 0 1.3rem #bc13fe;
 }
 @keyframes glow {
   from {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073,
-      0 0 60px #e60073, 0 0 70px #e60073;
+    text-shadow:
+      0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 30px #e60073,
+      0 0 40px #e60073,
+      0 0 50px #e60073,
+      0 0 60px #e60073,
+      0 0 70px #e60073;
   }
 
   to {
-    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6,
-      0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+    text-shadow:
+      0 0 20px #fff,
+      0 0 30px #ff4da6,
+      0 0 40px #ff4da6,
+      0 0 50px #ff4da6,
+      0 0 60px #ff4da6,
+      0 0 70px #ff4da6,
+      0 0 80px #ff4da6;
   }
 }
 div {
@@ -91,19 +108,26 @@ div {
 }
 
 .slot-machine-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
   /*background: radial-gradient(circle, rgb(72, 32, 98) 0%, rgb(122, 37, 125) 100%);*/
-  justify-items: center;
-  align-content: center;
 }
 
 .reels-container {
   border: 0.2rem solid #fff;
   border-radius: 2rem;
   padding: 2rem;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+  box-shadow:
+    0 0 0.2rem #fff,
+    0 0 0.2rem #fff,
+    0 0 2rem #bc13fe,
+    0 0 0.8rem #bc13fe,
+    0 0 2.8rem #bc13fe,
+    inset 0 0 1.3rem #bc13fe;
 }
 
 .reels {

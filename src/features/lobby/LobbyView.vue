@@ -128,7 +128,9 @@ function showInfo() {
 .waiting {
   color: white;
   font-size: 3rem;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 p {

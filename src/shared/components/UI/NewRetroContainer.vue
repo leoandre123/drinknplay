@@ -1,74 +1,66 @@
 <template>
-  <div>
-    <div class="retro-container">
-      <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <linearGradient id="background" x1="0" x2="0" y1="0" y2="1">
-            <stop stop-color="#010310" offset="0% " />
-            <stop stop-color="#0c1142" offset="37%" />
-            <stop stop-color="#45125e" offset="69%" />
-            <stop stop-color="#d53567" offset="92%" />
-            <stop stop-color="#f0c3d9" offset="100%" />
-            <stop stop-color="#0c1142" offset="100%" />
-          </linearGradient>
-          <linearGradient id="sunGradient" x1="0" x2="0" y1="0" y2="1">
-            <stop stop-color="red" offset="0%" />
-            <stop stop-color="yellow" offset="100%" />
-          </linearGradient>
-          <clipPath id="sunClip">
-            <rect x="0" y="0%" width="100%" height="50%" />
-            <rect x="0" y="51.5%" width="100%" height="1.8%" />
-            <rect x="0" y="54.4%" width="100%" height="1.1%" />
-            <rect x="0" y="56%" width="100%" height="0.7%" />
-            <rect x="0" y="57.1%" width="100%" height="0.7%" />
-            <rect x="0" y="58.2%" width="100%" height="0.7%" />
-            <rect x="0" y="59.1%" width="100%" height="40%" />
-          </clipPath>
-          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="rgba(255, 128, 0, 0.7)" />
-          </filter>
-        </defs>
+  <div class="retro-container">
+    <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="background" x1="0" x2="0" y1="0" y2="1">
+          <stop stop-color="#010310" offset="0% " />
+          <stop stop-color="#0c1142" offset="37%" />
+          <stop stop-color="#45125e" offset="69%" />
+          <stop stop-color="#d53567" offset="92%" />
+          <stop stop-color="#f0c3d9" offset="100%" />
+          <stop stop-color="#0c1142" offset="100%" />
+        </linearGradient>
+        <linearGradient id="sunGradient" x1="0" x2="0" y1="0" y2="1">
+          <stop stop-color="red" offset="0%" />
+          <stop stop-color="yellow" offset="100%" />
+        </linearGradient>
+        <clipPath id="sunClip">
+          <rect x="0" y="0%" width="100%" height="50%" />
+          <rect x="0" y="51.5%" width="100%" height="1.8%" />
+          <rect x="0" y="54.4%" width="100%" height="1.1%" />
+          <rect x="0" y="56%" width="100%" height="0.7%" />
+          <rect x="0" y="57.1%" width="100%" height="0.7%" />
+          <rect x="0" y="58.2%" width="100%" height="0.7%" />
+          <rect x="0" y="59.1%" width="100%" height="40%" />
+        </clipPath>
+        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="rgba(255, 128, 0, 0.7)" />
+        </filter>
+      </defs>
 
-        <rect x="0" y="65" width="100%" height="35" fill="#0c1142" />
-        <path v-for="(x, i) in 100" :d="horizontalLine(i)" stroke="#3f186c" stroke-width="0.2" />
-        <path
-          v-for="(x, i) in 100"
-          :d="`M${100 + 2 * (i - 50)} 65 L${100 + 8 * (i - 50)} 100`"
-          stroke="#3f186c"
-          stroke-width="0.2"
-        />
-        <rect x="0" y="0" width="100%" height="65" fill="url(#background)" />
+      <rect x="0" y="65" width="100%" height="35" fill="#0c1142" />
+      <path v-for="(x, i) in 100" :d="horizontalLine(i)" stroke="#3f186c" stroke-width="0.2" />
+      <path
+        v-for="(x, i) in 100"
+        :d="`M${100 + 2 * (i - 50)} 65 L${100 + 8 * (i - 50)} 100`"
+        stroke="#3f186c"
+        stroke-width="0.2"
+      />
+      <rect x="0" y="0" width="100%" height="65" fill="url(#background)" />
 
-        <circle
-          v-for="star in stars"
-          :cx="star.x"
-          :cy="star.y"
-          r="0.2"
-          fill="white"
-          opacity="0.5"
-        />
+      <circle v-for="star in stars" :cx="star.x" :cy="star.y" r="0.2" fill="white" opacity="0.5" />
 
-        <circle
-          clip-path="url(#sunClip)"
-          cx="50%"
-          cy="50%"
-          r="6.5%"
-          fill="url(#sunGradient)"
-          filter="url(#shadow)"
-        />
+      <circle
+        clip-path="url(#sunClip)"
+        cx="50%"
+        cy="50%"
+        r="6.5%"
+        fill="url(#sunGradient)"
+        filter="url(#shadow)"
+      />
 
-        <path v-for="mountain in mountains" :d="mountain.path" :fill="mountain.color" />
-        <path
-          v-for="x in 300"
-          :d="`M0 ${x / 3} L200 ${x / 3}`"
-          stroke="black"
-          opacity="0.5"
-          stroke-width="0.1"
-        />
-      </svg>
-    </div>
-    <slot></slot>
+      <path v-for="mountain in mountains" :d="mountain.path" :fill="mountain.color" />
+      <path
+        v-for="x in 300"
+        :d="`M0 ${x / 3} L200 ${x / 3}`"
+        stroke="black"
+        opacity="0.5"
+        stroke-width="0.1"
+      />
+    </svg>
   </div>
+
+  <slot></slot>
 </template>
 
 <script setup lang="ts">

@@ -27,13 +27,15 @@ function close() {
 .modal-container {
   width: 100dvw;
   height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
   background: #00000020;
-  align-content: center;
-  justify-items: center;
   z-index: 10000;
 }
 .modal {

@@ -117,8 +117,10 @@ function randomizeAvatar() {
 .join-container {
   width: 100vw;
   height: 100vh;
-  justify-items: center;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-image: radial-gradient(
     circle farthest-corner at 10% 20%,
     rgba(0, 51, 102, 1) 0%,
@@ -126,6 +128,7 @@ function randomizeAvatar() {
     rgba(0, 191, 255, 1) 90%
   );
   color: white;
+  overflow: hidden;
 }
 
 .menu {
