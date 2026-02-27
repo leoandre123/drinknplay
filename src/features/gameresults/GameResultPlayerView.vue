@@ -1,0 +1,154 @@
+<template>
+  <div class="player-results">
+    <h1>{{ $t("common.results") }}</h1>
+    <h3>{{ $t("common.drinkingCreditsLeft") }}: {{ creditsLeft }}</h3>
+    <div class="player-selection-list">
+      <div class="player-selection" v-for="(player, i) in context.state?.players">
+        <p>{{ player.name }}</p>
+        <div class="flex-expander"></div>
+        <div class="spinner">
+          <p class="spinner-button" @click="() => changeCredits(player.id, -1)">-</p>
+          <p class="spinner-display">{{ creditsGiven.get(player.id) ?? 0 }}</p>
+          <p class="spinner-button" @click="() => changeCredits(player.id, 1)">+</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex-expander"></div>
+    <RetroButton color="green" :disabled="isConfirmed || creditsLeft != 0" @click="confirmPoints">
+      {{
+        isConfirmed
+          ? $t("common.waiting")
+          : creditsLeft == 0
+            ? $t("common.confirm")
+            : $t("results.use_all_credits")
+      }}
+    </RetroButton>
+  </div>
+</template>
+
+<script setup lang="ts">
+import RetroButton from "@/shared/components/UI/RetroButton.vue";
+import { context } from "../../context";
+import { socket } from "../../socket";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+
+const drinkingCredits = ref(0);
+const isConfirmed = ref(false);
+const creditsLeft = ref(0);
+const creditsGiven = ref(new Map());
+
+onMounted(() => {
+  drinkingCredits.value = context.getCurrentPlayer()?.credits ?? 8;
+  creditsLeft.value = drinkingCredits.value;
+
+  socket.on("results:creditsConfirmed", () => (isConfirmed.value = true));
+});
+onBeforeUnmount(() => {
+  socket.off("results:creditsConfirmed");
+});
+
+function confirmPoints() {
+  if (isConfirmed.value) {
+    return;
+  }
+
+  const credits = [...creditsGiven.value].map(([key, value]) => ({
+    playerId: key,
+    credits: value,
+  }));
+  socket.emit("results:confirmCredits", credits);
+}
+function changeCredits(playerId: string, delta: number) {
+  if (isConfirmed.value) {
+    return;
+  }
+  const current = creditsGiven.value.get(playerId) ?? 0;
+
+  if (creditsLeft.value - delta < 0) return;
+  if (current + delta < 0) return;
+
+  creditsGiven.value.set(playerId, current + delta);
+  creditsLeft.value =
+    drinkingCredits.value - [...creditsGiven.value.values()].reduce((a, b) => a + b, 0);
+}
+</script>
+
+<style scoped>
+.player-results {
+  background: linear-gradient(90deg, rgb(76, 23, 112) 0%, rgb(11, 8, 19) 87%);
+  width: 100dvw;
+  height: 100dvh;
+  color: beige;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 5rem;
+}
+
+.player-selection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #bb13fe41;
+  overflow: auto;
+  border-radius: 0.5rem;
+  scrollbar-color: #bb13fe41 transparent;
+}
+
+.player-selection {
+  background: #ff0d86;
+  color: white;
+  font-size: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  display: flex;
+}
+
+.player-selection p {
+  margin: 0;
+}
+
+.flex-expander {
+  flex-grow: 1;
+}
+
+.spinner {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+.spinner-button {
+  background-color: rgba(160, 47, 47, 0.422);
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  align-content: center;
+}
+.spinner-display {
+  width: 2rem;
+  padding: 0;
+}
+.spinner-button:active {
+  transform: scale(1.15);
+}
+
+.done-button {
+  border-radius: 0.25rem;
+  border: none;
+  font-family: inherit;
+  padding: 1rem;
+  font-size: 2rem;
+  color: beige;
+  background-color: rgb(124, 184, 64);
+  cursor: pointer;
+}
+
+.done-button:disabled {
+  background-color: rgb(41, 45, 37);
+}
+</style>

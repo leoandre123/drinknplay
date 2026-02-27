@@ -19,10 +19,9 @@
 </template>
 
 <script>
-import PlayerCard from "@/components/PlayerCard.vue";
-import { context } from "../context";
-import { socket } from "../socket";
-import RetroButton from "@/components/RetroButton.vue";
+import { context } from "@/context";
+import PlayerCard from "@/shared/components/PlayerCard.vue";
+import RetroButton from "@/shared/components/UI/RetroButton.vue";
 
 export default {
   name: "FinalResultsView",

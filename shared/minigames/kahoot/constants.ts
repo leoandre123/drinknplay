@@ -1,0 +1,1 @@
+export const KAHOOT_QUESTIONS_PER_GAME = 5;

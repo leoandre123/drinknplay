@@ -1,5 +1,6 @@
 <template>
-  <RouterView />
+  <DialogProvider> <RouterView /> </DialogProvider>
+
   <div class="language-switcher">
     <div
       v-if="!context.state?.phase || context.state?.phase == 'lobby'"
@@ -19,28 +20,18 @@
   </div>
 </template>
 
-<script>
-import Flag from "vue-flag-icon/components/icon/Flag.vue";
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { RouterView } from "vue-router";
-import { audioManager } from "./AudioManager";
-import { context } from "./context";
+import { audioManager } from "./AudioManager.js";
+import { context } from "./context.js";
+import DialogProvider from "./shared/components/framework/DialogProvider.vue";
 
-export default {
-  name: "App",
-  data() {
-    return { audioManager, context };
-  },
-  components: { Flag },
-  setup() {
-    const { locale } = useI18n();
-    function switchLang(lang) {
-      locale.value = lang;
-    }
+const { locale } = useI18n();
 
-    return { switchLang };
-  },
-};
+function switchLang(lang: string) {
+  locale.value = lang;
+}
 </script>
 
 <style>

@@ -1,0 +1,19 @@
+//LOBBY SETTINGS
+export const DISCONNECT_TIMEOUT = 10_000;
+export const PLAYER_ID_LENGTH = 5;
+export const LOBBY_DISPOSE_TIMER = 600_000;
+
+//GAME SETTINGS
+export const CREDITS_PER_GLASS = 5;
+export const CREDITS_PER_ROUNDPLAYER = [0, 1, 3, 5];
+export const TOTAL_SCORE_PER_GAME = 1_000;
+
+//GAME CONSTANTS
+
+//CLOSEST
+export const CLOSEST_ROUNDS_PER_GAME = 5;
+export const CLOSEST_ROUND_TIMER = 30_000;
+
+//REACTION
+export const MAX_REACTION_ROUNDS = 10;
+export const FIGURE_COUNT_PER_ROUND = 7;
