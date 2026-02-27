@@ -27,6 +27,30 @@ const router = createRouter({
       path: "/admin",
       name: "Admin",
       component: AdminView,
+      children: [
+        { path: "/admin", redirect: "/admin/overview" },
+        { path: "/admin/:pathMatch(.*)*", redirect: "/admin/overview" },
+        {
+          path: "overview",
+          name: "admin-overview",
+          component: () => import("@/features/admin/pages/Overview.vue"),
+        },
+        {
+          path: "lobbies",
+          name: "admin-lobbies",
+          component: () => import("@/features/admin/pages/Lobbies.vue"),
+        },
+        {
+          path: "logs",
+          name: "admin-logs",
+          component: () => import("@/features/admin/pages/Logs.vue"),
+        },
+        {
+          path: "crashes",
+          name: "admin-crashes",
+          component: () => import("@/features/admin/pages/Crashes.vue"),
+        },
+      ],
     },
     {
       path: "/join/:id",
