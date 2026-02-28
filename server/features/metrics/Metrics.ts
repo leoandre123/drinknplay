@@ -1,7 +1,6 @@
+import { SlidingWindow } from "./SlidingWindow.js";
+
 type CounterMetric = {
-  value: number;
-};
-type GaugeMetric = {
   value: number;
 };
 type HistogramMetric = {
@@ -12,35 +11,47 @@ type HistogramMetric = {
 };
 
 export class Stats {
-  private counters = new Map<string, CounterMetric>();
-  private gauges = new Map<string, GaugeMetric>();
-  private histograms = new Map<string, HistogramMetric>();
+  private counterWindows = new Map<string, SlidingWindow<CounterMetric>>();
+  private histogramWindows = new Map<string, SlidingWindow<HistogramMetric>>();
 
   inc(name: string, value = 1) {
-    const currentValue: CounterMetric = this.counters.get(name) ?? {
-      value: 0,
-    };
-    currentValue.value += value;
-    this.counters.set(name, currentValue);
+    this.getCounterWindow(name).now().value += value;
   }
 
-  set(name: string, value: number) {
-    this.gauges.set(name, { value: value });
-  }
 
   observe(name: string, value: number) {
-    const currentValue: HistogramMetric = this.histograms.get(name) ?? {
-      count: 0,
-      sum: 0,
-      min: Infinity,
-      max: -Infinity,
-    };
+    const metric = this.getHistogramWindow(name).now();
+    metric.count++;
+    metric.sum += value;
+    metric.max = Math.max(metric.max, value);
+    metric.min = Math.min(metric.min, value);
+  }
 
-    currentValue.count++;
-    currentValue.sum += value;
-    currentValue.max = Math.max(currentValue.max, value);
-    currentValue.min = Math.min(currentValue.min, value);
+  getCounterSummary(name: string, lastNMinutes = 60) {
+    this.getCounterWindow(name).last(lastNMinutes);
 
-    this.histograms.set(name, currentValue);
+  }
+
+  private getCounterWindow(k: string) {
+    let w = this.counterWindows.get(k)
+    if (!w) {
+      w = new SlidingWindow<CounterMetric>(60, { value: 0 })
+      this.counterWindows.set(k, w)
+    }
+    return w
+  }
+
+  private getHistogramWindow(k: string) {
+    let w = this.histogramWindows.get(k)
+    if (!w) {
+      w = new SlidingWindow<HistogramMetric>(60, {
+        count: 0,
+        sum: 0,
+        min: Infinity,
+        max: -Infinity,
+      })
+      this.histogramWindows.set(k, w)
+    }
+    return w
   }
 }
