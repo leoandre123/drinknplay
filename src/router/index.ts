@@ -50,6 +50,11 @@ const router = createRouter({
           name: "admin-crashes",
           component: () => import("@/features/admin/pages/Crashes.vue"),
         },
+        {
+          path: "metrics",
+          name: "admin-metrics",
+          component: () => import("@/features/admin/pages/Metrics.vue"),
+        },
       ],
     },
     {
