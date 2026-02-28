@@ -78,8 +78,10 @@ admin.use((socket, next) => {
   const ok = token && token === process.env.ADMIN_TOKEN;
   if (!ok) {
     next(new Error("Not authorized"));
+    logger.warn(`Failed admin login attempt from ${socket.handshake.address}`);
   } else {
     next();
+    logger.info(`Successful admin login attempt from ${socket.handshake.address}`)
   }
 });
 
@@ -190,12 +192,10 @@ function registerAdminListeners(socket: Socket) {
       lobbyManager.lobbies.map((l) => l.toDto()),
     );
 
-    console.log("Sending s");
     const info = getServerInfo();
     socket.emit("admin:serverInfo", info);
     socket.emit("admin:recent_logs", Logger.getRecentLogs());
     socket.emit("admin:crashes", getCrashes());
-    console.log("Sending crashes");
   });
 
   socket.on("admin:create_lobby", () => {
